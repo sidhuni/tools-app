@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: "https://github.com/sidhuni/apps-repo.git"
+    targetRevision: main
+    path: apps/grafana
+    helm:
+      repoURL: "https://grafana.github.io/helm-charts"
+      chart: grafana
+      targetRevision: "9.0.0"   # choose appropriate chart version
+      valueFiles:
+        - values.yaml
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
