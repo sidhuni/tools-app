@@ -9,7 +9,10 @@ spec:
   sources:
     - repoURL: https://charts.bitnami.com/bitnami
       chart: nginx
-      targetRevision: 15.9.0   # stable bitnami chart
+      targetRevision: 15.9.0
+      helm:
+        valueFiles:
+          - $values/nginx/values.yaml   # <-- IMPORTANT
 
     - repoURL: https://github.com/sidhuni/apps-repo.git
       targetRevision: main
