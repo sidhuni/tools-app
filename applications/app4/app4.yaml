@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: app4
+  namespace: argocd
+spec:
+  project: default
+
+  sources:
+    - repoURL: http://chartmuseum.chartmuseum.svc.cluster.local:8080
+      chart: common-app-chart
+      targetRevision: 0.1.0
+      helm:
+        valueFiles:
+          - $valuesrepo/app4/values.yaml
+
+    - repoURL: https://github.com/sidhuni/helm-values-repo.git
+      targetRevision: main
+      ref: valuesrepo
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: app4
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+
