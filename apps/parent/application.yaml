@@ -5,13 +5,20 @@ metadata:
   namespace: argocd
 spec:
   project: default
+
+  # Parent App-of-Apps points to the folder that contains child apps
   source:
     repoURL: "https://github.com/sidhuni/apps-repo.git"
     targetRevision: main
-    path: apps                       # contains child Application YAMLs
+    path: apps     # this folder contains chartmuseum/ and grafana/
+
   destination:
     server: "https://kubernetes.default.svc"
     namespace: argocd
+
   syncPolicy:
+    automated:
+      prune: false      # keep false for safety (parent should not delete child apps)
+      selfHeal: true
     syncOptions:
       - CreateNamespace=true

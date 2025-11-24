@@ -12,9 +12,9 @@ spec:
     helm:
       repoURL: "https://grafana.github.io/helm-charts"
       chart: grafana
-      targetRevision: "9.0.0"   # choose appropriate chart version
+      targetRevision: "9.0.0"
       valueFiles:
-        - values.yaml
+        - values.yaml   # loads apps/grafana/values.yaml
   destination:
     server: "https://kubernetes.default.svc"
     namespace: monitoring
@@ -22,3 +22,6 @@ spec:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - Validate=false

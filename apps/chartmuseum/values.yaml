@@ -1,0 +1,67 @@
+# ------------------------------
+# ChartMuseum Values
+# ------------------------------
+
+# Number of replicas
+replicaCount: 1
+
+# Docker image
+image:
+  repository: chartmuseum/chartmuseum
+  tag: v0.15.0
+  pullPolicy: IfNotPresent
+
+# Service settings
+service:
+  type: ClusterIP
+  port: 8080
+
+# Ingress settings
+ingress:
+  enabled: true
+  className: nginx
+  annotations: {}
+  hosts:
+    - host: chartmuseum.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+# Persistence (storage)
+persistence:
+  enabled: true
+  size: 5Gi
+  storageClass: ""
+
+# ChartMuseum configuration
+env:
+  open:
+    STORAGE: local
+    STORAGE_LOCAL_ROOTDIR: /storage
+    ALLOW_OVERWRITE: "true"
+    DEBUG: "true"
+
+# Resources
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# Service account
+serviceAccount:
+  create: true
+  name: ""
+
+# Liveness / Readiness probes
+livenessProbe:
+  httpGet:
+    path: /
+    port: 8080
+readinessProbe:
+  httpGet:
+    path: /
+    port: 8080
