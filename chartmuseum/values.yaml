@@ -1,23 +1,26 @@
-# ChartMuseum configuration values
+# -----------------------------------------------------
+# ChartMuseum Helm Chart - Fully Working values.yaml
+# -----------------------------------------------------
 
+# Correct and working container image
 image:
-  repository: ghcr.io/chartmuseum/chartmuseum
-  tag: latest
+  repository: ghcr.io/helm/chartmuseum
+  tag: v0.15.0
   pullPolicy: IfNotPresent
 
-# Expose ChartMuseum service
+# Service configuration
 service:
   type: ClusterIP
   port: 8080
 
-# Enable persistence if storing charts locally
+# Persistence for storing chart packages
 persistence:
   enabled: true
   accessMode: ReadWriteOnce
   size: 10Gi
-  storageClass: ""   # set to your storage class (gp2, standard, nfs, etc.)
+  storageClass: ""   # (optional) set to gp2 / standard / nfs if required
 
-# Ingress configuration
+# Enable ingress ONLY if needed
 ingress:
   enabled: false
   className: ""
@@ -25,36 +28,24 @@ ingress:
   hosts:
     - name: chartmuseum.local
       path: /
-  tls: []   # example:
-            # - secretName: chartmuseum-tls
-            #   hosts:
-            #     - chartmuseum.example.com
+  tls: []
 
-# ChartMuseum server configurations
+# ENV variables for ChartMuseum
 env:
   open:
-    STORAGE: local
-    STORAGE_LOCAL_ROOTDIR: /storage
+    STORAGE: local                   # store charts locally
+    STORAGE_LOCAL_ROOTDIR: /storage  # default storage path
     DEBUG: false
-    ALLOW_OVERWRITE: true
+    ALLOW_OVERWRITE: true            # allow updating existing charts
+    DISABLE_API: false               # enable /api for uploading charts
     CHART_POST_FORM_FIELD_NAME: chart
     PROV_POST_FORM_FIELD_NAME: prov
-    DISABLE_API: false
 
-# Enable metrics for Prometheus
+# Metrics for Prometheus
 metrics:
   enabled: true
 
-# Resource requests and limits
-resources:
-  requests:
-    cpu: 100m
-    memory: 128Mi
-  limits:
-    cpu: 300m
-    memory: 512Mi
-
-# Liveness & readiness probes
+# Probes
 livenessProbe:
   enabled: true
   initialDelaySeconds: 10
@@ -69,7 +60,16 @@ readinessProbe:
   periodSeconds: 10
   failureThreshold: 3
 
-# NodeSelector, tolerations, affinities (optional)
+# Resource limits & requests
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 300m
+    memory: 512Mi
+
+# Node scheduling (optional)
 nodeSelector: {}
 tolerations: []
 affinity: {}
