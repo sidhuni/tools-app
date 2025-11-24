@@ -6,15 +6,17 @@ metadata:
 spec:
   project: default
 
-  sources:
-    - repoURL: http://chartmuseum.chartmuseum.svc.cluster.local:8080
-      chart: common-app-chart
-      targetRevision: 0.1.0
-      helm:
-        valueFiles:
-          - $valuesrepo/app4/values.yaml
+  source:
+    repoURL: http://mycharts
+    chart: common-app-chart
+    targetRevision: 0.1.0
 
-    - repoURL: https://github.com/sidhuni/helm-values-repo.git
+    helm:
+      valueFiles:
+        - $valuesrepo/app4/values.yaml
+
+  sources:
+    - repoURL: https://github.com/sidhuni/my-checksum-helmchart.git
       targetRevision: main
       ref: valuesrepo
 
@@ -28,4 +30,3 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-
