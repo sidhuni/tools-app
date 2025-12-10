@@ -1,4 +1,5 @@
 # In: https://github.com/sidhuni/tools-app.git/kafka/values.yaml
+
 # --- Bitnami Kafka Chart Overrides ---
 
 auth:
@@ -29,3 +30,22 @@ resources:
   limits:
     memory: "1024Mi"
     cpu: "500m"
+
+# =================================================================
+# === FINAL FIXES FOR ARGOCD STABILITY (MUST BE ADDED) ===
+# =================================================================
+
+# 1. Instruct the Helm Chart to use the secrets we created manually.
+#    (These need to be created via kubectl first, see Step 2)
+kraft:
+  clusterIdSecret: my-kafka-cluster-kraft
+
+sasl:
+  interBrokerSecret: my-kafka-cluster-user-passwords
+  controllerSecret: my-kafka-cluster-user-passwords
+
+# 2. Add the Helm Resource Policy Annotation (The Sync Fix)
+commonAnnotations:
+  # This annotation tells Helm: "Do not touch the resource once created."
+  # This prevents the checksum/data differences from causing the Out of Sync state.
+  "helm.sh/resource-policy": keep
