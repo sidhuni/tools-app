@@ -7,18 +7,21 @@ metadata:
   finalizers:
   - resources-finalizer.argocd.argoproj.io
   annotations:
-    # 1. Broadly ignore differences for generated secrets (KRaft ID, Passwords)
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
     argocd.argoproj.io/resource-ignore-differences: |
       all:
-      # Ignore the entire data field for all Secrets
+      # 1. Ignore the entire data field for ALL Secrets
       - jsonPointers:
         - /data
-        - /metadata/annotations/argocd.argoproj.io~1tracking-id # Prevents syncing on the ID the resource was created with
+        - /stringData
+        - /metadata/annotations
         group: v1
         kind: Secret
-      
-      # 2. Ignore volatile annotations on the Pod Template within the StatefulSet
+
+      # 2. TARGET THE STATEFULSET ANNOTATIONS DIRECTLY
       - jsonPointers:
+        - /metadata/annotations/checksum~1configuration
+        - /metadata/annotations/checksum~1secret
         - /spec/template/metadata/annotations
         group: apps
         kind: StatefulSet
