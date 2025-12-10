@@ -16,12 +16,12 @@ defaultInitContainers:
 controller:
   replicaCount: 1
 
-resources:
+rresources:
   requests:
-    memory: "512Mi"
+    memory: "768Mi" # Increased request to match the limit increase
     cpu: "250m"
   limits:
-    memory: "1024Mi"
+    memory: "1536Mi" # INCREASE THIS to provide more headroom (1.5 GiB)
     cpu: "500m"
 
 # --- Use pre-created secrets ---
