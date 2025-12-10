@@ -1,5 +1,5 @@
 auth:
-  enabled: false  # disables SASL/TLS
+  enabled: false
 
 listeners:
   client:
@@ -24,15 +24,15 @@ resources:
     memory: "1024Mi"
     cpu: "500m"
 
+# --- Use pre-created secrets ---
 kraft:
   clusterIdSecret: my-kafka-cluster-kraft
-  # Ensures chart uses your secret, does NOT generate a new one
   force: true
 
 existingSecrets:
-  # Prevent chart from regenerating user passwords
   userSecrets:
     - my-kafka-cluster-user-passwords
 
+# Prevent Helm from overwriting secrets
 commonAnnotations:
   "helm.sh/resource-policy": keep
