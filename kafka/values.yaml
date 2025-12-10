@@ -1,29 +1,30 @@
 auth:
-  # Disable SASL/TLS authentication for simple local use
+  # Disables SASL/TLS authentication for simple local (in-cluster) use
   enabled: false
 
 listeners:
   client:
-    # Use unsecured plaintext protocol
+    # Sets the protocol to unsecured plaintext (standard for local dev)
     protocol: PLAINTEXT
 
-# Use the legacy image repository to resolve ErrImagePull issues
+# --- Image Configuration (Fixes ImagePullBackOff) ---
+# Use the legacy image repository due to Bitnami's recent migration
 image:
   repository: bitnamilegacy/kafka
-  # We omit the tag here; it will default to a stable tag used by chart 32.4.3
+  # (Tag defaults to the chart's compatible version, e.g., 4.0.0)
 
 defaultInitContainers:
   prepareConfig:
     image:
       repository: bitnamilegacy/kafka
 
-# --- 2. LOCAL CLUSTER SIZING ---
+# --- Local Sizing and Resources ---
 controller:
-  # Use a single controller/broker for resource efficiency on a Mac (KRaft mode)
+  # Use a single controller/broker for efficiency on Rancher Desktop (KRaft mode)
   replicaCount: 1
 
 resources:
-  # Set reasonable limits for Rancher Desktop to prevent crashes
+  # Set reasonable limits for Rancher Desktop to prevent cluster instability
   requests:
     memory: "512Mi"
     cpu: "250m"
@@ -31,16 +32,20 @@ resources:
     memory: "1024Mi"
     cpu: "500m"
 
-# --- 3. ARGOCD STABILITY FIXES (REQUIRED FOR SYNC STATUS) ---
+# =================================================================
+# 2. ARGOCD GITOPS STABILITY FIXES
+# (Crucial for preventing perpetual Out-of-Sync status)
+# =================================================================
 
-# This instructs the Helm chart to look for an existing secret containing the
-# stable cluster ID instead of generating a new one every time.
-# NOTE: The secret 'my-kafka-cluster-kraft' MUST be created manually beforehand.
+# --- KRaft ID Stabilization ---
+# Instructs the Helm chart to look for an existing Secret containing the stable 
+# Cluster ID instead of auto-generating a new one on every reconciliation.
+# NOTE: The secret 'my-kafka-cluster-kraft' MUST be created via kubectl first.
 kraft:
   clusterIdSecret: my-kafka-cluster-kraft
 
-# This is the final, most robust fix for the Out-of-Sync problem.
-# It tells Helm to deploy the secrets/configmaps once and then STOP managing them.
-# This stabilizes the checksum annotations on the StatefulSet.
+# --- Helm Resource Policy Override ---
+# This is the definitive fix for stabilizing checksums and auto-generated data.
+# It tells Helm to deploy the resource once and then stop managing it for updates.
 commonAnnotations:
   "helm.sh/resource-policy": keep
