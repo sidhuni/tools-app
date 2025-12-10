@@ -1,0 +1,37 @@
+# In: https://github.com/sidhuni/tools-app.git/sre-tools/kafka.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: my-kafka-cluster
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  sources:
+  # Source 1: The Kafka Chart (Bitnami Repository)
+  - repoURL: https://charts.bitnami.com/bitnami
+    targetRevision: 29.1.5 # <--- REQUIRED: Pinned to a stable Bitnami chart version (e.g., 29.1.5)
+    chart: kafka
+    helm:
+      # Tell Helm where to find the custom values file
+      valueFiles:
+      - $values/kafka/values.yaml 
+  
+  # Source 2: Your Configuration Values (tools-app Git Repository)
+  # This source provides the custom configuration for the chart
+  - repoURL: https://github.com/sidhuni/tools-app.git
+    targetRevision: main # <--- Use 'main' or a specific configuration Git tag (e.g., 1.5.9)
+    ref: values # <--- Creates the reference name "$values" for use above
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kafka-dev # Deploy into the dedicated namespace
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true # Ensure the kafka-dev namespace is created

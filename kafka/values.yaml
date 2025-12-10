@@ -1,0 +1,31 @@
+# In: https://github.com/sidhuni/tools-app.git/kafka/values.yaml
+# --- Bitnami Kafka Chart Overrides ---
+
+auth:
+  enabled: false
+
+listeners:
+  client:
+    protocol: PLAINTEXT
+
+# Use legacy images due to Bitnami's repository migration
+image:
+  repository: bitnamilegacy/kafka
+
+defaultInitContainers:
+  prepareConfig:
+    image:
+      repository: bitnamilegacy/kafka
+
+# Ensure the controller starts up fast for local Rancher Desktop testing
+controller:
+  replicaCount: 1
+
+# Provide basic resource limits to prevent pod failure on small clusters
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "250m"
+  limits:
+    memory: "1024Mi"
+    cpu: "500m"
