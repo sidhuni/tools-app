@@ -58,5 +58,4 @@ spec:
     automated:
       prune: true
       selfHeal: true
-    syncOptions:
-    - CreateNamespace=true # Ensure the kafka-dev namespace is created
+    
