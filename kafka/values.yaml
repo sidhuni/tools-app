@@ -80,9 +80,9 @@ metrics:
       tag: 1.4.0-debian-12-r0
     kafkaJmxPort: 5555
   serviceMonitor:
-    enabled: true
+    enabled: false
   prometheusRule:
-    enabled: true
+    enabled: false
 
 externalAccess:
   enabled: false
