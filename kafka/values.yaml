@@ -24,9 +24,9 @@ listeners:
 
 overrideConfiguration:
   # Replication and ISR Settings
-  default.replication.factor: "3" # Default replication factor for automatically created topics (number of copies of data).
-  min.insync.replicas: "2" # Minimum number of in-sync replicas required for a producer to successfully write to a topic
-  num.replica.fetchers: "2" # Number of threads to use for fetching data from other brokers.
+  default.replication.factor: "1" # Default replication factor for automatically created topics (number of copies of data).
+  min.insync.replicas: "1" # Minimum number of in-sync replicas required for a producer to successfully write to a topic
+  num.replica.fetchers: "1" # Number of threads to use for fetching data from other brokers.
   replication.quota.window.size.seconds: "2" # Time window for quota enforcement in seconds.
   # Topic Management
   message.max.bytes: "10485760" # Maximum size (in bytes) of a message that the broker will accept (10 MB).
