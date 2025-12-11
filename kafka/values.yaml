@@ -35,7 +35,7 @@ overrideConfiguration:
   default.replication.factor: "1" # Default replication factor for automatically created topics (number of copies of data).
   min.insync.replicas: "1" # Minimum number of in-sync replicas required for a producer to successfully write to a topic
   num.replica.fetchers: "1" # Number of threads to use for fetching data from other brokers.
-  replication.quota.window.size.seconds: "2" # Time window for quota enforcement in seconds.
+  replication.quota.window.size.seconds: "1" # Time window for quota enforcement in seconds.
   # Topic Management
   message.max.bytes: "10485760" # Maximum size (in bytes) of a message that the broker will accept (10 MB).
   log.retention.ms: "604800000" # Time (in milliseconds) to retain log segments before deletion (7 days).
@@ -68,17 +68,21 @@ controller:
     enabled: true
     accessModes:
       - ReadWriteOnce
-    size: 10Gi
+    size: 5Gi
     mountPath: /bitnami/kafka
 
 metrics:
   jmx:
-    enabled: false
+    enabled: true
+    image:
+      registry: docker.io
+      repository: bitnamilegacy/jmx-exporter
+      tag: 1.4.0-debian-12-r0
     kafkaJmxPort: 5555
   serviceMonitor:
-    enabled: false
+    enabled: true
   prometheusRule:
-    enabled: false
+    enabled: true
 
 externalAccess:
   enabled: false
