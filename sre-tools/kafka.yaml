@@ -12,7 +12,7 @@ spec:
     helm:
       valueFiles:
       - $values/kafka/values.yaml
-  - repoURL: https://github.com/Uni-Engineering/stage-sre-applications.git
+  - repoURL: https://github.com/sidhuni/tools-app.git
     targetRevision: stage
     ref: values
   destination:
