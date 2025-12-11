@@ -43,15 +43,8 @@ overrideConfiguration:
 
 controller:
 
-  replicaCount: 3
+  replicaCount: 1
 
-  resources:
-    requests:
-      memory: "2Gi"
-      cpu: "1"
-    limits:
-      memory: "2Gi"
-      cpu: "1"
 
   persistence:
     enabled: flase
