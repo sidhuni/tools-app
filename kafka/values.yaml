@@ -20,7 +20,8 @@ listeners:
     name: EXTERNAL
     sslClientAuth: ""
 
-
+image:
+ repository: bitnamilegacy/kafka
 
 overrideConfiguration:
   # Replication and ISR Settings
