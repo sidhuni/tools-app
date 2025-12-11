@@ -70,8 +70,3 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - RespectIgnoreDifferences=true # Ensure the ignore rules above are respected
-  ignoreDifferences:
-    - group: ""
-      kind: Service
-      jsonPointers:
-        - /spec/ports/0/nodePort

@@ -38,7 +38,7 @@ overrideConfiguration:
   num.network.threads: "8" # Number of threads to handle network requests.
   num.io.threads: "16" # Number of threads to handle I/O operations.
 
-  unclean.leader.election.enable: "false" 
+  unclean.leader.election.enable: "true" 
   leader.imbalance.per.broker.percentage: "10" # Maximum allowed leader imbalance percentage per broker.
 
 controller:
