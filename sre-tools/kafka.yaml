@@ -24,6 +24,7 @@ spec:
     - ServerSideApply=true
     - PruneLast=true
     - Validate=false
+    - Replace=true
     automated:
       prune: true
       selfHeal: true
