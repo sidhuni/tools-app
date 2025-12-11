@@ -1,72 +1,29 @@
-# In: https://github.com/sidhuni/tools-app.git/sre-tools/kafka.yaml
-
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: my-kafka-cluster
+  name: kafka
   namespace: argocd
-  finalizers:
-    # Ensures resources are cleaned up when the Application is deleted
-    - resources-finalizer.argocd.argoproj.io
-  annotations:
-    # 1. Ignore extraneous resources created outside of Helm's scope
-    argocd.argoproj.io/compare-options: IgnoreExtraneous
-    
-    # 2. Ignore volatile fields that cause the OutOfSync status (The FINAL FIX)
-    argocd.argoproj.io/resource-ignore-differences: |
-      all:
-      # Secrets (KRaft ID, Passwords) - IGNORE ALL METADATA
-      - jsonPointers:
-        - /data                       # Ignore auto-generated base64 data
-        - /stringData                 # Ignore string data
-        - /metadata                   # IGNORE ALL METADATA (Final Aggressive Fix)
-        group: v1
-        kind: Secret
-
-      # StatefulSet (Controller Pods) - IGNORE ALL METADATA and CPU limits
-      - jsonPointers:
-        - /metadata
-        - /spec/template/metadata/annotations
-        - /spec/template/spec/containers/0/resources/limits/cpu # Ignore CPU normalization (e.g., 250m vs 0.25)
-        - /spec/template/spec/containers/0/resources/requests/cpu
-        group: apps
-        kind: StatefulSet
-        
-      # Service (Cluster IP) - Ignore auto-assigned IP and other volatile fields
-      - jsonPointers:
-        - /spec/clusterIP
-        - /spec/clusterIPs
-        - /spec/sessionAffinity
-        - /metadata/annotations
-        group: v1
-        kind: Service
-
-
 spec:
   project: default
-  
   sources:
-    # Source 1: The Kafka Chart (Bitnami Repository)
-    - repoURL: 'registry-1.docker.io/bitnamicharts'
-      targetRevision: 32.4.3
-      chart: kafka
-      helm:
-        valueFiles:
-          - $values/kafka/values.yaml
-          
-    # Source 2: Your Configuration Values (tools-app Git Repository)
-    - repoURL: https://github.com/sidhuni/tools-app.git
-      targetRevision: main
-      ref: values 
-
+  - repoURL: 'registry-1.docker.io/bitnamicharts'
+    targetRevision: 32.4.3
+    chart: kafka
+    helm:
+      valueFiles:
+      - $values/kafka/values.yaml
+  - repoURL: https://github.com/Uni-Engineering/stage-sre-applications.git
+    targetRevision: stage
+    ref: values
   destination:
     server: https://kubernetes.default.svc
-    namespace: kafka-dev
-
+    namespace: kafka
   syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+    - ServerSideApply=true
+    - PruneLast=true
+    - Validate=false
     automated:
       prune: true
       selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-      - RespectIgnoreDifferences=true # Ensure the ignore rules above are respected
