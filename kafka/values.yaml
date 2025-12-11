@@ -48,10 +48,10 @@ controller:
   resources:
     requests:
       memory: "2048Mi"
-      cpu: "250Mi"
+      cpu: "250m"
     limits:
       memory: "4096Mi"
-      cpu: "500Mi"
+      cpu: "500m"
 
 
 externalAccess:
