@@ -32,12 +32,45 @@ spec:
       kind: Service
       jsonPointers:
         - /spec/ports/0/nodePort
-        
+
+    - group: ""
+      kind: PersistentVolumeClaim
+      jsonPointers:
+        - /metadata/creationTimestamp
+        - /metadata/uid
+        - /metadata/resourceVersion
+        - /metadata/managedFields # K8s adds this automatically
+
+    # If you must ignore spec.resources for PVCs
     - group: ""
       kind: PersistentVolumeClaim
       jqPathExpressions:
-        - .metadata
         - .spec.resources
+
+    # Your StatefulSet template metadata ignore (which is fine)
+    - group: apps
+      kind: StatefulSet
+      jqPathExpressions:
+        - .spec.volumeClaimTemplates[]?.metadata
+
+
+
+
+    - group: ""
+      kind: Secret
+      jsonPointers:
+        - /metadata/creationTimestamp
+        - /metadata/uid
+        - /metadata/resourceVersion
+        - /metadata/managedFields
+
+    - group: apps
+      kind: StatefulSet
+      jsonPointers:
+        - /metadata/creationTimestamp
+        - /metadata/uid
+        - /metadata/resourceVersion
+        - /metadata/managedFields
 
     - group: apps
       kind: StatefulSet
