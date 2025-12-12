@@ -28,13 +28,13 @@ spec:
       prune: true
       selfHeal: true
   ignoreDifferences:
-    # Service NodePort (Already done)
+    # Service NodePort
     - group: ""
       kind: Service
       jsonPointers:
         - /spec/ports/0/nodePort
 
-    # PVC Metadata & Resources (Already done)
+    # PVC Metadata & Resources (for the actual PVC objects)
     - group: ""
       kind: PersistentVolumeClaim
       jqPathExpressions:
@@ -44,42 +44,35 @@ spec:
         - .metadata.managedFields
         - .spec.resources
 
-    # StatefulSet template metadata (Already done, but extending to checksums)
+    # StatefulSet Metadata
     - group: apps
       kind: StatefulSet
-      jqPathExpressions:
-        - .spec.volumeClaimTemplates[]?.metadata
-
-    # StatefulSet Metadata (Already done)
-    - group: apps
-      kind: StatefulSet
-      jsonPointers:
-        - /metadata/creationTimestamp
-        - /metadata/uid
-        - /metadata/resourceVersion
-        - /metadata/managedFields
-
-    # Secret Metadata (Already done)
-    - group: ""
-      kind: Secret
       jsonPointers:
         - /metadata/creationTimestamp
         - /metadata/uid
         - /metadata/resourceVersion
         - /metadata/managedFields
         
-    # --- NEW RULES TO FIX DRIFT ---
-
-    # 1. Ignore Secret Data (fixes the Kraft ID drift)
+    # Secret Metadata
     - group: ""
       kind: Secret
       jsonPointers:
-        - /data
+        - /metadata/creationTimestamp
+        - /metadata/uid
+        - /metadata/resourceVersion
+        - /metadata/managedFields
+        - /data # FIX: To ignore Kraft IDs
 
-    # 2. Ignore Checksum Annotations in StatefulSet template (fixes the checksum drift)
+    # StatefulSet Template Checksums (for ConfigMap/Secret changes)
     - group: apps
       kind: StatefulSet
       jsonPointers:
         - /spec/template/metadata/annotations/checksum~1configuration
         - /spec/template/metadata/annotations/checksum~1jmx-configuration
         - /spec/template/metadata/annotations/checksum~1secret
+
+    # *** FINAL FIX FOR PVC TEMPLATE DRIFT ***
+    - group: apps
+      kind: StatefulSet
+      jsonPointers:
+        - /spec/volumeClaimTemplates # <--- This fixes your current error
