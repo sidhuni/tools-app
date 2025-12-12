@@ -32,3 +32,14 @@ spec:
       kind: Service
       jsonPointers:
         - /spec/ports/0/nodePort
+        
+    - group: ""
+      kind: PersistentVolumeClaim
+      jqPathExpressions:
+        - .metadata
+        - .spec.resources
+
+    - group: apps
+      kind: StatefulSet
+      jqPathExpressions:
+        - .spec.volumeClaimTemplates[]?.metadata
