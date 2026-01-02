@@ -43,7 +43,7 @@ persistence:
     accessModes: ["ReadWriteOnce"]
     resources:
       requests:
-        storage: 30Gi
+        storage: 10Gi
 
 # Security & certificates
 createCert: true
@@ -69,7 +69,7 @@ imagePullPolicy: "IfNotPresent"
 
 # Probes
 readinessProbe:
-  failureThreshold: 3
+  failureThreshold: 120
   initialDelaySeconds: 10
   periodSeconds: 10
   successThreshold: 3
