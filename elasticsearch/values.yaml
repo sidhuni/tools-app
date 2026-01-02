@@ -1,0 +1,196 @@
+# Stage-ready Elasticsearch Helm values.yaml
+
+clusterName: "elasticsearch"
+nodeGroup: "master"
+
+# Service used by nodes to discover master
+masterService: "elasticsearch-master"
+
+# Elasticsearch roles
+roles:
+  master: "true"
+  ingest: "true"
+  data: "true"
+  remote_cluster_client: "true"
+  ml: "false"  # disabled in stage
+
+# Cluster size
+replicas: 1
+minimumMasterNodes: 1
+
+# Elasticsearch major version (optional)
+esMajorVersion: "7"
+
+# Cluster deprecation indexing
+clusterDeprecationIndexing: "false"
+
+# Custom Elasticsearch config
+esConfig: {}
+
+# Extra environment variables
+extraEnvs: []
+envFrom: []
+
+# Secrets to mount
+secretMounts: []
+
+# Host aliases
+hostAliases: []
+
+# Docker image
+image: "docker.elastic.co/elasticsearch/elasticsearch"
+imageTag: "7.16.2"
+imagePullPolicy: "IfNotPresent"
+
+podAnnotations: {}
+labels: {}
+
+# Java Heap
+esJavaOpts: "-Xms1g -Xmx1g"
+
+# Resource requests and limits
+resources:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    cpu: "1000m"
+    memory: "512Mi"
+
+initResources: {}
+
+networkHost: "0.0.0.0"
+
+# Persistent storage
+volumeClaimTemplate:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 10Gi
+
+# RBAC
+rbac:
+  create: false
+  serviceAccountAnnotations: {}
+  serviceAccountName: ""
+  automountToken: true
+
+podSecurityPolicy:
+  create: false
+  name: ""
+  spec:
+    privileged: true
+    fsGroup:
+      rule: RunAsAny
+    runAsUser:
+      rule: RunAsAny
+    seLinux:
+      rule: RunAsAny
+    supplementalGroups:
+      rule: RunAsAny
+    volumes:
+      - secret
+      - configMap
+      - persistentVolumeClaim
+      - emptyDir
+
+persistence:
+  enabled: true
+  labels:
+    enabled: false
+  annotations: {}
+
+extraVolumes: []
+extraVolumeMounts: []
+
+extraContainers: []
+extraInitContainers: []
+
+priorityClassName: ""
+antiAffinityTopologyKey: "kubernetes.io/hostname"
+antiAffinity: "hard"
+nodeAffinity: {}
+
+# Start pods serially for stability
+podManagementPolicy: "OrderedReady"
+
+enableServiceLinks: false
+
+protocol: http
+httpPort: 9200
+transportPort: 9300
+
+service:
+  enabled: true
+  labels: {}
+  labelsHeadless: {}
+  type: ClusterIP
+  nodePort: ""
+  annotations: {}
+  httpPortName: http
+  transportPortName: transport
+  loadBalancerIP: ""
+  loadBalancerSourceRanges: []
+  externalTrafficPolicy: ""
+
+updateStrategy: RollingUpdate
+maxUnavailable: 1
+
+podSecurityContext:
+  fsGroup: 1000
+  runAsUser: 1000
+
+securityContext:
+  capabilities:
+    drop:
+      - ALL
+  runAsNonRoot: true
+  runAsUser: 1000
+
+terminationGracePeriod: 120
+sysctlVmMaxMapCount: 262144
+
+readinessProbe:
+  failureThreshold: 3
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  successThreshold: 3
+  timeoutSeconds: 5
+
+clusterHealthCheckParams: "wait_for_status=green&timeout=1s"
+
+schedulerName: ""
+imagePullSecrets: []
+nodeSelector: {}
+tolerations: []
+
+ingress:
+  enabled: false
+  annotations: {}
+  className: "nginx"
+  pathtype: ImplementationSpecific
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+  tls: []
+
+nameOverride: "elasticsearch"
+fullnameOverride: "elasticsearch"
+healthNameOverride: ""
+
+lifecycle: {}
+
+sysctlInitContainer:
+  enabled: true
+
+keystore: []
+
+networkPolicy:
+  http:
+    enabled: false
+  transport:
+    enabled: false
+
+tests:
+  enabled: true
