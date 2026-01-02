@@ -1,18 +1,25 @@
-replicas: 1
-minimumMasterNodes: 1
-clusterHealthCheckParams: 'wait_for_status=yellow&timeout=1s'
-
-# Resources are critical for ES
+replicas: 3
+# Lowering resources so they fit on smaller nodes
 resources:
   requests:
+    cpu: "500m"
+    memory: "1Gi"
+  limits:
     cpu: "1000m"
     memory: "2Gi"
-  limits:
-    cpu: "2000m"
-    memory: "4Gi"
 
+# If Init Container is failing, try forcing a standard image
+extraInitContainers:
+  - name: sysctl
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.5.1
+    command: ['sysctl', '-w', 'vm.max_map_count=262144']
+    securityContext:
+      privileged: true
+
+# Ensure you have a storage class defined
 volumeClaimTemplate:
-  accessModes: ["ReadWriteOnce"]
+  accessModes: [ "ReadWriteOnce" ]
+  storageClassName: "standard" # Change this to your provider's class (e.g., gp2, longhorn)
   resources:
     requests:
-      storage: 30Gi
+      storage: 10Gi
