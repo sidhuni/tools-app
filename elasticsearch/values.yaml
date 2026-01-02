@@ -27,8 +27,7 @@ sysctlInitContainer:
 esConfig:
   elasticsearch.yml: |
     discovery.type: single-node
-    cluster.initial_master_nodes: []
-
+    
 minimumMasterNodes: 1 
 
 persistence:
