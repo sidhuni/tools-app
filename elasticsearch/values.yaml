@@ -31,3 +31,9 @@ sysctlInitContainer:
   enabled: false
 
 clusterHealthCheckParams: "wait_for_status=yellow&timeout=1s"
+
+readinessProbe:
+  initialDelaySeconds: 120  # Increased from 60
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 6
