@@ -1,35 +1,42 @@
-clusterName: "elasticsearch"
-nodeGroup: "master"
 replicas: 1
 
+# Elasticsearch configuration
+esConfig:
+  elasticsearch.yml: |
+    discovery.type: single-node
+    network.host: 0.0.0.0
+
+# Do NOT set cluster.initial_master_nodes when using single-node
+minimumMasterNodes: 0
+
+# JVM options
+esJvmOptions:
+  Xms: "1g"
+  Xmx: "1g"
+
+# Node roles for single-node (can have all roles)
 roles:
   - master
   - data
+  - data_content
+  - data_hot
+  - data_warm
+  - data_cold
   - ingest
   - ml
+  - remote_cluster_client
+  - transform
 
-image: "docker.elastic.co/elasticsearch/elasticsearch"
-imageTag: "8.5.1"
-
+# Pod resources
 resources:
   requests:
-    cpu: "500m"
+    cpu: "1000m"
     memory: "2Gi"
   limits:
     cpu: "1000m"
     memory: "2Gi"
 
-esJavaOpts: "-Xms1g -Xmx1g"
-
-sysctlInitContainer:
-  enabled: false
-
-esConfig:
-  elasticsearch.yml: |
-    discovery.type: single-node
-    
-minimumMasterNodes: 1 
-
+# Persistent volume (optional for single-node testing)
 persistence:
   enabled: true
   volumeClaimTemplate:
@@ -38,10 +45,32 @@ persistence:
       requests:
         storage: 30Gi
 
+# Security & certificates
+createCert: true
+secret:
+  enabled: true
+  password: ""
 
+# Network
+networkHost: "0.0.0.0"
+
+# Ports
+httpPort: 9200
+transportPort: 9300
+
+# Pod management
+podManagementPolicy: "Parallel"
+antiAffinity: "soft"
+
+# Image
+image: "docker.elastic.co/elasticsearch/elasticsearch"
+imageTag: "8.5.1"
+imagePullPolicy: "IfNotPresent"
+
+# Probes
 readinessProbe:
-  initialDelaySeconds: 120
+  failureThreshold: 3
+  initialDelaySeconds: 10
   periodSeconds: 10
+  successThreshold: 3
   timeoutSeconds: 5
-  failureThreshold: 6
-
