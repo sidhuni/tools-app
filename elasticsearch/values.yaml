@@ -1,28 +1,17 @@
 clusterName: "elasticsearch"
 nodeGroup: "master"
-
 replicas: 1
 
-extraEnvs:
-  - name: discovery.type
-    value: single-node
-
-# 🔥 THIS IS THE IMPORTANT PART
-esConfig:
-  elasticsearch.yml: |
-    discovery.type: single-node
-    cluster.initial_master_nodes: []
-
-image: docker.elastic.co/elasticsearch/elasticsearch
-imageTag: 8.5.1
-imagePullPolicy: IfNotPresent
+image: "docker.elastic.co/elasticsearch/elasticsearch"
+imageTag: "8.5.1"
+imagePullPolicy: "IfNotPresent"
 
 resources:
   requests:
     cpu: "500m"
     memory: "2Gi"
   limits:
-    cpu: "1"
+    cpu: "1000m"
     memory: "2Gi"
 
 esJavaOpts: "-Xms1g -Xmx1g"
@@ -37,3 +26,9 @@ readinessProbe:
   periodSeconds: 10
   timeoutSeconds: 5
   failureThreshold: 6
+
+# 🔥 The fix:
+esConfig:
+  elasticsearch.yml: |
+    discovery.type: single-node
+    cluster.initial_master_nodes: []
