@@ -1,35 +1,40 @@
-# Use the official Docker image
-image: "docker.elastic.co/elasticsearch/elasticsearch"
-imageTag: "8.11.1" # Change to your preferred version
+# Use the Bitnami Legacy repository
+image:
+  repository: bitnamilegacy/elasticsearch
+  tag: 7.17.10  # Or 8.5.1 if available in legacy
+  pullPolicy: IfNotPresent
 
-# Local environment optimizations
-replicas: 1
-minimumMasterNodes: 1
+# Critical: Bitnami images run as user 1001 (non-root)
+podSecurityContext:
+  fsGroup: 1001
+containerSecurityContext:
+  runAsUser: 1001
 
-# Resource management for local machine (Rancher Desktop)
-rresources:
+# Resource management
+resources:
   requests:
-    cpu: "100m"     # Lowered from 500m
-    memory: "512Mi"  # Lowered from 1Gi
+    cpu: "500m"
+    memory: "1Gi"
   limits:
     cpu: "1000m"
-    memory: "1Gi"   # Lowered from 2Gi
+    memory: "2Gi"
 
-# Adjust Java Heap to match the new lower memory
-esJavaOpts: "-Xmx256m -Xms256m"
+# Java Heap settings
+esJavaOpts: "-Xmx1g -Xms1g"
 
-# Networking
-service:
-  type: ClusterIP
-  port: 9200
-
-# Volume settings
-persistence:
+# Init container fix (using Busybox because it's tiny and avoids timeouts)
+sysctl:
   enabled: true
-  size: 10Gi
+  image:
+    repository: public.ecr.aws/docker/library/busybox
+    tag: latest
+  command:
+    - /bin/sh
+    - -c
+    - sysctl -w vm.max_map_count=262144
+  securityContext:
+    privileged: true
+    runAsUser: 0
 
-# Security (Self-signed certificates are enabled by default in 8.x)
-# If you are just testing, you might want to disable security for simplicity:
-# esConfig:
-#   elasticsearch.yml: |
-#     xpack.security.enabled: false
+persistence:
+  enabled: false

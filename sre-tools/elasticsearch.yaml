@@ -6,9 +6,9 @@ metadata:
 spec:
   project: default
   sources:
-    - repoURL: 'https://helm.elastic.co'
+    - repoURL: 'registry-1.docker.io/bitnamicharts'
       chart: elasticsearch
-      targetRevision: 8.5.1
+      targetRevision: 17.9.29
       helm:
         valueFiles:
           - $values/elasticsearch/values.yaml # Path in your Git repo
