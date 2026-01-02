@@ -24,27 +24,23 @@ esConfig:
     node.store.allow_mmap: false
 
 resources:
+  limits:
+    cpu: 1000m
+    memory: 2Gi
   requests:
     cpu: 500m
     memory: 1Gi
-  limits:
-    cpu: 1
-    memory: 2Gi
 
 persistence:
   enabled: true
   storageClass: "standard"
   size: 10Gi
 
-livenessProbe:
-  enabled: true
-
-readinessProbe:
-  enabled: true
-
 service:
   type: ClusterIP
   port: 9200
 
-metrics:
-  enabled: true
+global:
+  security:
+    # allow legacy images without modern attestations
+    allowInsecureImages: true
