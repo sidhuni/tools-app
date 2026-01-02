@@ -2,7 +2,7 @@ replicas: 1
 
 # Bitnami legacy ES image
 image:
-  repository: bitnami/elasticsearch
+  repository: "bitnamilegacy/elasticsearch"
   tag: 7.17.10
   pullPolicy: IfNotPresent
 
@@ -33,11 +33,11 @@ persistence:
 # Sysctl init container (needed for Elasticsearch)
 extraInitContainers:
   - name: sysctl
-    image: bitnami/minideb:11    # lightweight image, works on Rancher Desktop
-    command: ['sh', '-c', 'sysctl -w vm.max_map_count=262144']
+    image: public.ecr.aws/docker/library/busybox:latest # Tiny & Fast
+    command: ['sysctl', '-w', 'vm.max_map_count=262144']
     securityContext:
       privileged: true
-
+      
 # Probes
 readinessProbe:
   enabled: true
