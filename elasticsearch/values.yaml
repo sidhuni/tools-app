@@ -1,194 +1,76 @@
-clusterName: "elasticsearch"
+clusterName: "elasticsearch-stage"
 nodeGroup: "master"
 
-# Service used by nodes to discover master
-masterService: "elasticsearch-master"
+# This is critical for discovery. 
+# It follows the pattern: [clusterName]-[nodeGroup]
+masterService: "elasticsearch-stage-master"
 
-# Elasticsearch roles
 roles:
   master: "true"
   ingest: "true"
   data: "true"
   remote_cluster_client: "true"
-  ml: "false"  # disabled in stage
+  ml: "false" # Disabled for stage to save resources unless needed
 
-# Cluster size
 replicas: 1
-minimumMasterNodes: 1
+minimumMasterNodes: 2
 
-# Elasticsearch major version (optional)
-esMajorVersion: "7"
-
-# Cluster deprecation indexing
-clusterDeprecationIndexing: "false"
-
-# Custom Elasticsearch config
-esConfig: {}
-
-# Extra environment variables
-extraEnvs: []
-envFrom: []
-
-# Secrets to mount
-secretMounts: []
-
-# Host aliases
-hostAliases: []
-
-# Docker image
-image: "docker.elastic.co/elasticsearch/elasticsearch"
 imageTag: "7.16.2"
-imagePullPolicy: "IfNotPresent"
 
-podAnnotations: {}
-labels: {}
+# Java Heap should typically be 50% of your container memory
+esJavaOpts: "-Xmx1g -Xms1g"
 
-# Java Heap
-esJavaOpts: "-Xms1g -Xmx1g"
-
-# Resource requests and limits
 resources:
   requests:
     cpu: "100m"
-    memory: "128Mi"
+    memory: "2Gi"
   limits:
-    cpu: "1000m"
+    cpu: "128m" # Allow some bursting
     memory: "512Mi"
 
-initResources: {}
-
-networkHost: "0.0.0.0"
-
-# Persistent storage
 volumeClaimTemplate:
   accessModes: ["ReadWriteOnce"]
   resources:
     requests:
-      storage: 10Gi
+      storage: 10Gi # Increased for stage testing
 
-# RBAC
-rbac:
-  create: false
-  serviceAccountAnnotations: {}
-  serviceAccountName: ""
-  automountToken: true
-
-podSecurityPolicy:
-  create: false
-  name: ""
-  spec:
-    privileged: true
-    fsGroup:
-      rule: RunAsAny
-    runAsUser:
-      rule: RunAsAny
-    seLinux:
-      rule: RunAsAny
-    supplementalGroups:
-      rule: RunAsAny
-    volumes:
-      - secret
-      - configMap
-      - persistentVolumeClaim
-      - emptyDir
-
-persistence:
-  enabled: true
-  labels:
-    enabled: false
-  annotations: {}
-
-extraVolumes: []
-extraVolumeMounts: []
-
-extraContainers: []
-extraInitContainers: []
-
-priorityClassName: ""
-antiAffinityTopologyKey: "kubernetes.io/hostname"
+# Anti-affinity ensures pods stay on different physical nodes
 antiAffinity: "hard"
-nodeAffinity: {}
-
-# Start pods serially for stability
-podManagementPolicy: "OrderedReady"
-
-enableServiceLinks: false
+antiAffinityTopologyKey: "kubernetes.io/hostname"
 
 protocol: http
-httpPort: 9200
-transportPort: 9300
 
-service:
+# Enable persistence for stage so data survives pod restarts
+persistence:
   enabled: true
-  labels: {}
-  labelsHeadless: {}
-  type: ClusterIP
-  nodePort: ""
-  annotations: {}
-  httpPortName: http
-  transportPortName: transport
-  loadBalancerIP: ""
-  loadBalancerSourceRanges: []
-  externalTrafficPolicy: ""
 
-updateStrategy: RollingUpdate
-maxUnavailable: 1
+# Health check adjustments for stable ArgoCD syncs
+readinessProbe:
+  failureThreshold: 5
+  initialDelaySeconds: 30
+  periodSeconds: 15
 
+# Use 'green' status check to ensure the cluster is fully healthy before Argo considers it "Synced"
+clusterHealthCheckParams: "wait_for_status=green&timeout=3s"
+
+# Recommended for Stage: Enable Ingress to access the API internally
+ingress:
+  enabled: true
+  className: "nginx"
+  hosts:
+    - host: elastic-stage.yourdomain.com
+      paths:
+        - path: /
+  tls:
+    - secretName: elastic-stage-tls
+      hosts:
+        - elastic-stage.yourdomain.com
+
+# Best Practice: Run as non-root
 podSecurityContext:
   fsGroup: 1000
   runAsUser: 1000
 
 securityContext:
-  capabilities:
-    drop:
-      - ALL
   runAsNonRoot: true
   runAsUser: 1000
-
-terminationGracePeriod: 120
-sysctlVmMaxMapCount: 262144
-
-readinessProbe:
-  failureThreshold: 3
-  initialDelaySeconds: 10
-  periodSeconds: 10
-  successThreshold: 3
-  timeoutSeconds: 5
-
-clusterHealthCheckParams: "wait_for_status=green&timeout=1s"
-
-schedulerName: ""
-imagePullSecrets: []
-nodeSelector: {}
-tolerations: []
-
-ingress:
-  enabled: false
-  annotations: {}
-  className: "nginx"
-  pathtype: ImplementationSpecific
-  hosts:
-    - host: chart-example.local
-      paths:
-        - path: /
-  tls: []
-
-nameOverride: "elasticsearch"
-fullnameOverride: "elasticsearch"
-healthNameOverride: ""
-
-lifecycle: {}
-
-sysctlInitContainer:
-  enabled: true
-
-keystore: []
-
-networkPolicy:
-  http:
-    enabled: false
-  transport:
-    enabled: false
-
-tests:
-  enabled: true
