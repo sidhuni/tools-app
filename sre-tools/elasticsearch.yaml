@@ -6,12 +6,15 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://helm.elastic.co
+  - repoURL: https://helm.elastic.co
     chart: elasticsearch
     targetRevision: 7.16.2
     helm:
       valueFiles:
         - $values/elastic/values.yaml
+  - repoURL: https://github.com/sidhuni/tools-app.git
+    targetRevision: main
+    ref: values
   destination:
     server: https://kubernetes.default.svc
     namespace: elasticsearch-stage
