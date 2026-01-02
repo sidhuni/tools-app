@@ -1,46 +1,32 @@
 clusterName: "elasticsearch"
 nodeGroup: "master"
 
-image: "elasticsearch"
-imageTag: 8.5.1
-imagePullPolicy: IfNotPresent
+# Bitnami specific values
+global:
+  storageClass: "local-path" # Standard for Rancher Desktop
 
-# Force single-node mode correctly
-extraEnvs:
-  - name: "discovery.type"
-    value: "single-node"
+# THE LEGACY IMAGE FIX
+sysctl:
+  enabled: true
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/os-shell
+    tag: 12-debian-12-r50
+    pullPolicy: IfNotPresent
 
-# Set replicas to 1
-replicas: 1
+# Bypassing the 3-node requirement (Single Node Mode)
+master:
+  replicaCount: 1
+  # Bitnami uses this to set discovery.type=single-node
+  extraEnvs:
+    - name: BITNAMI_DEBUG
+      value: "true"
+    - name: discovery.type
+      value: single-node
 
-# Resource bump is CRITICAL. Elasticsearch 8.x often crashes 
-# with 1Gi during the security initialization phase.
+# Reducing resources for Rancher Desktop
 resources:
-  requests:
-    cpu: "1000m"
-    memory: "2Gi"
   limits:
-    cpu: "1000m"
-    memory: "2Gi"
-
-esJavaOpts: "-Xmx1g -Xms1g"
-
-# Roles for a single node cluster
-roles:
-  - master
-  - data
-  - data_content
-  - data_hot
-  - ingest
-
-createCert: true
-
-# Disable the init container
-sysctlInitContainer:
-  enabled: false
-
-# Readiness settings
-clusterHealthCheckParams: "wait_for_status=yellow&timeout=1s"
-readinessProbe:
-  initialDelaySeconds: 90
-  periodSeconds: 10
+    memory: 2Gi
+  requests:
+    memory: 1Gi
