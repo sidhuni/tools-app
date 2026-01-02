@@ -7,7 +7,7 @@ spec:
   project: default
   sources:
   - repoURL: "https://helm.elastic.co"
-    targetRevision: "7.17.14"
+    targetRevision: "7.17.3"
     chart: elasticsearch
     helm:
       valueFiles:
