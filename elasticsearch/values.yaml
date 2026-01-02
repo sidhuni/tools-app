@@ -2,7 +2,7 @@ replicas: 1
 
 # Image details for Bitnami Legacy
 image: "docker.elastic.co/elasticsearch/elasticsearch"
-imageTag: "7.16.2"
+imageTag: "8.5.1"
 imagePullPolicy: "IfNotPresent"
 
 # Bitnami images run as non-root (1001)
