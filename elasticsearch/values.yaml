@@ -1,40 +1,42 @@
-# Use the Bitnami Legacy repository
+## Bitnami Legacy Image Configuration
 image:
+  registry: docker.io
   repository: bitnamilegacy/elasticsearch
-  tag: 7.17.10  # Or 8.5.1 if available in legacy
+  tag: 7.17.10
   pullPolicy: IfNotPresent
 
-# Critical: Bitnami images run as user 1001 (non-root)
-podSecurityContext:
-  fsGroup: 1001
-containerSecurityContext:
-  runAsUser: 1001
+## Standardizing for local Rancher Desktop
+global:
+  storageClass: "standard"
 
-# Resource management
-resources:
-  requests:
-    cpu: "500m"
-    memory: "1Gi"
-  limits:
-    cpu: "1000m"
-    memory: "2Gi"
+# Combine roles to save RAM (1 pod instead of 4+)
+master:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+  heapSize: 1024m
 
-# Java Heap settings
-esJavaOpts: "-Xmx1g -Xms1g"
+# Disable other roles for local development
+data:
+  replicaCount: 0
+coordinating:
+  replicaCount: 0
+ingest:
+  replicaCount: 0
 
-# Init container fix (using Busybox because it's tiny and avoids timeouts)
+# Init Container Fix (Busybox for sysctl)
 sysctl:
   enabled: true
   image:
-    repository: public.ecr.aws/docker/library/busybox
+    registry: public.ecr.aws
+    repository: docker/library/busybox
     tag: latest
   command:
     - /bin/sh
     - -c
     - sysctl -w vm.max_map_count=262144
-  securityContext:
-    privileged: true
-    runAsUser: 0
-
-persistence:
-  enabled: false
