@@ -6,7 +6,7 @@ image:
 
 ## Standardizing for local Rancher Desktop
 global:
-  storageClass: "standard"
+  storageClass: "local-path"
 
 # Combine roles to save RAM (1 pod instead of 4+)
 master:
