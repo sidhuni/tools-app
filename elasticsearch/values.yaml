@@ -1,32 +1,31 @@
-replicas: 1
+eplicas: 1
 
-# Image details for Bitnami Legacy
+# Image details (Using Official for stability, as we fixed the network)
 image: "docker.elastic.co/elasticsearch/elasticsearch"
 imageTag: "8.5.1"
 imagePullPolicy: "IfNotPresent"
 
-# Bitnami images run as non-root (1001)
-podSecurityContext:
-  fsGroup: 1001
-containerSecurityContext:
-  runAsUser: 1001
+# Resource Fix: 128Mi is too low for Java; 1Gi is the minimum to boot
 resources:
   requests:
-    cpu: "600m"
-    memory: "1Gi" 
+    cpu: "500m"
+    memory: "1Gi"
   limits:
-    cpu: 600m"
+    cpu: "1000m"
     memory: "2Gi"
 
-# Java Heap settings (Required for Bitnami images)
+# Java Heap must match your memory requests
 esJavaOpts: "-Xmx512m -Xms512m"
+
+# Anti-Affinity fix for single-node clusters
+antiAffinity: "soft"
 
 extraInitContainers:
   - name: sysctl
-    image: bitnamilegacy/elasticsearch:8.5.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.5.1
     command: ['sysctl', '-w', 'vm.max_map_count=262144']
     securityContext:
       privileged: true
 
 persistence:
-  enabled: false # Setting to false as per your request
+  enabled: false
