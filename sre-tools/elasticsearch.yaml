@@ -26,13 +26,15 @@ spec:
       - CreateNamespace=true
       - ServerSideApply=true # Mandatory for large ES resources
   ignoreDifferences:
+    - group: "policy"
+      kind: "PodDisruptionBudget"
+      name: "elasticsearch-master-pdb"
+      jsonPointers:
+        - /spec/selector # Version 7.16.2 often has diffs here
     - group: ""
-      kind: Service
-      name: elasticsearch-master-headless
-      jsonPointers: [ "/spec/clusterIP" ]
-    - group: policy
-      kind: PodDisruptionBudget
-      name: elasticsearch-master-pdb
-      jsonPointers: [ "/spec/selector" ]
+      kind: "Service"
+      name: "elasticsearch-master-headless"
+      jsonPointers:
+        - /spec/clusterIP
   helm:
       releaseName: elasticsearch-stage
