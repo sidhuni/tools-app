@@ -44,5 +44,10 @@ service:
   type: ClusterIP
   httpPort: 9200
 
-sysctlImage:
-  enabled: false
+# Find the sysctl section in your values.yaml
+sysctl:
+  enabled: true
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/os-shell  # Change 'bitnami' to 'bitnamilegacy'
+    tag: 12-debian-12-r50               # You can also try tag: latest
