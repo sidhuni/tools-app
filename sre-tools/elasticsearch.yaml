@@ -6,36 +6,23 @@ metadata:
 spec:
   project: default
   sources:
-    - repoURL: "https://github.com/bitnami/charts.git"
-      chart: elasticsearch
-      helm:
-        valueFiles:
-          - $values/elasticsearch/values.yaml # Path in your Git repo
-    - repoURL: 'https://github.com/sidhuni/tools-app.git'
-      targetRevision: main
-      ref: values # This label matches the $values alias above
+  - repoURL: "https://helm.elastic.co"
+    targetRevision: "7.17.14"
+    chart: elasticsearch
+    helm:
+      valueFiles:
+      - $values/elasticsearch/values.yaml
+  - repoURL: https://github.com/sidhuni/tools-app.git
+    targetRevision: main
+    ref: values
+
   destination:
-    server: 'https://kubernetes.default.svc'
+    server: "https://kubernetes.default.svc"
     namespace: elasticsearch
+
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-      - ServerSideApply=true # Mandatory for large ES resources
-  ignoreDifferences:
-    - group: "policy"
-      kind: "PodDisruptionBudget"
-      name: "elasticsearch-master-pdb"
-      jsonPointers:
-        - /spec/selector # Version 7.16.2 often has diffs here
-    - group: ""
-      kind: "Service"
-      name: "elasticsearch-master-headless"
-      jsonPointers:
-        - /spec/clusterIP
-    - group: "policy"
-      kind: "PodDisruptionBudget"
-  helm:
-      releaseName: elasticsearch-stage

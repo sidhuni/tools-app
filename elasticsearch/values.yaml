@@ -1,46 +1,18 @@
-# values.yaml
-
 image:
-  registry: docker.io
-  repository: bitnamilegacy/elasticsearch
+  repository: docker.io/bitnamilegacy/elasticsearch
   tag: "7.17.14-debian-11-r0"
   pullPolicy: IfNotPresent
 
-cluster:
-  enabled: true
-  name: "es-cluster"
-  initialMasterNodes:
-    - es-node-0
-    - es-node-1
-    - es-node-2
-
 replicas: 1
-
-esConfig:
-  elasticsearch.yml: |
-    cluster.name: "es-cluster"
-    network.host: 0.0.0.0
-    discovery.seed_hosts: ["es-node-0","es-node-1","es-node-2"]
-    node.store.allow_mmap: false
 
 resources:
   limits:
-    cpu: 1000m
-    memory: 2Gi
+    cpu: "1000m"
+    memory: "2Gi"
   requests:
-    cpu: 500m
-    memory: 1Gi
+    cpu: "500m"
+    memory: "1Gi"
 
 persistence:
   enabled: true
-  storageClass: "standard"
   size: 10Gi
-
-service:
-  type: ClusterIP
-  port: 9200
-
-global:
-  security:
-    # allow legacy images without modern attestations
-    allowInsecureImages: true
