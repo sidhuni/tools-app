@@ -5,18 +5,22 @@ image: "elasticsearch"
 imageTag: 8.5.1
 imagePullPolicy: IfNotPresent
 
-# --- KEY FIX FOR SINGLE NODE ---
+# Force single-node mode correctly
 extraEnvs:
   - name: "discovery.type"
     value: "single-node"
+  # We use a space to 'blank' out the chart's default if it's being stubborn
+  - name: "cluster.initial_master_nodes"
+    value: " " 
 
+# Set replicas to 1
 replicas: 1
-minimumMasterNodes: 
 
-# Resource adjustments (Bumped to 2Gi for stability)
+# Resource bump is CRITICAL. Elasticsearch 8.x often crashes 
+# with 1Gi during the security initialization phase.
 resources:
   requests:
-    cpu: "500m"
+    cpu: "1000m"
     memory: "2Gi"
   limits:
     cpu: "1000m"
@@ -24,34 +28,22 @@ resources:
 
 esJavaOpts: "-Xmx1g -Xms1g"
 
+# Roles for a single node cluster
 roles:
   - master
   - data
   - data_content
   - data_hot
   - ingest
-  - remote_cluster_client
-
-volumeClaimTemplate:
-  accessModes: ["ReadWriteOnce"]
-  resources:
-    requests:
-      storage: 5Gi
 
 createCert: true
 
-service:
-  type: ClusterIP
-  httpPort: 9200
-
+# Disable the init container
 sysctlInitContainer:
   enabled: false
 
-# Accept 'yellow' status because a 1-node cluster can never be 'green'
+# Readiness settings
 clusterHealthCheckParams: "wait_for_status=yellow&timeout=1s"
-
 readinessProbe:
-  initialDelaySeconds: 90 # Increased to give JVM time to fully start
+  initialDelaySeconds: 90
   periodSeconds: 10
-  successThreshold: 3
-  timeoutSeconds: 5
