@@ -11,7 +11,7 @@ spec:
     targetRevision: 7.16.2
     helm:
       valueFiles:
-        - $values/elastic/values.yaml
+        - $values/elasticsearch/values.yaml
   - repoURL: https://github.com/sidhuni/tools-app.git
     targetRevision: main
     ref: values
