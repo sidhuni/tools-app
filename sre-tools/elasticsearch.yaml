@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: elasticsearch-stage
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: 'https://helm.elastic.co'
+      chart: elasticsearch
+      targetRevision: 7.16.2
+      helm:
+        valueFiles:
+          - $values/elasticsearch/values.yaml # Path in your Git repo
+    - repoURL: 'https://github.com/sidhuni/tools-app.git'
+      targetRevision: main
+      ref: values # This label matches the $values alias above
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: elasticsearch
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true # Mandatory for large ES resources
+  ignoreDifferences:
+    - group: ""
+      kind: Service
+      name: elasticsearch-master-headless
+      jsonPointers: [ "/spec/clusterIP" ]
+    - group: policy
+      kind: PodDisruptionBudget
+      name: elasticsearch-master-pdb
+      jsonPointers: [ "/spec/selector" ]
+  helm:
+      releaseName: elasticsearch-stage
