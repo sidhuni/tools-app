@@ -1,32 +1,35 @@
-clusterName: "elasticsearch"
-nodeGroup: "master"
+# Use the Official Elastic Image instead of Bitnami's
+image:
+  registry: docker.elastic.co
+  repository: elasticsearch/elasticsearch
+  tag: 8.5.1
+  pullPolicy: IfNotPresent
 
-# Bitnami specific values
-global:
-  storageClass: "local-path" # Standard for Rancher Desktop
+# THE FIX: Since we aren't using Bitnami's image, we must 
+# use standard Elastic environment variables.
+master:
+  replicaCount: 1
+  extraEnvVars:
+    - name: discovery.type
+      value: single-node
+    - name: xpack.security.enabled
+      value: "true"
+  
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 2Gi
 
-# THE LEGACY IMAGE FIX
+# Use Busybox for the init-container to avoid Bitnami registry issues
 sysctl:
   enabled: true
   image:
     registry: docker.io
-    repository: bitnamilegacy/os-shell
-    tag: 12-debian-12-r50
-    pullPolicy: IfNotPresent
+    repository: busybox
+    tag: latest
 
-# Bypassing the 3-node requirement (Single Node Mode)
-master:
-  replicaCount: 1
-  # Bitnami uses this to set discovery.type=single-node
-  extraEnvs:
-    - name: BITNAMI_DEBUG
-      value: "true"
-    - name: discovery.type
-      value: single-node
-
-# Reducing resources for Rancher Desktop
-resources:
-  limits:
-    memory: 2Gi
-  requests:
-    memory: 1Gi
+# JVM configuration for the Official image
+heapSize: 1024m
