@@ -1,28 +1,76 @@
 clusterName: "elasticsearch-stage"
 nodeGroup: "master"
+
+# This is critical for discovery. 
+# It follows the pattern: [clusterName]-[nodeGroup]
 masterService: "elasticsearch-stage-master"
 
-# High availability for stage
-replicas: 1
-minimumMasterNodes: 1
+roles:
+  master: "true"
+  ingest: "true"
+  data: "true"
+  remote_cluster_client: "true"
+  ml: "false" # Disabled for stage to save resources unless needed
 
-# Resource management to prevent "OOMKilled" which causes health to fail
+replicas: 1
+minimumMasterNodes: 2
+
+imageTag: "7.16.2"
+
+# Java Heap should typically be 50% of your container memory
 esJavaOpts: "-Xmx1g -Xms1g"
+
 resources:
   requests:
-    cpu: "1000m"
+    cpu: "100m"
     memory: "2Gi"
   limits:
-    cpu: "2000m"
-    memory: "2Gi"
+    cpu: "128m" # Allow some bursting
+    memory: "512Mi"
 
-# Wait for 'green' status before considering the pod "Ready"
-clusterHealthCheckParams: "wait_for_status=green&timeout=10s"
+volumeClaimTemplate:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 10Gi # Increased for stage testing
 
-readinessProbe:
-  initialDelaySeconds: 40 # ES takes time to start JVM
-  periodSeconds: 15
-  failureThreshold: 5
+# Anti-affinity ensures pods stay on different physical nodes
+antiAffinity: "hard"
+antiAffinityTopologyKey: "kubernetes.io/hostname"
 
+protocol: http
+
+# Enable persistence for stage so data survives pod restarts
 persistence:
   enabled: true
+
+# Health check adjustments for stable ArgoCD syncs
+readinessProbe:
+  failureThreshold: 5
+  initialDelaySeconds: 30
+  periodSeconds: 15
+
+# Use 'green' status check to ensure the cluster is fully healthy before Argo considers it "Synced"
+clusterHealthCheckParams: "wait_for_status=green&timeout=3s"
+
+# Recommended for Stage: Enable Ingress to access the API internally
+ingress:
+  enabled: false
+  className: "nginx"
+  hosts:
+    - host: elastic-stage.yourdomain.com
+      paths:
+        - path: /
+  tls:
+    - secretName: elastic-stage-tls
+      hosts:
+        - elastic-stage.yourdomain.com
+
+# Best Practice: Run as non-root
+podSecurityContext:
+  fsGroup: 1000
+  runAsUser: 1000
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000

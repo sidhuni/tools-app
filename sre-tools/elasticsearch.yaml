@@ -34,3 +34,5 @@ spec:
       kind: PodDisruptionBudget
       name: elasticsearch-master-pdb
       jsonPointers: [ "/spec/selector" ]
+  helm:
+      releaseName: elasticsearch-stage
