@@ -1,38 +1,33 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: elasticsearch-master
+  name: elasticsearch
   namespace: argocd
 spec:
   project: default
-  sources:
-  - repoURL: https://helm.elastic.co
-    targetRevision: 7.16.2
+  source:
+    repoURL: https://helm.elastic.co
     chart: elasticsearch
+    targetRevision: 7.16.2
     helm:
       valueFiles:
-      - $values/elastic/values.yaml
-  - repoURL: https://github.com/sidhuni/tools-app.git
-    targetRevision: main
-    ref: values
+        - $values/elastic/values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: elasticsearch-stage
   syncPolicy:
-    syncOptions:
-    - CreateNamespace=true
-    - ServerSideApply=true
-    - PruneLast=true
-    - Validate=false
     automated:
       prune: true
       selfHeal: true
-  clusterIP: None
-  selector:
-    app.kubernetes.io/name: elasticsearch
-    app.kubernetes.io/component: master
-  ports:
-    - port: 9200
-      name: http
-    - port: 9300
-      name: transport
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+      - PruneLast=true
+      - Validate=false
+  ignoreDifferences:
+    - group: ""
+      kind: PodDisruptionBudget
+      name: elasticsearch-master-pdb
+    - group: ""
+      kind: Service
+      name: elasticsearch-master-headless

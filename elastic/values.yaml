@@ -175,8 +175,8 @@ ingress:
         - path: /
   tls: []
 
-nameOverride: ""
-fullnameOverride: ""
+nameOverride: "elasticsearch"
+fullnameOverride: "elasticsearch"
 healthNameOverride: ""
 
 lifecycle: {}
