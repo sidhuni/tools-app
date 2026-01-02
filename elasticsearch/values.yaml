@@ -18,7 +18,11 @@ master:
     limits:
       cpu: 1000m
       memory: 2Gi
+  persistence:
+    storageClass: "local-path"
+    size: 5Gi
   heapSize: 1024m
+   
 
 # Disable other roles for local development
 data:
