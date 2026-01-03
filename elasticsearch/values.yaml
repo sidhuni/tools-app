@@ -1,14 +1,10 @@
 replicas: 1
 
-roles:
-  - master
-  - data
-  - ingest
+roles: []
 
 esConfig:
   elasticsearch.yml: |
-    discovery.type: single-node
-
+    node.roles: []
 esJavaOpts: "-Xms1g -Xmx1g"
 
 resources:
@@ -19,7 +15,6 @@ resources:
     cpu: "1000m"
     memory: "2Gi"
 
-esJavaOpts: "-Xms1g -Xmx1g"
 
 sysctlInitContainer:
   enabled: false
