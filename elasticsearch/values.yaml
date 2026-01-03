@@ -5,20 +5,21 @@ image: "docker.elastic.co/elasticsearch/elasticsearch"
 imageTag: "8.5.1"
 imagePullPolicy: "IfNotPresent"
 
-# 1. Mandatory for single-node development
+# Force single-node and disable memory lock (essential for Mac)
 extraEnvs:
   - name: "discovery.type"
     value: "single-node"
+  - name: "bootstrap.memory_lock"
+    value: "false"
 
-# 2. THE SECRET FIX: This overrides the chart's automatic injection
-# of cluster.initial_master_nodes
+# This block is the 'Secret Sauce' that stops the Forbidden/Parse errors
 cluster:
   initial_master_nodes: [] 
 
 replicas: 1
 minimumMasterNodes: null
 
-# 3. Resource bump for stability on Mac
+# Resource limits (Elastic 8 needs 2Gi to boot)
 resources:
   requests:
     cpu: "500m"
@@ -29,12 +30,16 @@ resources:
 
 esJavaOpts: "-Xmx1g -Xms1g"
 
-# 4. Disable init container and set host limit manually
+# Using local storage for Rancher Desktop
+volumeClaimTemplate:
+  accessModes: [ "ReadWriteOnce" ]
+  resources:
+    requests:
+      storage: 5Gi
+
+# Disable the problematic init container
 sysctlInitContainer:
   enabled: false
 
+# Acceptance criteria for a 1-node setup
 clusterHealthCheckParams: "wait_for_status=yellow&timeout=1s"
-
-readinessProbe:
-  initialDelaySeconds: 120
-  periodSeconds: 60
