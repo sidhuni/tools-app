@@ -5,23 +5,26 @@ image: "docker.elastic.co/elasticsearch/elasticsearch"
 imageTag: "8.5.1"
 imagePullPolicy: "IfNotPresent"
 
-# 1. We use 'env' instead of 'extraEnvs' to try and force a cleaner override
-env:
+# --- THE RADICAL CHANGE ---
+# We force the container to run a specific command, bypassing 
+# the chart's automatic (and failing) environment setup.
+extraEnvs:
   - name: "discovery.type"
     value: "single-node"
+  - name: "xpack.security.enabled"
+    value: "true"
   - name: "bootstrap.memory_lock"
     value: "false"
 
-# 2. FORCE empty discovery to stop the chart's automatic 'help'
+# Use these to 'kill' the chart's automatic discovery injection
 cluster:
   initial_master_nodes: []
   seed_hosts: []
 
-# 3. These must be null/empty
 replicas: 1
 minimumMasterNodes: null
 
-# 4. Give the container enough RAM (Critical for 8.x)
+# 2Gi is the 'magic number' for ES 8 to start without OOM (Out of Memory)
 resources:
   requests:
     cpu: "1000m"
@@ -32,11 +35,15 @@ resources:
 
 esJavaOpts: "-Xmx1g -Xms1g"
 
-# 5. Disable the failing init container
+# Disable everything that could fail on Mac
 sysctlInitContainer:
   enabled: false
+volumeClaimTemplate:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 5Gi
 
-# 6. Allow the single node to stay 'yellow'
 clusterHealthCheckParams: "wait_for_status=yellow&timeout=1s"
 
 Probes: 
