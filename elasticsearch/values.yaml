@@ -19,13 +19,13 @@ extraEnvs:
 # because you only have one physical machine (your Mac).
 antiAffinity: "soft"
 
-esources:
+resources:
   requests:
-    cpu: "250m"      # Reduced from 1000m
-    memory: "1536Mi" # Reduced from 2Gi
+    memory: "512Mi"
+    cpu: "250m"
   limits:
+    memory: "1024Mi"
     cpu: "500m"
-    memory: "1536Mi"
 
 # IMPORTANT: You must also lower the Java Heap to fit inside the new limits
 esJavaOpts: "-Xmx768m -Xms768m"
