@@ -9,16 +9,9 @@ extraEnvs:
   - name: "discovery.type"
     value: "single-node"
   - name: "xpack.security.enabled"
-    value: "false" # Temporarily disable security to reduce RAM/Startup complexity
+    value: "false"
   - name: "bootstrap.memory_lock"
     value: "false"
-  - name: "cluster.initial_master_nodes"
-    value: ""  
-
-cluster:
-  initial_master_nodes: null
-
-
 
 resources:
   requests:
@@ -30,24 +23,14 @@ resources:
 
 esJavaOpts: "-Xmx1g -Xms1g"
 
-sysctlInitContainer:
-  enabled: false # We handle this manually with rdctl shell
-
-# 4. STORAGE (Reduced from 30Gi to 5Gi for local testing)
 volumeClaimTemplate:
-  accessModes: [ "ReadWriteOnce" ]
+  accessModes: ["ReadWriteOnce"]
   resources:
     requests:
       storage: 5Gi
 
-# 5. HEALTH CHECKS
-# A 1-node cluster will NEVER be 'green' (it stays yellow). 
-# We must change your computed 'green' to 'yellow'.
-clusterHealthCheckParams: "wait_for_status=yellow&timeout=1s"
-
-
 readinessProbe:
-  initialDelaySeconds: 150 
+  initialDelaySeconds: 150
   periodSeconds: 60
   failureThreshold: 10
 
