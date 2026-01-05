@@ -13,6 +13,9 @@ extraEnvs:
   - name: "bootstrap.memory_lock"
     value: "false"
 
+cluster:
+  initial_master_nodes: null
+
 
 
 resources:
