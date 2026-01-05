@@ -60,7 +60,7 @@ podAnnotations: {}
 # additionals labels
 labels: {}
 
-esJavaOpts: "" # example: "-Xmx1g -Xms1g"
+esJavaOpts: "-Xmx1g -Xms1g"
 
 resources:
   requests:
@@ -232,7 +232,7 @@ networkPolicy:
   transport:
     enabled: false
 
-    
+
 tests:
   enabled: true
 
