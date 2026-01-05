@@ -15,6 +15,10 @@ extraEnvs:
     value: "false"
 
 
+cluster: {}
+
+
+
 resources:
   requests:
     cpu: "500m"
