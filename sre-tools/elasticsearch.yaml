@@ -27,3 +27,52 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - SkipDryRunOnMissingResource=true
+  ignoreDifferences:
+    # Service NodePort
+    - group: ""
+      kind: Service
+      jsonPointers:
+        - /spec/ports/0/nodePort
+
+    # PVC Metadata & Resources (for the actual PVC objects)
+    - group: ""
+      kind: PersistentVolumeClaim
+      jqPathExpressions:
+        - .metadata.creationTimestamp
+        - .metadata.uid
+        - .metadata.resourceVersion
+        - .metadata.managedFields
+        - .spec.resources
+
+    # StatefulSet Metadata
+    - group: apps
+      kind: StatefulSet
+      jsonPointers:
+        - /metadata/creationTimestamp
+        - /metadata/uid
+        - /metadata/resourceVersion
+        - /metadata/managedFields
+        
+    # Secret Metadata
+    - group: ""
+      kind: Secret
+      jsonPointers:
+        - /metadata/creationTimestamp
+        - /metadata/uid
+        - /metadata/resourceVersion
+        - /metadata/managedFields
+        - /data # FIX: To ignore Kraft IDs
+
+    # StatefulSet Template Checksums (for ConfigMap/Secret changes)
+    - group: apps
+      kind: StatefulSet
+      jsonPointers:
+        - /spec/template/metadata/annotations/checksum~1configuration
+        - /spec/template/metadata/annotations/checksum~1jmx-configuration
+        - /spec/template/metadata/annotations/checksum~1secret
+
+    # *** FINAL FIX FOR PVC TEMPLATE DRIFT ***
+    - group: apps
+      kind: StatefulSet
+      jsonPointers:
+        - /spec/volumeClaimTemplates # <--- This fixes your current error
