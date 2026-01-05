@@ -45,3 +45,6 @@ readinessProbe:
   initialDelaySeconds: 150 
   periodSeconds: 60
   failureThreshold: 10
+
+volumePermissions:
+  enabled: true
