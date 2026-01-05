@@ -4,7 +4,6 @@ image: "docker.elastic.co/elasticsearch/elasticsearch"
 imageTag: "8.5.1"
 
 replicas: 1
-minimumMasterNodes: null
 
 extraEnvs:
   - name: "discovery.type"
@@ -13,9 +12,6 @@ extraEnvs:
     value: "false" # Temporarily disable security to reduce RAM/Startup complexity
   - name: "bootstrap.memory_lock"
     value: "false"
-
-
-cluster: {}
 
 
 
