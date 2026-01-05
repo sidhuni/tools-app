@@ -14,8 +14,6 @@ extraEnvs:
   - name: "bootstrap.memory_lock"
     value: "false"
 
-cluster:
-  initial_master_nodes: []
 
 resources:
   requests:
@@ -45,5 +43,5 @@ clusterHealthCheckParams: "wait_for_status=yellow&timeout=1s"
 
 readinessProbe:
   initialDelaySeconds: 150 
-  periodSeconds: 20
+  periodSeconds: 60
   failureThreshold: 10
