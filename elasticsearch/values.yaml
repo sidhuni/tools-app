@@ -33,9 +33,7 @@ esJvmOptions: {}
 
 
 
-extraEnvs:
-  - name: "discovery.type"
-    value: "single-node"
+extraEnvs: []
 
 
 
