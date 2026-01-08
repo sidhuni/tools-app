@@ -9,7 +9,7 @@ elasticsearchCertificateAuthoritiesFile: ca.crt
 
 # Secret that contains Kibana service token
 # The secret should have keys: username=elastic, password=<ki-kibana-token>
-elasticsearchCredentialSecret: kibana-token-secret
+elasticsearchCredentialSecret: ki-kibana-es-token
 
 replicas: 1
 
