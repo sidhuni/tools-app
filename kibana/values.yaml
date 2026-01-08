@@ -29,7 +29,7 @@ protocol: https
 serverHost: "0.0.0.0"
 
 # Using /api/status for faster health reporting in ArgoCD
-healthCheckPath: "/api/status"
+healthCheckPath: "/app/kibana"
 
 podSecurityContext:
   fsGroup: 1000
