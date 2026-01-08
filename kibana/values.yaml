@@ -29,7 +29,7 @@ protocol: https
 serverHost: "0.0.0.0"
 
 # Using /api/status for health reporting
-healthCheckPath: "/api/status"
+healthCheckPath: "/api/kibana"
 
 podSecurityContext:
   fsGroup: 1000
