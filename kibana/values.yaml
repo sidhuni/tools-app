@@ -1,0 +1,48 @@
+replicas: 1
+
+image:
+  repository: docker.elastic.co/kibana/kibana
+  tag: 8.5.1
+  pullPolicy: IfNotPresent
+
+resources:
+  requests:
+    cpu: "500m"
+    memory: "1Gi"
+  limits:
+    cpu: "500m"
+    memory: "1Gi"
+
+elasticsearchHosts: "https://elasticsearch-master.elasticsearch.svc.cluster.local:9200"
+
+# Use the same password as the elastic user
+elasticsearchCredentials:
+  username: "elastic"
+  password: "SNF9FYsz9uC1NaRo"
+
+# Service configuration
+service:
+  type: ClusterIP
+  port: 5601
+  annotations: {}
+
+ingress:
+  enabled: false
+
+protocol: https
+
+extraEnvs:
+  - name: ELASTICSEARCH_HOSTS
+    value: "https://elasticsearch-master.elasticsearch.svc.cluster.local:9200"
+
+# Persist data if needed
+persistence:
+  enabled: false
+
+# Security context (optional)
+podSecurityContext:
+  fsGroup: 1000
+  runAsUser: 1000
+
+securityContext:
+  runAsNonRoot: true
