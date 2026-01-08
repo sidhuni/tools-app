@@ -4,6 +4,7 @@ metadata:
   name: kibana-new
   namespace: argocd
 spec:
+spec:
   project: default
   sources:
   - repoURL: 'https://helm.elastic.co'
