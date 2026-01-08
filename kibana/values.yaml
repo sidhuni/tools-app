@@ -1,10 +1,8 @@
 elasticsearchHosts: "https://elasticsearch-master:9200"
 
-# TLS Configuration using your existing secret
+# Secret References
 elasticsearchCertificateSecret: elasticsearch-master-certs
 elasticsearchCertificateAuthoritiesFile: ca.crt
-
-# Authentication using your existing secret
 elasticsearchCredentialSecret: elasticsearch-master-credentials
 
 replicas: 1
@@ -27,9 +25,7 @@ resources:
 
 protocol: https
 serverHost: "0.0.0.0"
-
-# Using /api/status for faster health reporting in ArgoCD
-healthCheckPath: "/app/kibana"
+healthCheckPath: "/api/status"
 
 podSecurityContext:
   fsGroup: 1000
@@ -41,7 +37,7 @@ securityContext:
   runAsNonRoot: true
   runAsUser: 1000
 
-# Required for the pre-install job to create the service token
+# Service Account configuration
 serviceAccount: ""
 automountToken: true
 
