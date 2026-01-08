@@ -1,70 +1,43 @@
----
-elasticsearchHosts: "https://elasticsearch-master:9200"
-elasticsearchCertificateSecret: elasticsearch-master-certs
-elasticsearchCertificateAuthoritiesFile: ca.crt
-
+elasticsearchURL: "" # "http://elasticsearch-master:9200"
+elasticsearchHosts: "http://elasticsearch-master:9200"
 
 replicas: 1
 
-# Extra environment variables to append to this nodeGroup
-# This will be appended to the current 'env:' key. You can use any of the kubernetes env
-# syntax here
-extraEnvs:
-  - name: ELASTICSEARCH_USERNAME
-    value: "elastic"
-  - name: ELASTICSEARCH_PASSWORD
-    value: "DPdm08XcTbsZVsIk"
+extraEnvs: []
 
-
-# Allows you to load environment variables from kubernetes secret or config map
-envFrom: []
-
+# Mount Elasticsearch certs
 secretMounts:
-  - name: elasticsearch-certs
+  - name: elasticsearch-master-certs
     secretName: elasticsearch-master-certs
     path: /usr/share/kibana/config/certs
-
-
-hostAliases: []
-#- ip: "127.0.0.1"
-#  hostnames:
-#  - "foo.local"
-#  - "bar.local"
+    subPath: ""  # optional, keep empty to mount the whole secret
 
 image: "docker.elastic.co/kibana/kibana"
-imageTag: "8.5.1"
+imageTag: "7.5.1"
 imagePullPolicy: "IfNotPresent"
 
-# additionals labels
 labels: {}
-
-annotations: {}
-
 podAnnotations: {}
-# iam.amazonaws.com/role: es-cluster
 
 resources:
   requests:
-    cpu: "1000m"
-    memory: "2Gi"
+    cpu: "100m"
+    memory: "500Mi"
   limits:
     cpu: "1000m"
-    memory: "2Gi"
+    memory: "1Gi"
 
 protocol: http
-
 serverHost: "0.0.0.0"
-
 healthCheckPath: "/app/kibana"
 
-# Allows you to add any config files in /usr/share/kibana/config/
-# such as kibana.yml
-kibanaConfig: {}
-#   kibana.yml: |
-#     key:
-#       nestedkey: value
-
-# If Pod Security Policy in use it may be required to specify security context as well as service account
+kibanaConfig:
+  kibana.yml: |
+    server.host: "0.0.0.0"
+    elasticsearch.hosts: ["https://elasticsearch-master:9200"]
+    elasticsearch.ssl.certificateAuthorities: ["/usr/share/kibana/config/certs/ca.crt"]
+    elasticsearch.username: "elastic"
+    elasticsearch.password: "DPdm08XcTbsZVsIk"
 
 podSecurityContext:
   fsGroup: 1000
@@ -72,78 +45,34 @@ podSecurityContext:
 securityContext:
   capabilities:
     drop:
-      - ALL
-  # readOnlyRootFilesystem: true
+    - ALL
   runAsNonRoot: true
   runAsUser: 1000
 
 serviceAccount: ""
 
-# Whether or not to automount the service account token in the pod. Normally, Kibana does not need this
-automountToken: true
-
-# This is the PriorityClass settings as defined in
-# https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass
 priorityClassName: ""
 
 httpPort: 5601
-
-extraVolumes:
-  []
-  # - name: extras
-  #   emptyDir: {}
-
-extraVolumeMounts:
-  []
-  # - name: extras
-  #   mountPath: /usr/share/extras
-  #   readOnly: true
-  #
-
-extraContainers: []
-# - name: dummy-init
-#   image: busybox
-#   command: ['echo', 'hey']
-
-extraInitContainers: []
-# - name: dummy-init
-#   image: busybox
-#   command: ['echo', 'hey']
+maxUnavailable: 1
 
 updateStrategy:
   type: "Recreate"
 
 service:
   type: ClusterIP
-  loadBalancerIP: ""
   port: 5601
   nodePort: ""
   labels: {}
   annotations: {}
-  # cloud.google.com/load-balancer-type: "Internal"
-  # service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
-  # service.beta.kubernetes.io/azure-load-balancer-internal: "true"
-  # service.beta.kubernetes.io/openstack-internal-load-balancer: "true"
-  # service.beta.kubernetes.io/cce-load-balancer-internal-vpc: "true"
-  loadBalancerSourceRanges: []
-  # 0.0.0.0/0
-  httpPortName: http
 
 ingress:
   enabled: false
-  className: "nginx"
-  pathtype: ImplementationSpecific
   annotations: {}
-  # kubernetes.io/ingress.class: nginx
-  # kubernetes.io/tls-acme: "true"
+  path: /
   hosts:
-    - host: kibana-example.local
-      paths:
-        - path: /
-  #tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+    - chart-example.local
+  tls: []
 
 readinessProbe:
   failureThreshold: 3
@@ -161,9 +90,25 @@ nameOverride: ""
 fullnameOverride: ""
 
 lifecycle: {}
-# preStop:
-#   exec:
-#     command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
-# postStart:
-#   exec:
-#     command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
+
+# --- Add a pre-install hook that waits for Elasticsearch certs ---
+hooks:
+  preInstall:
+    - name: wait-for-elasticsearch-certs
+      kind: Job
+      spec:
+        template:
+          spec:
+            restartPolicy: OnFailure
+            containers:
+              - name: wait-for-certs
+                image: busybox
+                command:
+                  - sh
+                  - -c
+                  - |
+                    echo "Waiting for Elasticsearch certs..."
+                    while ! kubectl get secret elasticsearch-master-certs -n elastic; do
+                      sleep 5
+                    done
+                    echo "Elasticsearch certs exist, continuing..."
