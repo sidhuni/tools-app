@@ -5,13 +5,16 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  source:
-    repoURL: 'https://helm.elastic.co'
+  sources:
+  - repoURL: 'https://helm.elastic.co'
     targetRevision: 8.5.1
     chart: kibana
     helm:
       valueFiles:
-        - $values/kibana/values.yaml
+      - $values/kibana/values.yaml
+  - repoURL: https://github.com/sidhuni/tools-app.git
+    targetRevision: main
+    ref: values
   destination:
     server: "https://kubernetes.default.svc"
     namespace: kibana
