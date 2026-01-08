@@ -1,110 +1,78 @@
-# Kibana Helm values.yaml - corrected for Elasticsearch token auth
-
-elasticsearchHosts: "https://elasticsearch-master:9200"
-protocol: https
-
-# Secret that contains CA cert for Elasticsearch TLS
-elasticsearchCertificateSecret: elasticsearch-master-certs
-elasticsearchCertificateAuthoritiesFile: ca.crt
-
-# Secret that contains Kibana service token
-# The secret should have keys: username=elastic, password=<ki-kibana-token>
-elasticsearchCredentialSecret: ki-kibana-es-token
-
-# Disable automatic creation of Kibana service token
-createKibanaServiceToken: false
-
-replicas: 1
-
-extraEnvs:
-  - name: "NODE_OPTIONS"
-    value: "--max-old-space-size=1800"
-
-envFrom: []
-
-secretMounts: []
-
-hostAliases: []
-
-image: "docker.elastic.co/kibana/kibana"
-imageTag: "8.5.1"
-imagePullPolicy: "IfNotPresent"
-
-labels: {}
+COMPUTED VALUES:
+affinity: {}
 annotations: {}
-
-podAnnotations: {}
-
-resources:
-  requests:
-    memory: "512Mi"
-    cpu: "250m"
-  limits:
-    memory: "1024Mi"
-    cpu: "500m"
-
-serverHost: "0.0.0.0"
-healthCheckPath: "/app/kibana"
-
+automountToken: true
+elasticsearchCertificateAuthoritiesFile: ca.crt
+elasticsearchCertificateSecret: elasticsearch-master-certs
+elasticsearchCredentialSecret: elasticsearch-master-credentials
+elasticsearchHosts: https://elasticsearch-master:9200
+envFrom: []
+extraContainers: []
+extraEnvs:
+- name: NODE_OPTIONS
+  value: --max-old-space-size=1800
+extraInitContainers: []
+extraVolumeMounts: []
+extraVolumes: []
+fullnameOverride: ""
+healthCheckPath: /app/kibana
+hostAliases: []
+httpPort: 5601
+image: docker.elastic.co/kibana/kibana
+imagePullPolicy: IfNotPresent
+imagePullSecrets: []
+imageTag: 8.5.1
+ingress:
+  annotations: {}
+  className: nginx
+  enabled: false
+  hosts:
+  - host: kibana-example.local
+    paths:
+    - path: /
+  pathtype: ImplementationSpecific
 kibanaConfig: {}
-
+labels: {}
+lifecycle: {}
+nameOverride: ""
+nodeSelector: {}
+podAnnotations: {}
 podSecurityContext:
   fsGroup: 1000
-
-securityContext:
-  capabilities:
-    drop:
-      - ALL
-  runAsNonRoot: true
-  runAsUser: 1000
-
-serviceAccount: ""
-automountToken: false
-
 priorityClassName: ""
-
-httpPort: 5601
-
-extraVolumes: []
-extraVolumeMounts: []
-
-extraContainers: []
-extraInitContainers: []
-
-updateStrategy:
-  type: "Recreate"
-
-service:
-  type: ClusterIP
-  port: 5601
-  labels: {}
-  annotations: {}
-  loadBalancerSourceRanges: []
-  httpPortName: http
-
-ingress:
-  enabled: false
-  className: "nginx"
-  pathtype: ImplementationSpecific
-  annotations: {}
-  hosts:
-    - host: kibana-example.local
-      paths:
-        - path: /
-
+protocol: http
 readinessProbe:
   failureThreshold: 3
   initialDelaySeconds: 10
   periodSeconds: 10
   successThreshold: 3
   timeoutSeconds: 5
-
-imagePullSecrets: []
-nodeSelector: {}
+replicas: 1
+resources:
+  limits:
+    cpu: 1000m
+    memory: 2Gi
+  requests:
+    cpu: 1000m
+    memory: 2Gi
+secretMounts: []
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  runAsNonRoot: true
+  runAsUser: 1000
+serverHost: 0.0.0.0
+service:
+  annotations: {}
+  httpPortName: http
+  labels: {}
+  loadBalancerIP: ""
+  loadBalancerSourceRanges: []
+  nodePort: ""
+  port: 5601
+  type: ClusterIP
+serviceAccount: ""
 tolerations: []
-affinity: {}
-
-nameOverride: ""
-fullnameOverride: ""
-
-lifecycle: {}
+updateStrategy:
+  type: Recreate
