@@ -18,7 +18,7 @@ spec:
     ref: values
   destination:
     server: https://kubernetes.default.svc
-    namespace: elasticsearch
+    namespace: kibana
   syncPolicy:
     automated:
       prune: true
@@ -26,3 +26,9 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - SkipDryRunOnMissingResource=true 
+  ignoreDifferences:
+  - group: apps
+    kind: Deployment
+    jsonPointers:
+      - /spec
+
