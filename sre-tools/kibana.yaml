@@ -1,34 +1,34 @@
 
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: ki
-  namespace: argocd
-spec:
-  project: default
-  sources:
-  - repoURL: 'https://helm.elastic.co'
-    targetRevision: 8.5.1
-    chart: kibana
-    helm:
-      valueFiles:
-      - $values/kibana/values.yaml
-  - repoURL: https://github.com/sidhuni/tools-app.git
-    targetRevision: main
-    ref: values
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: elastic
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-      - SkipDryRunOnMissingResource=true 
-  ignoreDifferences:
-  - group: apps
-    kind: Deployment
-    jsonPointers:
-      - /spec
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: ki
+#   namespace: argocd
+# spec:
+#   project: default
+#   sources:
+#   - repoURL: 'https://helm.elastic.co'
+#     targetRevision: 8.5.1
+#     chart: kibana
+#     helm:
+#       valueFiles:
+#       - $values/kibana/values.yaml
+#   - repoURL: https://github.com/sidhuni/tools-app.git
+#     targetRevision: main
+#     ref: values
+#   destination:
+#     server: https://kubernetes.default.svc
+#     namespace: elastic
+#   syncPolicy:
+#     automated:
+#       prune: true
+#       selfHeal: true
+#     syncOptions:
+#       - CreateNamespace=true
+#       - SkipDryRunOnMissingResource=true 
+#   ignoreDifferences:
+#   - group: apps
+#     kind: Deployment
+#     jsonPointers:
+#       - /spec
 
