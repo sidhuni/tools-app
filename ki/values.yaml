@@ -1,14 +1,13 @@
-# Kibana Helm values.yaml - corrected for Elasticsearch token auth
+# Kibana Helm values.yaml - Optimized for ArgoCD and Token Auth
 
 elasticsearchHosts: "https://elasticsearch-master:9200"
 protocol: https
 
-# Secret that contains CA cert for Elasticsearch TLS
+# TLS Configuration
 elasticsearchCertificateSecret: elasticsearch-master-certs
 elasticsearchCertificateAuthoritiesFile: ca.crt
 
-# Secret that contains Kibana service token
-# The secret should have keys: username=elastic, password=<ki-kibana-token>
+# Secret updated with username=elastic and password=<token>
 elasticsearchCredentialSecret: ki-kibana-es-token
 
 replicas: 1
@@ -17,33 +16,21 @@ extraEnvs:
   - name: "NODE_OPTIONS"
     value: "--max-old-space-size=1800"
 
-envFrom: []
-
-secretMounts: []
-
-hostAliases: []
-
 image: "docker.elastic.co/kibana/kibana"
 imageTag: "8.5.1"
 imagePullPolicy: "IfNotPresent"
 
-labels: {}
-annotations: {}
-
-podAnnotations: {}
-
 resources:
   requests:
-    memory: "512Mi"
-    cpu: "250m"
-  limits:
-    memory: "1024Mi"
     cpu: "500m"
+    memory: "1Gi"
+  limits:
+    cpu: "1000m"
+    memory: "2Gi"
 
 serverHost: "0.0.0.0"
-healthCheckPath: "/app/kibana"
-
-kibanaConfig: {}
+# /api/status is more reliable than /app/kibana for readiness probes in 8.x
+healthCheckPath: "/api/status"
 
 podSecurityContext:
   fsGroup: 1000
@@ -55,53 +42,23 @@ securityContext:
   runAsNonRoot: true
   runAsUser: 1000
 
-serviceAccount: ""
-automountToken: false
-
-priorityClassName: ""
+# Set to true to allow the pre-install setup job to function
+automountToken: true
 
 httpPort: 5601
-
-extraVolumes: []
-extraVolumeMounts: []
-
-extraContainers: []
-extraInitContainers: []
-
-updateStrategy:
-  type: "Recreate"
 
 service:
   type: ClusterIP
   port: 5601
-  labels: {}
-  annotations: {}
-  loadBalancerSourceRanges: []
   httpPortName: http
 
-ingress:
-  enabled: false
-  className: "nginx"
-  pathtype: ImplementationSpecific
-  annotations: {}
-  hosts:
-    - host: kibana-example.local
-      paths:
-        - path: /
+updateStrategy:
+  type: "Recreate"
 
+# Optional: Ensure the readiness probe matches the new health path
 readinessProbe:
   failureThreshold: 3
-  initialDelaySeconds: 10
+  initialDelaySeconds: 20
   periodSeconds: 10
   successThreshold: 3
   timeoutSeconds: 5
-
-imagePullSecrets: []
-nodeSelector: {}
-tolerations: []
-affinity: {}
-
-nameOverride: ""
-fullnameOverride: ""
-
-lifecycle: {}
