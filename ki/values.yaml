@@ -9,7 +9,9 @@ elasticsearchHosts: "https://elasticsearch-master:9200"
 elasticsearchCredentialSecret: kibana-token-secret
 
 # Disable automatic creation of Kibana service token
-createKibanaServiceToken: false
+elasticsearch:
+  createServiceToken: true
+
 
 # Elasticsearch TLS certificates (if needed)
 elasticsearchCertificateSecret: elasticsearch-master-certs
