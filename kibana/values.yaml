@@ -28,11 +28,12 @@ podAnnotations: {}
 
 resources:
   requests:
-    cpu: "1000m"
-    memory: "2Gi"
+    memory: "512Mi"
+    cpu: "250m"
   limits:
-    cpu: "1000m"
-    memory: "2Gi"
+    memory: "1024Mi"
+    cpu: "500m"
+
 
 protocol: http
 serverHost: "0.0.0.0"
