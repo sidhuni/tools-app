@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: kibbana
+  name: kibbanna
   namespace: argocd
 spec:
   project: default
@@ -25,9 +25,4 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - SkipDryRunOnMissingResource=true 
-  ignoreDifferences:
-  - group: apps
-    kind: Deployment
-    jsonPointers:
-      - /spec
-
+  

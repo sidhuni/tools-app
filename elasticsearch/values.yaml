@@ -1,175 +1,61 @@
----
-clusterName: "elasticsearch"
-nodeGroup: "master"
+## Complete values.yaml for Kibana 8.5.1
+## Integrated with your existing Elasticsearch secrets
 
+elasticsearchHosts: "https://elasticsearch-master:9200"
 
-masterService: ""
+# TLS Configuration using your existing secret
+elasticsearchCertificateSecret: elasticsearch-master-certs
+elasticsearchCertificateAuthoritiesFile: ca.crt
 
-
-roles:
-  - master
-  - data
-  - data_content
-  - data_hot
-  - data_warm
-  - data_cold
-  - ingest
-  - ml
-  - remote_cluster_client
-  - transform
+# Authentication using your existing secret
+# Ensure this secret contains 'username' and 'password' keys
+elasticsearchCredentialSecret: elasticsearch-master-credentials
 
 replicas: 1
-minimumMasterNodes: 1
 
-esMajorVersion: ""
-
-
-esConfig: {}
-
-
-createCert: true
-
-esJvmOptions: {}
-
-
-
-extraEnvs: []
-
-
+# Extra environment variables
+extraEnvs:
+  - name: "NODE_OPTIONS"
+    value: "--max-old-space-size=1800"
 
 envFrom: []
 
-
-secret:
-  enabled: true
-  password: "" # generated randomly if not defined
-
-
+# Secret mounts for additional configs if needed
 secretMounts: []
 
 hostAliases: []
 
-
-image: "docker.elastic.co/elasticsearch/elasticsearch"
+image: "docker.elastic.co/kibana/kibana"
 imageTag: "8.5.1"
 imagePullPolicy: "IfNotPresent"
 
-podAnnotations: {}
-# iam.amazonaws.com/role: es-cluster
-
-# additionals labels
 labels: {}
-
-esJavaOpts: "-Xmx1g -Xms1g"
+annotations: {}
+podAnnotations: {}
 
 resources:
   requests:
     cpu: "1000m"
     memory: "2Gi"
   limits:
-    cpu: "2000m"
-    memory: "4Gi"
+    cpu: "1000m"
+    memory: "2Gi"
 
-initResources: {}
-
-
-networkHost: "0.0.0.0"
-
-volumeClaimTemplate:
-  accessModes: ["ReadWriteOnce"]
-  resources:
-    requests:
-      storage: 5Gi
-
-rbac:
-  create: false
-  serviceAccountAnnotations: {}
-  serviceAccountName: ""
-  automountToken: true
-
-podSecurityPolicy:
-  create: false
-  name: ""
-  spec:
-    privileged: true
-    fsGroup:
-      rule: RunAsAny
-    runAsUser:
-      rule: RunAsAny
-    seLinux:
-      rule: RunAsAny
-    supplementalGroups:
-      rule: RunAsAny
-    volumes:
-      - secret
-      - configMap
-      - persistentVolumeClaim
-      - emptyDir
-
-persistence:
-  enabled: true
-  labels:
-   
-    enabled: false
-  annotations: {}
-
-extraVolumes: []
-
-
-extraVolumeMounts: []
-
-
-extraContainers: []
-
-
-extraInitContainers: []
-
-
-
-priorityClassName: ""
-
-
-antiAffinityTopologyKey: "kubernetes.io/hostname"
-
-
-antiAffinity: "hard"
-
-
-nodeAffinity: {}
-
-
-podManagementPolicy: "Parallel"
-
-
-enableServiceLinks: true
-
+# Set to https to match the elasticsearchHosts protocol
 protocol: https
-httpPort: 9200
-transportPort: 9300
 
-service:
-  enabled: true
-  labels: {}
-  labelsHeadless: {}
-  type: ClusterIP
-  
-  publishNotReadyAddresses: false
-  nodePort: ""
-  annotations: {}
-  httpPortName: http
-  transportPortName: transport
-  loadBalancerIP: ""
-  loadBalancerSourceRanges: []
-  externalTrafficPolicy: ""
+serverHost: "0.0.0.0"
 
-updateStrategy: RollingUpdate
+healthCheckPath: "/app/kibana"
 
-
-maxUnavailable: 1
+# Custom kibana.yml settings
+kibanaConfig: 
+  kibana.yml: |
+    server.ssl.enabled: false
+    # Add other custom configs here if needed
 
 podSecurityContext:
   fsGroup: 1000
-  runAsUser: 1000
 
 securityContext:
   capabilities:
@@ -178,70 +64,52 @@ securityContext:
   runAsNonRoot: true
   runAsUser: 1000
 
-terminationGracePeriod: 120
+serviceAccount: ""
+automountToken: true
 
-sysctlVmMaxMapCount: 262144
+priorityClassName: ""
 
-livenessProbe:
-  initialDelaySeconds: 5
-  periodSeconds: 10
-  timeoutSeconds: 5
-  successThreshold: 1
-  failureThreshold: 3
+httpPort: 5601
 
+extraVolumes: []
+extraVolumeMounts: []
+extraContainers: []
+extraInitContainers: []
+
+updateStrategy:
+  type: "Recreate"
+
+service:
+  type: ClusterIP
+  port: 5601
+  httpPortName: http
+  labels: {}
+  annotations: {}
+  loadBalancerSourceRanges: []
+
+ingress:
+  enabled: false
+  className: "nginx"
+  pathtype: ImplementationSpecific
+  annotations: {}
+  hosts:
+    - host: kibana-example.local
+      paths:
+        - path: /
 
 readinessProbe:
-  failureThreshold: 10
-  initialDelaySeconds: 120
-  periodSeconds: 60
+  failureThreshold: 3
+  initialDelaySeconds: 10
+  periodSeconds: 10
   successThreshold: 3
   timeoutSeconds: 5
-
-clusterHealthCheckParams: "wait_for_status=green&timeout=30s"
-
-
-schedulerName: ""
 
 imagePullSecrets: []
 nodeSelector: {}
 tolerations: []
-
-ingress:
-  enabled: false
-  annotations: {}
-  
-  className: "nginx"
-  pathtype: ImplementationSpecific
-  hosts:
-    - host: chart-example.local
-      paths:
-        - path: /
-  tls: []
-  
+affinity: {}
 
 nameOverride: ""
 fullnameOverride: ""
-healthNameOverride: ""
 
 lifecycle: {}
-
-
-sysctlInitContainer:
-  enabled: true
-
-keystore: []
-
-networkPolicy:
-  
-
-  http:
-    enabled: false
-
-  transport:
-    enabled: false
-
-
-tests:
-  enabled: true
-
-
