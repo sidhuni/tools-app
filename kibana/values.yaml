@@ -107,26 +107,3 @@ fullnameOverride: ""
 
 lifecycle: {}
 
-# --- Optional pre-install hook to wait for Elasticsearch certs ---
-hooks:
-  preInstall:
-    - name: wait-for-elasticsearch-certs
-      kind: Job
-      spec:
-        template:
-          spec:
-            restartPolicy: OnFailure
-            containers:
-              - name: wait-for-certs
-                image: busybox
-                command:
-                  - sh
-                  - -c
-                  - |
-                    echo "Waiting for Elasticsearch certs..."
-                    while ! kubectl get secret elasticsearch-master-certs -n elastic; do
-                      sleep 5
-                    done
-                    echo "Elasticsearch certs exist, continuing..."
-            # Make sure the Job is cleaned up after success
-            ttlSecondsAfterFinished: 60
