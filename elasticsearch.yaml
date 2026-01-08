@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: elasticsearch
+  namespace: argocd
+spec:
+  project: default
+  sources:
+  - repoURL: 'https://helm.elastic.co'
+    targetRevision: 8.5.1
+    chart: elasticsearch
+    helm:
+      valueFiles:
+      - $values/elasticsearch/values.yaml
+  - repoURL: https://github.com/sidhuni/tools-app.git
+    targetRevision: main
+    ref: values
+
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: elasticsearch
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - SkipDryRunOnMissingResource=true
+
+
+  ignoreDifferences:
+    # Secret Metadata
+    - group: ""
+      kind: Secret
+      jsonPointers:
+        - /metadata/creationTimestamp
+        - /metadata/uid
+        - /metadata/resourceVersion
+        - /metadata/managedFields
+        - /data # FIX: To ignore Kraft IDs

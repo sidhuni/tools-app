@@ -1,0 +1,247 @@
+---
+clusterName: "elasticsearch"
+nodeGroup: "master"
+
+
+masterService: ""
+
+
+roles:
+  - master
+  - data
+  - data_content
+  - data_hot
+  - data_warm
+  - data_cold
+  - ingest
+  - ml
+  - remote_cluster_client
+  - transform
+
+replicas: 1
+minimumMasterNodes: 1
+
+esMajorVersion: ""
+
+
+esConfig: {}
+
+
+createCert: true
+
+esJvmOptions: {}
+
+
+
+extraEnvs: []
+
+
+
+envFrom: []
+
+
+secret:
+  enabled: true
+  password: "" # generated randomly if not defined
+
+
+secretMounts: []
+
+hostAliases: []
+
+
+image: "docker.elastic.co/elasticsearch/elasticsearch"
+imageTag: "8.5.1"
+imagePullPolicy: "IfNotPresent"
+
+podAnnotations: {}
+# iam.amazonaws.com/role: es-cluster
+
+# additionals labels
+labels: {}
+
+esJavaOpts: "-Xmx1g -Xms1g"
+
+resources:
+  requests:
+    cpu: "1000m"
+    memory: "2Gi"
+  limits:
+    cpu: "2000m"
+    memory: "4Gi"
+
+initResources: {}
+
+
+networkHost: "0.0.0.0"
+
+volumeClaimTemplate:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 5Gi
+
+rbac:
+  create: false
+  serviceAccountAnnotations: {}
+  serviceAccountName: ""
+  automountToken: true
+
+podSecurityPolicy:
+  create: false
+  name: ""
+  spec:
+    privileged: true
+    fsGroup:
+      rule: RunAsAny
+    runAsUser:
+      rule: RunAsAny
+    seLinux:
+      rule: RunAsAny
+    supplementalGroups:
+      rule: RunAsAny
+    volumes:
+      - secret
+      - configMap
+      - persistentVolumeClaim
+      - emptyDir
+
+persistence:
+  enabled: true
+  labels:
+   
+    enabled: false
+  annotations: {}
+
+extraVolumes: []
+
+
+extraVolumeMounts: []
+
+
+extraContainers: []
+
+
+extraInitContainers: []
+
+
+
+priorityClassName: ""
+
+
+antiAffinityTopologyKey: "kubernetes.io/hostname"
+
+
+antiAffinity: "hard"
+
+
+nodeAffinity: {}
+
+
+podManagementPolicy: "Parallel"
+
+
+enableServiceLinks: true
+
+protocol: https
+httpPort: 9200
+transportPort: 9300
+
+service:
+  enabled: true
+  labels: {}
+  labelsHeadless: {}
+  type: ClusterIP
+  
+  publishNotReadyAddresses: false
+  nodePort: ""
+  annotations: {}
+  httpPortName: http
+  transportPortName: transport
+  loadBalancerIP: ""
+  loadBalancerSourceRanges: []
+  externalTrafficPolicy: ""
+
+updateStrategy: RollingUpdate
+
+
+maxUnavailable: 1
+
+podSecurityContext:
+  fsGroup: 1000
+  runAsUser: 1000
+
+securityContext:
+  capabilities:
+    drop:
+      - ALL
+  runAsNonRoot: true
+  runAsUser: 1000
+
+terminationGracePeriod: 120
+
+sysctlVmMaxMapCount: 262144
+
+livenessProbe:
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 3
+
+
+readinessProbe:
+  failureThreshold: 10
+  initialDelaySeconds: 120
+  periodSeconds: 60
+  successThreshold: 3
+  timeoutSeconds: 5
+
+clusterHealthCheckParams: "wait_for_status=green&timeout=30s"
+
+
+schedulerName: ""
+
+imagePullSecrets: []
+nodeSelector: {}
+tolerations: []
+
+ingress:
+  enabled: false
+  annotations: {}
+  
+  className: "nginx"
+  pathtype: ImplementationSpecific
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+  tls: []
+  
+
+nameOverride: ""
+fullnameOverride: ""
+healthNameOverride: ""
+
+lifecycle: {}
+
+
+sysctlInitContainer:
+  enabled: true
+
+keystore: []
+
+networkPolicy:
+  
+
+  http:
+    enabled: false
+
+  transport:
+    enabled: false
+
+
+tests:
+  enabled: true
+
+
