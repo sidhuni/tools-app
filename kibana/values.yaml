@@ -1,5 +1,5 @@
 ---
-elasticsearchHosts: "https://elasticsearch-master.elastic.svc.cluster.local:9200"
+elasticsearchHosts: "https://elasticsearch-master:9200"
 elasticsearchCertificateSecret: elasticsearch-master-certs
 elasticsearchCertificateAuthoritiesFile: ca.crt
 
@@ -9,7 +9,7 @@ replicas: 1
 # Extra environment variables to append to this nodeGroup
 # This will be appended to the current 'env:' key. You can use any of the kubernetes env
 # syntax here
-extraEnvs:
+eextraEnvs:
   - name: ELASTICSEARCH_USERNAME
     value: elastic
   - name: ELASTICSEARCH_PASSWORD
@@ -17,7 +17,6 @@ extraEnvs:
       secretKeyRef:
         name: elasticsearch-master-credentials
         key: password
-
 
 
 # Allows you to load environment variables from kubernetes secret or config map
@@ -28,7 +27,7 @@ secretMounts:
     secretName: elasticsearch-master-certs
     path: /usr/share/kibana/config/certs
 
-    
+
 hostAliases: []
 #- ip: "127.0.0.1"
 #  hostnames:
