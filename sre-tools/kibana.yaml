@@ -1,9 +1,9 @@
+
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: kibana
+  name: kibana-new 
   namespace: argocd
-spec:
 spec:
   project: default
   sources:
@@ -17,7 +17,7 @@ spec:
     targetRevision: main
     ref: values
   destination:
-    server: "https://kubernetes.default.svc"
+    server: https://kubernetes.default.svc
     namespace: elasticsearch
   syncPolicy:
     automated:
