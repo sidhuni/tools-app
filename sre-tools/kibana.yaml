@@ -18,11 +18,12 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: elastic
-  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+    - ServerSideApply=true
+    - PruneLast=true
+    - Validate=false
     automated:
       prune: true
       selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-      - Replace=true 
   
