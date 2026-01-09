@@ -1,110 +1,62 @@
-# Elasticsearch connection
-elasticsearchHosts: "https://elasticsearch-master:9200"
-protocol: http
-
-# Secret that contains CA cert for Elasticsearch TLS
-elasticsearchCertificateSecret: elasticsearch-master-certs
-elasticsearchCertificateAuthoritiesFile: ca.crt
-
-# Secret that contains Kibana service token
-# Must have keys: username=elastic, password=<ki-kibana-token>
-elasticsearchCredentialSecret: elasticsearch-master-credentials
-
-# Disable automatic creation of Kibana service token
-createKibanaServiceToken: false
-
-# Deployment
 replicas: 1
 
-extraEnvs:
-  - name: "NODE_OPTIONS"
-    value: "--max-old-space-size=1800"
+image:
+  repository: docker.elastic.co/kibana/kibana
+  tag: 8.5.1   # must match your Elasticsearch version
+  pullPolicy: IfNotPresent
 
-envFrom: []
+elasticsearchHosts: "https://elasticsearch-master:9200"
 
-secretMounts: []
+# Use EXISTING service account token secret
+elasticsearchServiceAccountToken:
+  secretName: kibana-kibana-es-token
+  secretKey: token
 
-hostAliases: []
+# TLS configuration (important)
+elasticsearchSSL:
+  enabled: true
+  certificateAuthorities:
+    - /usr/share/kibana/config/certs/ca.crt
+  verificationMode: certificate
 
-image: "docker.elastic.co/kibana/kibana"
-imageTag: "8.5.1"
-imagePullPolicy: "IfNotPresent"
+# Mount Elasticsearch CA cert
+secretMounts:
+  - name: elastic-ca
+    secretName: elasticsearch-master-certs
+    path: /usr/share/kibana/config/certs
 
-labels: {}
-annotations: {}
-
-podAnnotations: {}
+kibanaConfig:
+  kibana.yml: |
+    server.name: kibana
+    server.host: "0.0.0.0"
+    monitoring.ui.container.elasticsearch.enabled: true
+    elasticsearch.ssl.verificationMode: certificate
 
 resources:
   requests:
-    memory: "512Mi"
     cpu: "250m"
+    memory: "512Mi"
   limits:
-    memory: "1024Mi"
     cpu: "500m"
-
-serverHost: "0.0.0.0"
-healthCheckPath: "/app/kibana"
-
-kibanaConfig: {}
-
-podSecurityContext:
-  fsGroup: 1000
-
-securityContext:
-  capabilities:
-    drop:
-      - ALL
-  runAsNonRoot: true
-  runAsUser: 1000
-
-serviceAccount: ""
-automountToken: false
-
-priorityClassName: ""
-
-httpPort: 5601
-
-extraVolumes: []
-extraVolumeMounts: []
-
-extraContainers: []
-extraInitContainers: []
-
-updateStrategy:
-  type: "Recreate"
+    memory: "1Gi"
 
 service:
   type: ClusterIP
   port: 5601
-  labels: {}
-  annotations: {}
-  loadBalancerSourceRanges: []
-  httpPortName: http
 
 ingress:
   enabled: false
-  className: "nginx"
-  pathtype: ImplementationSpecific
-  annotations: {}
-  hosts:
-    - host: kibana-example.local
-      paths:
-        - path: /
 
 readinessProbe:
-  failureThreshold: 3
-  initialDelaySeconds: 10
+  httpGet:
+    path: /login
+    port: 5601
+  initialDelaySeconds: 20
   periodSeconds: 10
-  successThreshold: 3
-  timeoutSeconds: 5
 
-imagePullSecrets: []
-nodeSelector: {}
-tolerations: []
-affinity: {}
-
-nameOverride: ""
-fullnameOverride: ""
-
-lifecycle: {}
+livenessProbe:
+  httpGet:
+    path: /login
+    port: 5601
+  initialDelaySeconds: 60
+  periodSeconds: 20
