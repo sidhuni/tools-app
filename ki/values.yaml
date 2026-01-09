@@ -1,7 +1,7 @@
 rreplicas: 1
 image:
   repository: docker.elastic.co/kibana/kibana
-  tag: 8.11.0
+  tag: "8.5.1"
   pullPolicy: IfNotPresent
 
 elasticsearchHosts: "https://elasticsearch-master:9200"
