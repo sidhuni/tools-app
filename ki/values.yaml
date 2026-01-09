@@ -6,6 +6,19 @@ imagePullPolicy: IfNotPresent
 
 elasticsearchHosts: "https://elasticsearch-master:9200"
 
+# 🔴 VERY IMPORTANT — disable token creation job
+serviceAccount:
+  create: false
+
+# 🔴 Disable Helm hook that creates token using elastic user
+elasticsearch:
+  createCert: false
+
+# 🔴 Tell chart NOT to manage credentials
+elasticsearchUsername: ""
+elasticsearchPassword: ""
+
+# ✅ Use EXISTING service account token
 elasticsearchServiceAccountToken:
   secretName: kibana-kibana-es-token
   secretKey: token
@@ -25,8 +38,8 @@ kibanaConfig:
   kibana.yml: |
     server.name: kibana
     server.host: "0.0.0.0"
-    monitoring.ui.container.elasticsearch.enabled: true
     elasticsearch.ssl.verificationMode: certificate
+    monitoring.ui.container.elasticsearch.enabled: true
 
 resources:
   requests:
