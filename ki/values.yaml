@@ -1,16 +1,19 @@
-rreplicas: 1
-image:
-  repository: docker.elastic.co/kibana/kibana
-  tag: "8.5.1"
-  pullPolicy: IfNotPresent
+replicas: 1
+
+image: docker.elastic.co/kibana/kibana
+imageTag: "8.5.1"
+imagePullPolicy: IfNotPresent
 
 elasticsearchHosts: "https://elasticsearch-master:9200"
+
+# Use existing service account token
 elasticsearchServiceAccountToken:
   secretName: kibana-kibana-es-token
   secretKey: token
 
-preInstallJob:
-  enabled: false
+# Do NOT use elastic user
+elasticsearchUsername: ""
+elasticsearchPassword: ""
 
 elasticsearchSSL:
   enabled: true
