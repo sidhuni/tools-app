@@ -107,7 +107,7 @@ affinity: {}
 nameOverride: ""
 fullnameOverride: ""
 
-# Lifecycle hook to import dashboards after container starts
+# Lifecycle hook to import dashboards after container starts (optional)
 lifecycle:
   postStart:
     exec:
@@ -122,11 +122,11 @@ lifecycle:
                -H "kbn-xsrf: true" \
                -d '{"objects":[{"type":"index-pattern","id":"my-pattern","attributes":{"title":"my-pattern-*"}},{"type":"dashboard","id":"my-dashboard","attributes":{"title":"Look at my dashboard"}}]}'
 
-# Use EXISTING service account token (do NOT use elastic user)
+# ✅ Use EXISTING Kibana service account token (from your secret)
 elasticsearchServiceAccountToken:
   secretName: kibana-kibana-es-token
   secretKey: token
 
-# Disable elastic username/password
+# 🚫 Do NOT use elastic user
 elasticsearchUsername: ""
 elasticsearchPassword: ""
