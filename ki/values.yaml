@@ -178,7 +178,7 @@ preInstallJob:
   enabled: false
 
 elasticsearchServiceAccountToken:
-  secretName: kibana-kibana-es-token
+  secretName: ki-kibana-es-token
   secretKey: token
 
 elasticsearchUsername: ""
