@@ -1,10 +1,6 @@
-# ==========================
-# Kibana Helm values.yaml - corrected for Elasticsearch token auth
-# ==========================
-
 # Elasticsearch connection
 elasticsearchHosts: "https://elasticsearch-master:9200"
-protocol: https
+protocol: http
 
 # Secret that contains CA cert for Elasticsearch TLS
 elasticsearchCertificateSecret: elasticsearch-master-certs
@@ -12,7 +8,7 @@ elasticsearchCertificateAuthoritiesFile: ca.crt
 
 # Secret that contains Kibana service token
 # Must have keys: username=elastic, password=<ki-kibana-token>
-elasticsearchCredentialSecret: ki-kibana-es-token
+elasticsearchCredentialSecret: elasticsearch-master-credentials
 
 # Disable automatic creation of Kibana service token
 createKibanaServiceToken: false
