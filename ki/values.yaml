@@ -1,34 +1,43 @@
+---
+elasticsearchHosts: "https://elasticsearch-master:9200"
+elasticsearchCertificateSecret: elasticsearch-master-certs
+elasticsearchCertificateAuthoritiesFile: ca.crt
+elasticsearchCredentialSecret: elasticsearch-master-credentials
+
 replicas: 1
 
-image: docker.elastic.co/kibana/kibana
-imageTag: "8.5.1"
-imagePullPolicy: IfNotPresent
+extraEnvs:
+  - name: "NODE_OPTIONS"
+    value: "--max-old-space-size=1800"
 
-elasticsearchHosts: "https://elasticsearch-master:9200"
-
-# Use existing service account token
-elasticsearchServiceAccountToken:
-  secretName: kibana-kibana-es-token
-  secretKey: token
-
-preInstallJob:
-  enabled: false
-
-
-# Do NOT use elastic user
-elasticsearchUsername: ""
-elasticsearchPassword: ""
-
-elasticsearchSSL:
-  enabled: true
-  certificateAuthorities:
-    - /usr/share/kibana/config/certs/ca.crt
-  verificationMode: certificate
+envFrom: []
 
 secretMounts:
   - name: elastic-ca
     secretName: elasticsearch-master-certs
     path: /usr/share/kibana/config/certs
+
+hostAliases: []
+
+image: "docker.elastic.co/kibana/kibana"
+imageTag: "8.5.1"
+imagePullPolicy: "IfNotPresent"
+
+labels: {}
+annotations: {}
+podAnnotations: {}
+
+resources:
+  requests:
+    cpu: "1000m"
+    memory: "2Gi"
+  limits:
+    cpu: "1000m"
+    memory: "2Gi"
+
+protocol: http
+serverHost: "0.0.0.0"
+healthCheckPath: "/app/kibana"
 
 kibanaConfig:
   kibana.yml: |
@@ -37,18 +46,68 @@ kibanaConfig:
     elasticsearch.ssl.verificationMode: certificate
     monitoring.ui.container.elasticsearch.enabled: true
 
+podSecurityContext:
+  fsGroup: 1000
+
+securityContext:
+  capabilities:
+    drop:
+      - ALL
+  runAsNonRoot: true
+  runAsUser: 1000
+
+serviceAccount: ""
+automountToken: true
+
+priorityClassName: ""
+
+httpPort: 5601
+
+extraVolumes: []
+extraVolumeMounts: []
+
+extraContainers: []
+extraInitContainers: []
+
+updateStrategy:
+  type: "Recreate"
+
 service:
   type: ClusterIP
+  loadBalancerIP: ""
   port: 5601
+  nodePort: ""
+  labels: {}
+  annotations: {}
+  loadBalancerSourceRanges: []
+  httpPortName: http
 
-resources:
-  requests:
-    cpu: 250m
-    memory: 512Mi
-  limits:
-    cpu: 500m
-    memory: 1Gi
+ingress:
+  enabled: false
+  className: "nginx"
+  pathtype: ImplementationSpecific
+  annotations: {}
+  hosts:
+    - host: kibana-example.local
+      paths:
+        - path: /
 
+readinessProbe:
+  failureThreshold: 3
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  successThreshold: 3
+  timeoutSeconds: 5
+
+imagePullSecrets: []
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+nameOverride: ""
+fullnameOverride: ""
+
+# Lifecycle hook to import dashboards after container starts
 lifecycle:
   postStart:
     exec:
@@ -56,11 +115,18 @@ lifecycle:
         - bash
         - -c
         - |
-          # Wait for Kibana to be up
           KB_URL=http://localhost:5601
           until [[ "$(curl -s -o /dev/null -w '%{http_code}' $KB_URL)" == "200" ]]; do sleep 1; done
-          # Import dashboards
           curl -XPOST "$KB_URL/api/kibana/dashboards/import" \
                -H "Content-Type: application/json" \
                -H "kbn-xsrf: true" \
                -d '{"objects":[{"type":"index-pattern","id":"my-pattern","attributes":{"title":"my-pattern-*"}},{"type":"dashboard","id":"my-dashboard","attributes":{"title":"Look at my dashboard"}}]}'
+
+# Use EXISTING service account token (do NOT use elastic user)
+elasticsearchServiceAccountToken:
+  secretName: kibana-kibana-es-token
+  secretKey: token
+
+# Disable elastic username/password
+elasticsearchUsername: ""
+elasticsearchPassword: ""
