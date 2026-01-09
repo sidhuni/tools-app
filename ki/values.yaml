@@ -44,3 +44,19 @@ resources:
   limits:
     cpu: 500m
     memory: 1Gi
+
+lifecycle:
+  postStart:
+    exec:
+      command:
+        - bash
+        - -c
+        - |
+          # Wait for Kibana to be up
+          KB_URL=http://localhost:5601
+          until [[ "$(curl -s -o /dev/null -w '%{http_code}' $KB_URL)" == "200" ]]; do sleep 1; done
+          # Import dashboards
+          curl -XPOST "$KB_URL/api/kibana/dashboards/import" \
+               -H "Content-Type: application/json" \
+               -H "kbn-xsrf: true" \
+               -d '{"objects":[{"type":"index-pattern","id":"my-pattern","attributes":{"title":"my-pattern-*"}},{"type":"dashboard","id":"my-dashboard","attributes":{"title":"Look at my dashboard"}}]}'
