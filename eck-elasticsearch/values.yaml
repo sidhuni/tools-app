@@ -205,9 +205,9 @@ nodeSets:
 
         # List of environment variables to set in the 'elasticsearch' container.
         # https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/
-        # env:
-        # - name: "my-env-var"
-        #   value: "my-value"
+        env:
+          - name: ES_JAVA_OPTS
+            value: "-Xms128m -Xmx256m"
 
         # Compute Resources required by this container.
         resources:
