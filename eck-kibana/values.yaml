@@ -17,4 +17,4 @@ ingress:
 labels: {}
 monitoring: {}
 secureSettings: []
-version: 9.2.2
+version: 8.17.0
