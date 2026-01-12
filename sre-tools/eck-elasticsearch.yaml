@@ -7,15 +7,13 @@ spec:
   project: default
 
   source:
-    repoURL: 'https://github.com/sidhuni/tools-app.git'  # your repo
+    repoURL: 'https://github.com/sidhuni/tools-app.git'
     targetRevision: main
-    path: sre-tools       # folder containing the actual CR manifests
-    directory:
-      recurse: true       # recursively include subfolders if needed
+    path: eck-elasticsearch   # folder containing elasticsearch.yaml (CRD manifest)
 
   destination:
     server: "https://kubernetes.default.svc"
-    namespace: eck-elasticsearch   # namespace where Elasticsearch will live
+    namespace: eck-elasticsearch
 
   syncPolicy:
     automated:
