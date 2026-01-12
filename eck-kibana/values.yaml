@@ -18,7 +18,10 @@
 
 # Version of Kibana.
 #
-version: 9.2.0
+image:
+  repository: docker.elastic.co/kibana/kibana
+  tag: 9.2.0
+  pullPolicy: IfNotPresent
 
 
 
@@ -65,18 +68,7 @@ config: null
 
 # PodTemplate provides customisation options (labels, annotations, affinity rules,
 # resource requests, and so on) for the Kibana pods
-#
-podTemplate:
-  spec:
-    containers:
-      - name: kibana
-        resources:
-          requests:
-            cpu: 500m
-            memory: 512Mi
-          limits:
-            cpu: 1
-            memory: 1Gi
+
 
 
 # Number of revisions to retain to allow rollback in the underlying deployment.
