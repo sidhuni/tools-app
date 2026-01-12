@@ -4,6 +4,7 @@ config: null
 count: 1
 elasticsearchRef:
   name: eck-elasticsearch
+  value: eck-operator
 ingress:
   annotations: {}
   enabled: false
