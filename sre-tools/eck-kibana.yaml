@@ -8,7 +8,7 @@ spec:
   project: default
   sources:
   - repoURL: 'https://helm.elastic.co'
-    targetRevision: 9.2.0
+    targetRevision: 0.17.0
     chart: eck-kibana
     helm:
       valueFiles:
