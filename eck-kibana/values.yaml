@@ -21,12 +21,6 @@
 
 image: "docker.elastic.co/kibana/kibana:9.2.0"
 
-podTemplate:
-  spec:
-    containers:
-      - name: kibana
-        imagePullPolicy: Never
-
 
 
 
