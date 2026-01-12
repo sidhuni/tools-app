@@ -3,7 +3,7 @@ annotations: {}
 config: null
 count: 1
 elasticsearchRef:
-  name: my-eck-elasticsearch
+  name: eck-elasticsearch
 ingress:
   annotations: {}
   enabled: false
