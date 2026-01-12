@@ -22,7 +22,7 @@ version: 9.2.0
 
 # Kibana Docker image to deploy
 #
-# image: docker.elastic.co/kibana/kibana:9.2.0
+image: docker.elastic.co/kibana/kibana:9.2.0
 
 # Labels that will be applied to Kibana.
 #
