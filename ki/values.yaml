@@ -174,3 +174,7 @@ lifecycle: {}
 #   exec:
 #     command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
 
+preInstallJob:
+  enabled: false
+
+
