@@ -18,7 +18,7 @@
 
 # Version of Elasticsearch.
 #
-version: 9.2.0
+version: 8.2.3
 
 # License type to use, allowed values are `basic` and `enterprise`.
 # ref: https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-licensing.html
