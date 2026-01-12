@@ -220,7 +220,7 @@ nodeSets:
             memory: 512Mi
           requests:
             # cpu: 1
-            memory: 256Mi
+            memory: 1Gi
 
           # Example increasing both the requests and limits values:
           # limits:
@@ -398,7 +398,7 @@ readinessProbe:
       - bash
       - -c
       - /mnt/elastic-internal/scripts/readiness-port-script.sh
-  initialDelaySeconds: 20
+  initialDelaySeconds: 40
   timeoutSeconds: 10
   periodSeconds: 10
   failureThreshold: 5
