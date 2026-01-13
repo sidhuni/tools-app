@@ -23,10 +23,10 @@ nodeSets:
             resources:
               limits:
                 cpu: 1
-                memory: 4Gi
+                memory: 2Gi
               requests:
                 cpu: 1
-                memory: 4Gi
+                memory: 2Gi
 ingress:
   enabled: false
   annotations: {}
