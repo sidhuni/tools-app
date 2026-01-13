@@ -1,4 +1,4 @@
----
+# This is a Helm values file for deploying Elasticsearch using the Elastic Cloud on Kubernetes (ECK) operator.
 version: 9.2.0
 labels: {}
 annotations: {}
@@ -27,16 +27,16 @@ nodeSets:
               requests:
                 cpu: 1
                 memory: 4Gi
-      ingress:
-        enabled: false
-    annotations: {}
-    labels: {}
-    pathType: Prefix
-    hosts:
-      - host: chart-example.local
-        path: /
-    tls:
-      enabled: false
+ingress:
+  enabled: false
+  annotations: {}
+  labels: {}
+  pathType: Prefix
+  hosts:
+    - host: chart-example.local
+      path: /
+  tls:
+    enabled: false
 readinessProbe:
   exec:
     command:
