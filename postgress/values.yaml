@@ -2,12 +2,10 @@ fullnameOverride: postgresql
 
 auth:
   enablePostgresUser: true
+  username: admin
+  database: chms
 
-  username: "admin"
-  database: "chms"
-
-  existingSecret: "postgresql-secret"
-
+  existingSecret: postgresql-secret
   secretKeys:
     adminPasswordKey: postgres-password
     userPasswordKey: password
@@ -15,17 +13,18 @@ auth:
 architecture: standalone
 
 primary:
-  resourcesPreset: "none"
+  resourcesPreset: none
 
   persistence:
     enabled: true
+    storageClass: local-path     # 🔥 IMPORTANT FIX
     accessModes:
       - ReadWriteOnce
     size: 5Gi
     mountPath: /bitnami/postgresql
 
   service:
-    type: NodePort
+    type: NodePort               # OK for local testing
 
   networkPolicy:
     enabled: false
@@ -33,11 +32,9 @@ primary:
   pdb:
     create: false
 
+# Disable read replicas for local setup
 readReplicas:
-  name: read
-  replicaCount: 1
+  replicaCount: 0
 
 persistentVolumeClaimRetentionPolicy:
   enabled: false
-  whenScaled: Retain
-  whenDeleted: Retain
