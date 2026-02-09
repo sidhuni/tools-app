@@ -19,7 +19,6 @@ primary:
 
   persistence:
     enabled: true
-    storageClass: "standrad"
     accessModes:
       - ReadWriteOnce
     size: 5Gi
