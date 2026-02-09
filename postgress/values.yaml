@@ -37,4 +37,5 @@ readReplicas:
   replicaCount: 0
 
 persistentVolumeClaimRetentionPolicy:
-  enabled: false
+  enabled: true
+  
