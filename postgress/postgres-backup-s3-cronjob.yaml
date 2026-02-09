@@ -1,0 +1,39 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: postgresql-backup-local
+  namespace: postgresql
+spec:
+  schedule: "0 2 * * *"  # daily at 2 AM
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: backup
+            image: bitnami/postgresql:16
+            env:
+              - name: PGPASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: postgresql-secret
+                    key: postgres-password
+            command:
+              - /bin/sh
+              - -c
+              - |
+                BACKUP_DIR=/bitnami/postgresql/backups
+                mkdir -p $BACKUP_DIR
+                FILENAME="$BACKUP_DIR/backup-$(date +\%F).sql"
+                echo "Starting backup: $FILENAME"
+                pg_dump -h postgresql -U admin chms > $FILENAME
+                echo "Backup done, cleaning old backups..."
+                ls -1t $BACKUP_DIR/*.sql | tail -n +6 | xargs -r rm
+            volumeMounts:
+              - name: postgresql-data
+                mountPath: /bitnami/postgresql
+          restartPolicy: OnFailure
+          volumes:
+            - name: postgresql-data
+              persistentVolumeClaim:
+                claimName: data-postgresql-0  # your PostgreSQL PVC
