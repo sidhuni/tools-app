@@ -22,7 +22,7 @@ primary:
     storageClass: "standrad"
     accessModes:
       - ReadWriteOnce
-    size: 10Gi
+    size: 5Gi
 
   service:
     type: NodePort
