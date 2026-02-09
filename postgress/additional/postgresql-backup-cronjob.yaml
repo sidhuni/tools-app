@@ -4,7 +4,7 @@ metadata:
   name: postgresql-backup
   namespace: postgresql
 spec:
-  schedule: "0 2 * * *" 
+  schedule: "*/1 * * * *" # Runs every 5 mins for testing
   jobTemplate:
     spec:
       template:
@@ -22,13 +22,14 @@ spec:
               - /bin/sh
               - -c
               - |
-                # Use /tmp for local testing so we don't touch the DB disk
-                FILENAME="/tmp/backup-$(date +%F).sql"
-                echo "Starting backup to $FILENAME..."
-                pg_dump -h postgresql -U admin chms > $FILENAME
-                echo "Backup size: $(du -sh $FILENAME)"
-                # Local cleanup logic (keeps last 5 files in /tmp)
-                ls -1t /tmp/backup-*.sql | tail -n +6 | xargs -r rm
-                echo "Cleanup complete."
+                echo "Starting backup..."
+                pg_dump -h postgresql -U admin chms > /backups/local-test.sql
+                echo "Backup finished. Size: $(du -sh /backups/local-test.sql)"
+                sleep 300 # Keeps pod alive for 5 mins so you can inspect it
+            volumeMounts:
+              - name: temp-storage
+                mountPath: /backups
+          volumes:
+            - name: temp-storage
+              emptyDir: {}
           restartPolicy: OnFailure
-          # No volumes needed for a simple local test to /tmp
