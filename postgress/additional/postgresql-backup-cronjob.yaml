@@ -14,7 +14,7 @@ spec:
           containers:
           - name: backup
             # Use this specific tag to avoid the ImagePullBackOff error
-            image: bitnami/postgresql:18
+            image: registry-1.docker.io/bitnami/postgresql:16.6.0-debian-12-r1
             env:
               - name: PGPASSWORD
                 valueFrom:
