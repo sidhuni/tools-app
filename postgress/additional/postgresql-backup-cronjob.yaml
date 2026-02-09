@@ -13,8 +13,8 @@ spec:
         spec:
           containers:
           - name: backup
-            # Use this specific tag to avoid the ImagePullBackOff error
-            image: docker.io/library/postgres:16
+            image: postgres:16
+            imagePullPolicy: IfNotPresent
             env:
               - name: PGPASSWORD
                 valueFrom:
