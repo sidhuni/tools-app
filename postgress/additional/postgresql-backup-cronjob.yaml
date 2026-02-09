@@ -15,6 +15,7 @@ spec:
           - name: backup
             # Use this specific tag to avoid the ImagePullBackOff error
             image: docker.io/bitnami/postgresql:16
+            imagePullPolicy: Always
             env:
               - name: PGPASSWORD
                 valueFrom:
