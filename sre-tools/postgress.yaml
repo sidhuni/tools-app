@@ -18,7 +18,7 @@ spec:
 
   - repoURL: https://github.com/sidhuni/tools-app.git
     targetRevision: main
-    path: postgress
+    path: postgress/additional
 
   destination:
     server: "https://kubernetes.default.svc"
