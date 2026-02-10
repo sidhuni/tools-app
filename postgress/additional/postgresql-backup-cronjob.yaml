@@ -1,11 +1,10 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: postgresql-backup
+  name: postgresql-local-backup
   namespace: postgresql
 spec:
-  # This runs every 5 minutes automatically
-  schedule: "*/1 * * * *" 
+  schedule: "*/1 * * * *" # Running every minute for your test
   concurrencyPolicy: Forbid
   jobTemplate:
     spec:
@@ -14,19 +13,44 @@ spec:
           containers:
           - name: backup
             image: postgres:16
-            imagePullPolicy: IfNotPresent
             env:
               - name: PGPASSWORD
                 valueFrom:
                   secretKeyRef:
                     name: postgresql
                     key: postgres-password
+            volumeMounts:
+            - name: backup-dir
+              mountPath: /backups
             command:
               - /bin/sh
               - -c
               - |
-                echo "Automatic Backup Started at $(date)"
-                # -h postgresql matches your fullnameOverride
-                pg_dump -h postgresql -U postgres chms > /tmp/backup.sql
-                echo "Backup Success. Size: $(du -sh /tmp/backup.sql)"
+                set -e
+                DATE_FOLDER=$(date +%Y-%m-%d)
+                TARGET_DIR="/backups/$DATE_FOLDER"
+                mkdir -p "$TARGET_DIR"
+
+                echo "--- Starting Local Multi-DB Backup: $DATE_FOLDER ---"
+
+                # 1. Get all DB names (Grafana, Temporal, Uni, etc.)
+                DB_LIST=$(psql -h postgresql -U postgres -At -c "SELECT datname FROM pg_database WHERE datistemplate = false AND datname != 'postgres';")
+
+                for DB in $DB_LIST; do
+                  echo "Backing up: $DB"
+                  pg_dump -h postgresql -U postgres "$DB" > "$TARGET_DIR/$DB.sql"
+                done
+
+                # 2. Rotation: Keep only the 5 most recent date folders
+                echo "Cleaning up old folders..."
+                cd /backups
+                # List directories by time, skip newest 5, delete the rest
+                ls -dt */ | tail -n +6 | xargs -I {} rm -rf "{}"
+
+                echo "--- Current backup folders on disk ---"
+                ls -F /backups
           restartPolicy: OnFailure
+          volumes:
+          - name: backup-dir
+            persistentVolumeClaim:
+              claimName: postgres-local-backups
