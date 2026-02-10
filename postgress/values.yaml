@@ -1,10 +1,16 @@
 fullnameOverride: postgresql
 
 auth:
-  enablePostgresUser: true
-  username: admin
-  password: MyStrongPassword123%    # ✅ fixed password for predictable backups
-  database: chms
+  username: admin                # main database user
+  database: chms                 # database to create
+  existingSecret: postgresql     # the secret name your pod already uses
+  secretKeys:
+    adminPasswordKey: password           # key in secret for `admin` user
+    userPasswordKey: ""                  # not using extra user
+    replicationPasswordKey: postgres-password  # key in secret for replication / postgres superuser
+  password: ""                  # ignored because existingSecret is set
+  postgresPassword: ""          # ignored because existingSecret is set
+
 
 architecture: standalone
 
