@@ -5,7 +5,7 @@ auth:
   username: admin
   database: chms
 
-  existingSecret: ""
+  existingSecret: "postgresql-secrets"
   secretKeys:
     adminPasswordKey: postgres-password
     userPasswordKey: password
@@ -40,4 +40,11 @@ persistentVolumeClaimRetentionPolicy:
   enabled: true
 
 
+volumes:
+  - name: secrets-store-inline
+    csi:
+      driver: secrets-store.csi.k8s.io
+      readOnly: true
+      volumeAttributes:
+        secretProviderClass: "postgresql-secrets"
 
