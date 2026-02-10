@@ -4,7 +4,7 @@ auth:
   enablePostgresUser: true
   username: admin
   database: chms
-  existingSecret: "postgresql-secrets" # We will create this manually
+  existingSecret: "postgresql-secrets" # This now exists!
   secretKeys:
     adminPasswordKey: postgres_password
     userPasswordKey: user_password
@@ -19,6 +19,3 @@ primary:
     mountPath: /bitnami/postgresql
   service:
     type: NodePort
-
-readReplicas:
-  replicaCount: 0
