@@ -23,7 +23,6 @@ spec:
             - name: backup-dir
               mountPath: /backups
             command:
-              command:
               - /bin/sh
               - -c
               - |
@@ -32,33 +31,30 @@ spec:
                 TARGET_DIR="/backups/$DATE_FOLDER"
                 mkdir -p "$TARGET_DIR"
 
-                echo "--- Starting Local Backup: $DATE_FOLDER ---"
-                
-                # Use 'postgres' as the host if that is your service name
-                HOST="postgresql" 
-                USER="postgres"
+                echo "--- Starting Global Discovery Backup ---"
 
-                # 1. Test Connection first
-                if ! psql -h $HOST -U $USER -c "SELECT 1" > /dev/null 2>&1; then
-                  echo "ERROR: Cannot connect to $HOST. Check password or service name."
-                  exit 1
-                fi
-
-                # 2. Get DB list (finds Grafana, Temporal, etc.)
-                DB_LIST=$(psql -h $HOST -U $USER -At -c "SELECT datname FROM pg_database WHERE datistemplate = false AND datname != 'postgres';")
+                # 1. This command 'asks' Postgres for all database names
+                # It excludes only 'postgres' and templates to avoid system junk
+                DB_LIST=$(psql -h postgresql -U postgres -At -c "SELECT datname FROM pg_database WHERE datistemplate = false AND datname != 'postgres';")
 
                 for DB in $DB_LIST; do
-                  echo "Backing up: $DB..."
-                  if pg_dump -h $HOST -U $USER "$DB" > "$TARGET_DIR/$DB.sql"; then
-                    echo "  [SUCCESS] $DB"
+                  echo "Found Database: $DB. Starting backup..."
+                  
+                  # 2. Back up each database found into the dated folder
+                  if pg_dump -h postgresql -U postgres "$DB" > "$TARGET_DIR/$DB.sql"; then
+                    echo "  [SUCCESS] Saved $DB.sql"
                   else
-                    echo "  [FAILED] $DB"
+                    echo "  [ERROR] Failed to backup $DB"
                   fi
                 done
 
-                # 3. Prevent immediate exit (Optional for debugging)
-                echo "Backup cycle complete. Files in $TARGET_DIR:"
-                ls -lh "$TARGET_DIR"
+                # 3. Cleanup: Keep only the 5 most recent folders
+                echo "Rotating local storage..."
+                cd /backups && ls -dt */ | tail -n +6 | xargs -I {} rm -rf "{}"
+                
+                echo "--- All Discoverable Databases Backed Up ---"
+                ls -R /backups/$DATE_FOLDER
+                
           volumes:
           - name: backup-dir
             persistentVolumeClaim:
