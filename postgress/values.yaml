@@ -17,14 +17,14 @@ primary:
 
   persistence:
     enabled: true
-    storageClass: local-path     # 🔥 IMPORTANT FIX
+    storageClass: local-path
     accessModes:
       - ReadWriteOnce
     size: 8Gi
     mountPath: /bitnami/postgresql
 
   service:
-    type: NodePort               # OK for local testing
+    type: NodePort
 
   networkPolicy:
     enabled: false
@@ -32,13 +32,13 @@ primary:
   pdb:
     create: false
 
-# Disable read replicas for local setup
 readReplicas:
   replicaCount: 0
 
 persistentVolumeClaimRetentionPolicy:
   enabled: true
 
+# Extra secret mount for reference inside the container
 extraVolumeMounts:
   - name: postgresql-secrets
     mountPath: /mnt/postgresql-secrets
@@ -46,10 +46,5 @@ extraVolumeMounts:
 
 extraVolumes:
   - name: postgresql-secrets
-    csi:
-      driver: secrets-store.csi.k8s.io
-      readOnly: true
-      volumeAttributes:
-        secretProviderClass: "postgresql-secrets"
-
-
+    secret:
+      secretName: postgresql-secrets
