@@ -3,7 +3,7 @@ fullnameOverride: postgresql
 auth:
   enablePostgresUser: true
   username: admin
-  password: MyStrongPassword123    # ✅ fixed password for predictable backups
+  password: MyStrongPassword123%    # ✅ fixed password for predictable backups
   database: chms
 
 architecture: standalone
