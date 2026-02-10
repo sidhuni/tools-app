@@ -4,13 +4,12 @@ metadata:
   name: postgresql-backup
   namespace: postgresql
 spec:
-  schedule: "*/1 * * * *"  # Once a minute for testing
+  schedule: "0 2 * * *"  # Runs every day at 2:00 AM
   concurrencyPolicy: Forbid
   jobTemplate:
     spec:
       template:
         spec:
-          # This ensures the pod can write to the PVC on Rancher Desktop
           securityContext:
             fsGroup: 1001
           restartPolicy: OnFailure
@@ -36,31 +35,28 @@ spec:
                 - -c
                 - |
                   set -e
-                  # 1. Create directory for current backup
-                  DATE=$(date +%Y-%m-%d_%H-%M-%S)
+                  DATE=$(date +%Y-%m-%d_%H-%M)
                   BACKUP_DIR="/backups/$DATE"
                   mkdir -p "$BACKUP_DIR"
 
-                  echo "--- Backup Started: $(date) ---"
+                  echo "--- Starting Global Backup: $DATE ---"
                   
-                  # 2. Get database list
+                  # This finds ALL databases you created (chms, inventory, orders, etc.)
                   DB_LIST=$(psql -h postgresql -U "$PGUSER" -d postgres -At -c "SELECT datname FROM pg_database WHERE datistemplate = false AND datname != 'postgres';")
 
                   for DB in $DB_LIST; do
                     FILE_PATH="$BACKUP_DIR/$DB.sql.gz"
-                    echo "Backing up: $DB ..."
+                    echo "Backing up: $DB"
                     pg_dump -h postgresql -U "$PGUSER" "$DB" | gzip > "$FILE_PATH"
                     SIZE=$(du -sh "$FILE_PATH" | cut -f1)
-                    echo "✅ Done: $DB.sql.gz (Size: $SIZE)"
+                    echo "✅ Saved $DB.sql.gz ($SIZE)"
                   done
 
-                  # 3. ROLLING DELETE: Keep only the 5 most recent folders
-                  # This lists directories by time (newest first), skips the first 5, and deletes the rest
-                  echo "Checking for old backups (Keeping latest 5)..."
-                  cd /backups
-                  ls -dt 20* | tail -n +6 | xargs -r rm -rf
+                  # Keep only the last 5 backup events (5 folders)
+                  echo "Rotating old backups..."
+                  cd /backups && ls -dt 20* | tail -n +6 | xargs -r rm -rf
                   
-                  echo "--- All backups finished successfully ---"
+                  echo "--- Global Backup Complete ---"
           volumes:
             - name: backup-storage
               persistentVolumeClaim:
