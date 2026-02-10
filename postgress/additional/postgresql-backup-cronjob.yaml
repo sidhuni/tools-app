@@ -4,16 +4,18 @@ metadata:
   name: postgresql-backup
   namespace: postgresql
 spec:
-  schedule: "*/1 * * * *" 
+  schedule: "*/1 * * * *"  # Once a minute for testing
   concurrencyPolicy: Forbid
   jobTemplate:
     spec:
       template:
         spec:
+          # This ensures the pod can write to the PVC on Rancher Desktop
+          securityContext:
+            fsGroup: 1001
           restartPolicy: OnFailure
           containers:
             - name: backup
-              # Use the exact cached image from your running pod
               image: registry-1.docker.io/bitnami/postgresql:latest
               imagePullPolicy: IfNotPresent
               securityContext:
@@ -34,28 +36,29 @@ spec:
                 - -c
                 - |
                   set -e
-                  DATE=$(date +%Y-%m-%d_%H-%M)
+                  # 1. Create directory for current backup
+                  DATE=$(date +%Y-%m-%d_%H-%M-%S)
                   BACKUP_DIR="/backups/$DATE"
                   mkdir -p "$BACKUP_DIR"
 
                   echo "--- Backup Started: $(date) ---"
                   
-                  # Connect to 'postgres' to get the list of other databases
+                  # 2. Get database list
                   DB_LIST=$(psql -h postgresql -U "$PGUSER" -d postgres -At -c "SELECT datname FROM pg_database WHERE datistemplate = false AND datname != 'postgres';")
 
                   for DB in $DB_LIST; do
                     FILE_PATH="$BACKUP_DIR/$DB.sql.gz"
-                    echo "Backing up database: $DB ..."
-                    
+                    echo "Backing up: $DB ..."
                     pg_dump -h postgresql -U "$PGUSER" "$DB" | gzip > "$FILE_PATH"
-                    
-                    # --- NEW: Get and print the file size ---
                     SIZE=$(du -sh "$FILE_PATH" | cut -f1)
                     echo "✅ Done: $DB.sql.gz (Size: $SIZE)"
                   done
 
-                  echo "Cleaning up backups older than 5 days..."
-                  find /backups -type d -mtime +5 -exec rm -rf {} +
+                  # 3. ROLLING DELETE: Keep only the 5 most recent folders
+                  # This lists directories by time (newest first), skips the first 5, and deletes the rest
+                  echo "Checking for old backups (Keeping latest 5)..."
+                  cd /backups
+                  ls -dt 20* | tail -n +6 | xargs -r rm -rf
                   
                   echo "--- All backups finished successfully ---"
           volumes:
