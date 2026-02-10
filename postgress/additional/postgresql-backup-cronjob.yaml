@@ -4,7 +4,7 @@ metadata:
   name: postgresql-backup
   namespace: postgresql
 spec:
-  schedule: "0 2 * * *"   # daily at 2 AM
+  schedule: "*/1 * * * *"  # daily at 2 AM
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 3
