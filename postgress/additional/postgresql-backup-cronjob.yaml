@@ -13,7 +13,11 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: backup
-              image: bitnami/postgresql:18
+              # Use the exact cached image from your running pod
+              image: registry-1.docker.io/bitnami/postgresql:latest
+              imagePullPolicy: IfNotPresent
+              securityContext:
+                runAsUser: 1001
               env:
                 - name: PGUSER
                   value: "admin"
@@ -22,9 +26,6 @@ spec:
                     secretKeyRef:
                       name: postgresql-secrets
                       key: user_password
-              # Bitnami images run as non-root (1001), so we match that here
-              securityContext:
-                runAsUser: 1001
               volumeMounts:
                 - name: backup-storage
                   mountPath: /backups
