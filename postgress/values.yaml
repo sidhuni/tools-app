@@ -1,17 +1,14 @@
 fullnameOverride: postgresql
 
 auth:
+  enablePostgresUser: true
   username: admin
   database: chms
-  existingSecret: postgresql
-  secretKeys:
-    # Key for the 'admin' user
-    adminPasswordKey: password
-    # Key for the 'postgres' (superuser) 
-    postgresPasswordKey: postgres-password
-    # Key for replication
-    replicationPasswordKey: postgres-password
 
+  existingSecret: ""
+  secretKeys:
+    adminPasswordKey: postgres-password
+    userPasswordKey: password
 
 architecture: standalone
 
@@ -20,14 +17,14 @@ primary:
 
   persistence:
     enabled: true
-    storageClass: local-path
+    storageClass: local-path     # 🔥 IMPORTANT FIX
     accessModes:
       - ReadWriteOnce
     size: 8Gi
     mountPath: /bitnami/postgresql
 
   service:
-    type: NodePort
+    type: NodePort               # OK for local testing
 
   networkPolicy:
     enabled: false
@@ -35,22 +32,12 @@ primary:
   pdb:
     create: false
 
+# Disable read replicas for local setup
 readReplicas:
   replicaCount: 0
 
 persistentVolumeClaimRetentionPolicy:
   enabled: true
 
-extraObjects:
-  - apiVersion: v1
-    kind: PersistentVolumeClaim
-    metadata:
-      name: postgres-local-backups
-      namespace: postgresql
-    spec:
-      accessModes:
-        - ReadWriteOnce
-      storageClassName: local-path
-      resources:
-        requests:
-          storage: 5Gi
+
+
