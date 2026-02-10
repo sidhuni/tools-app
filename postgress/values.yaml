@@ -5,11 +5,6 @@ auth:
   username: admin               
   database: chms                
 
-  # Map secret keys properly
-  secretKeys:
-    adminPasswordKey: postgres-password   # superuser password
-    userPasswordKey: password             # app user password
-
 architecture: standalone
 
 primary:
