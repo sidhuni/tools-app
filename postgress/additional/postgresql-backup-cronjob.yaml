@@ -18,12 +18,16 @@ spec:
               image: postgres:16
               env:
                 - name: PGUSER
-                  value: admin
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgres-backup-creds
+                      key: PGUSER
                 - name: PGPASSWORD
                   valueFrom:
                     secretKeyRef:
                       name: postgres-backup-creds
-                      key: password
+                      key: PGPASSWORD
+
               volumeMounts:
                 - name: backup-storage
                   mountPath: /backups
