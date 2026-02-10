@@ -8,7 +8,7 @@ auth:
   existingSecret: "postgresql-secrets"
   secretKeys:
     adminPasswordKey: postgres_password
-    userPasswordKey: user_password
+    userPasswordKey: password
 
 architecture: standalone
 
