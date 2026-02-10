@@ -13,38 +13,17 @@ auth:
 architecture: standalone
 
 primary:
-  resourcesPreset: none
-
   persistence:
     enabled: true
     storageClass: local-path
-    accessModes:
-      - ReadWriteOnce
     size: 8Gi
     mountPath: /bitnami/postgresql
 
   service:
     type: NodePort
 
-  networkPolicy:
-    enabled: false
-
-  pdb:
-    create: false
-
 readReplicas:
   replicaCount: 0
 
 persistentVolumeClaimRetentionPolicy:
   enabled: true
-
-# Extra secret mount for reference inside the container
-extraVolumeMounts:
-  - name: postgresql-secrets
-    mountPath: /opt/bitnami/postgresql/secrets
-    readOnly: true
-
-extraVolumes:
-  - name: postgresql-secrets
-    secret:
-      secretName: postgresql-secrets
