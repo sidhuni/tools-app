@@ -20,6 +20,8 @@ spec:
     targetRevision: main
     path: postgress/additional
 
+  
+
   destination:
     server: "https://kubernetes.default.svc"
     namespace: postgresql
