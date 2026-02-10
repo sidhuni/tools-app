@@ -9,13 +9,29 @@ auth:
     adminPasswordKey: postgres_password
     userPasswordKey: user_password
 
-architecture: standalone
-
 primary:
+  resourcesPreset: none
+
   persistence:
     enabled: true
-    storageClass: local-path
+    storageClass: local-path     # 🔥 IMPORTANT FIX
+    accessModes:
+      - ReadWriteOnce
     size: 8Gi
     mountPath: /bitnami/postgresql
+
   service:
-    type: NodePort
+    type: NodePort               # OK for local testing
+
+  networkPolicy:
+    enabled: false
+
+  pdb:
+    create: false
+
+# Disable read replicas for local setup
+readReplicas:
+  replicaCount: 0
+
+persistentVolumeClaimRetentionPolicy:
+  enabled: true
