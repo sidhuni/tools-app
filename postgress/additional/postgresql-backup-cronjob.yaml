@@ -13,7 +13,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: backup
-              image: postgres:16
+              image: postgres:18-alpine
               env:
                 # We use 'admin' because that's what you set in values.yaml
                 - name: PGUSER
