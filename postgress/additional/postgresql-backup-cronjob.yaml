@@ -6,47 +6,56 @@ metadata:
 spec:
   schedule: "*/5 * * * *"
   concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
   jobTemplate:
     spec:
       template:
         spec:
           restartPolicy: OnFailure
           containers:
-          - name: backup
-            image: postgres:16
-            envFrom:
-              - secretRef:
-                  name: postgres-backup-creds
-            volumeMounts:
-              - name: backup-storage
-                mountPath: /backups
-            command:
-              - /bin/sh
-              - -c
-              - |
-                set -e
+            - name: backup
+              image: postgres:16
+              env:
+                - name: PGUSER
+                  value: admin
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgresql
+                      key: password
+              volumeMounts:
+                - name: backup-storage
+                  mountPath: /backups
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -e
 
-                echo "Automatic Backup Started at $(date -u)"
+                  echo "Automatic Backup Started at $(date -u)"
 
-                DATE=$(date +%Y-%m-%d)
-                BACKUP_DIR="/backups/$DATE"
-                mkdir -p "$BACKUP_DIR"
+                  DATE=$(date +%Y-%m-%d)
+                  BACKUP_DIR="/backups/$DATE"
+                  mkdir -p "$BACKUP_DIR"
 
-                echo "Testing connection..."
-                psql -h postgresql -c "SELECT 1;" >/dev/null
+                  echo "Testing connection..."
+                  psql -h postgresql -d chms -c "SELECT 1;" >/dev/null
 
-                DB_LIST=$(psql -h postgresql -At \
-                  -c "SELECT datname FROM pg_database WHERE datistemplate = false;")
+                  echo "Fetching database list..."
+                  DB_LIST=$(psql -h postgresql -At \
+                    -c "SELECT datname FROM pg_database WHERE datistemplate = false;")
 
-                for DB in $DB_LIST; do
-                  echo "Backing up $DB"
-                  pg_dump -h postgresql "$DB" | gzip > "$BACKUP_DIR/$DB.sql.gz"
-                done
+                  for DB in $DB_LIST; do
+                    echo "Backing up database: $DB"
+                    pg_dump -h postgresql "$DB" | gzip > "$BACKUP_DIR/$DB.sql.gz"
+                    echo "Done: $DB ($(du -sh "$BACKUP_DIR/$DB.sql.gz" | cut -f1))"
+                  done
 
-                echo "Cleaning old backups..."
-                cd /backups && ls -dt */ | tail -n +6 | xargs -r rm -rf
+                  echo "Cleaning backups older than 5 days..."
+                  cd /backups && ls -dt */ | tail -n +6 | xargs -r rm -rf
 
-                echo "✅ Backup completed"
+                  echo "✅ Backup completed successfully"
           volumes:
             - name: backup-storage
               persistentVolumeClaim:
