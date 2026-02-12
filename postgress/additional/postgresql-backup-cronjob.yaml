@@ -24,25 +24,33 @@ spec:
                 value: "postgresql" # Your DB Service name
               - name: BUCKET
                 value: "postgresqlb-backup"
-            command:
+                        command:
               - /bin/sh
               - -c
               - |
                 set -e
-                # 1. Add Postgres 18 Repo (Required because Ubuntu 24.04 only has v16)
-                apt-get update && apt-get install -y curl ca-certificates gnupg
-                install -d /usr/share/postgresql-common/pgdg
-                curl -fsSL https://www.postgresql.org | gpg --dearmor -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.gpg
+                
+                # 1. Add Postgres 18 Repo
+                apt-get update && apt-get install -y curl ca-certificates gnupg unzip gzip
+                
+                # Download key with retry and -k to bypass network SSL issues
+                curl -fsSLk https://www.postgresql.org | gpg --dearmor -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.gpg
+                
                 echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.gpg] http://apt.postgresql.org noble-pgdg main" > /etc/apt/sources.list.d/pgdg.list
 
-                # 2. Install Tools (Notice postgresql-client-18)
-                apt-get update && apt-get install -y postgresql-client-18 unzip gzip
+                # 2. Install Tools (Postgres 18)
+                apt-get update && apt-get install -y postgresql-client-18
                 
-                # 3. Fix AWS Download URL (You were missing /awscli-exe-linux-x86_64.zip)
-                curl "https://awscli.amazonaws.com" -o "awscliv2.zip"
+                # 3. Install AWS CLI v2 for ARM64 (Notice 'aarch64' instead of 'x86_64')
+                echo "Downloading AWS CLI for ARM64..."
+                curl -Lk "https://awscli.amazonaws.com" -o "awscliv2.zip"
                 unzip -q awscliv2.zip && ./aws/install
                 
-                # 4. Perform backup
+                # 4. Verification
+                aws --version
+                pg_dump --version
+
+                # 5. Backup Logic
                 TIMESTAMP=$(date +%Y-%m-%d)
                 DB_LIST=$(psql -h $PGHOST -U "$PGUSER" -d postgres -At -c "SELECT datname FROM pg_database WHERE datistemplate = false AND datname != 'postgres';")
 
@@ -51,4 +59,5 @@ spec:
                   pg_dump -h $PGHOST -U "$PGUSER" "$DB" | gzip | aws s3 cp - s3://$BUCKET/$TIMESTAMP/$DB.sql.gz
                   echo "✅ Uploaded $DB"
                 done
+
           restartPolicy: OnFailure
