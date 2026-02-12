@@ -37,33 +37,34 @@ spec:
               - |
                 set -e
                 
-                # 1. Prepare a writable environment for the non-root user
+                # 1. Setup local environment
                 export HOME=/tmp/1001
                 mkdir -p $HOME/bin
                 export PATH=$PATH:$HOME/bin
                 cd /tmp
 
-                # 2. Runtime Installation of AWS CLI
-                echo "Downloading AWS CLI..."
-                curl -s "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+                # 2. Use the Bundled Installer (Uses .tar.gz which Bitnami has 'tar' for)
+                echo "Downloading AWS CLI Bundled Installer..."
+                curl -s "https://s3.amazonaws.com/aws-cli/awscli-bundle.tar.gz" -o "awscli-bundle.tar.gz"
                 
-                echo "Extracting using Python..."
-                python3 -c "import zipfile; zipfile.ZipFile('awscliv2.zip').extractall('.')"
+                echo "Extracting using tar..."
+                tar -xzf awscli-bundle.tar.gz
                 
-                echo "Installing..."
-                ./aws/install -i $HOME/aws-cli -b $HOME/bin > /dev/null
+                echo "Installing AWS CLI..."
+                # The bundled installer is a self-contained script
+                ./awscli-bundle/install -i $HOME/aws-cli -b $HOME/bin/aws > /dev/null
 
-                # 3. Backup Logic
+                # 3. Set current date for folder name
                 TIMESTAMP=$(date +%Y-%m-%d)
                 echo "--- Starting S3 Backup for $TIMESTAMP ---"
 
-                # Get list of databases (excluding system dbs)
+                # 4. List all databases
                 DB_LIST=$(psql -h postgresql -U "$PGUSER" -d postgres -At -c "SELECT datname FROM pg_database WHERE datistemplate = false AND datname != 'postgres';")
 
+                # 5. Backup and Stream to S3
                 for DB in $DB_LIST; do
                   echo "Backing up: $DB"
-                  # Stream directly to S3: Dump -> Gzip -> S3
-                 
+                  pg_dump -h postgresql -U "$PGUSER" "$DB" | gzip | aws s3 cp - s3://$BUCKET/$TIMESTAMP/$DB.sql.gz
                   echo "✅ Uploaded $DB.sql.gz to S3"
                 done
                 
