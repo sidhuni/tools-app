@@ -24,7 +24,7 @@ spec:
                 value: "postgresql" # Your DB Service name
               - name: BUCKET
                 value: "postgresqlb-backup"
-                        command:
+              command:
               - /bin/sh
               - -c
               - |
