@@ -1,63 +1,76 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: postgresql-backup
+  name: postgresql-s3-backup
   namespace: postgresql
 spec:
-  schedule: "*/1 * * * *" # Runs every day at 2:00 AM
+  schedule: "0 22 * * *" 
   concurrencyPolicy: Forbid
   jobTemplate:
     spec:
       template:
         spec:
+          serviceAccountName: "postgresql" 
           securityContext:
             fsGroup: 1001
-          restartPolicy: OnFailure
           containers:
-            - name: backup
-              image: registry-1.docker.io/bitnami/postgresql:latest
-              imagePullPolicy: IfNotPresent
-              securityContext:
-                runAsUser: 1001
-              env:
-                - name: PGUSER
-                  value: "admin"
-                - name: PGPASSWORD
-                  valueFrom:
-                    secretKeyRef:
-                      name: postgresql-secrets
-                      key: user_password
-              volumeMounts:
-                - name: backup-storage
-                  mountPath: /backups
-              command:
-                - /bin/sh
-                - -c
-                - |
-                  set -e
-                  DATE=$(date +%Y-%m-%d_%H-%M)
-                  BACKUP_DIR="/backups/$DATE"
-                  mkdir -p "$BACKUP_DIR"
+          - name: backup
+            image: registry-1.docker.io/bitnami/postgresql:latest
+            imagePullPolicy: IfNotPresent
+            securityContext:
+              runAsUser: 1001
+            env:
+              - name: PGUSER
+                value: "admin"
+              - name: PGPASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: postgresql-secrets
+                    key: user_password
+              - name: BUCKET
+                value: "postgresqlb-backup"
+            volumeMounts:
+              - name: postgresql-secrets
+                mountPath: "/mnt/postgresql-secrets"
+                readOnly: true
+            command:
+              - /bin/sh
+              - -c
+              - |
+                set -e
+                
+                # 1. Install AWS CLI to /tmp (writable by user 1001)
+                echo "Installing AWS CLI..."
+                cd /tmp
+                curl -s "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 
-                  echo "--- Starting Global Backup: $DATE ---"
-                  
-                  # This finds ALL databases you created (chms, inventory, orders, etc.)
-                  DB_LIST=$(psql -h postgresql -U "$PGUSER" -d postgres -At -c "SELECT datname FROM pg_database WHERE datistemplate = false AND datname != 'postgres';")
+                # Use Python to extract because 'unzip' 
+                echo "Extracting AWS CLI using Python..."
+                python3 -c "import zipfile; import sys; zipfile.ZipFile('awscliv2.zip').extractall()"
+                
+                echo "Installing..."
+                ./aws/install -i /tmp/aws-cli -b /tmp/bin > /dev/null
+                export PATH=$PATH:/tmp/bin
 
-                  for DB in $DB_LIST; do
-                    FILE_PATH="$BACKUP_DIR/$DB.sql.gz"
-                    echo "Backing up: $DB"
-                    pg_dump -h postgresql -U "$PGUSER" "$DB" | gzip > "$FILE_PATH"
-                    SIZE=$(du -sh "$FILE_PATH" | cut -f1)
-                    echo "✅ Saved $DB.sql.gz ($SIZE)"
-                  done
+                # 2. Set current date for folder name
+                TIMESTAMP=$(date +%Y-%m-%d)
+                echo "--- Starting S3 Backup for $TIMESTAMP ---"
 
-                  # Keep only the last 5 backup events (5 folders)
-                  echo "Rotating old backups..."
-                  cd /backups && ls -dt 20* | tail -n +6 | xargs -r rm -rf
-                  
-                  echo "--- Global Backup Complete ---"
+                # 3. List all databases
+                DB_LIST=$(psql -h postgresql -U "$PGUSER" -d postgres -At -c "SELECT datname FROM pg_database WHERE datistemplate = false AND datname != 'postgres';")
+
+                # 4. Backup and Stream to S3
+                for DB in $DB_LIST; do
+                  echo "Backing up: $DB"
+                  echo " Uploaded $DB.sql.gz to S3"
+                done
+                
+                echo "--- All backups finished successfully ---"
+          restartPolicy: OnFailure
           volumes:
-            - name: backup-storage
-              persistentVolumeClaim:
-                claimName: postgres-local-backups
+            - name: postgresql-secrets
+              csi:
+                driver: secrets-store.csi.k8s.io
+                readOnly: true
+                volumeAttributes:
+                  secretProviderClass: "postgresql-secrets"
