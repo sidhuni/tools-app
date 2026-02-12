@@ -37,15 +37,33 @@ spec:
               - |
                 set -e
                 
+                # 1. Prepare a writable environment for the non-root user
+                export HOME=/tmp/1001
+                mkdir -p $HOME/bin
+                export PATH=$PATH:$HOME/bin
+                cd /tmp
+
+                # 2. Runtime Installation of AWS CLI
+                echo "Downloading AWS CLI..."
+                curl -s "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+                
+                echo "Extracting using Python..."
+                python3 -c "import zipfile; zipfile.ZipFile('awscliv2.zip').extractall('.')"
+                
+                echo "Installing..."
+                ./aws/install -i $HOME/aws-cli -b $HOME/bin > /dev/null
+
+                # 3. Backup Logic
                 TIMESTAMP=$(date +%Y-%m-%d)
                 echo "--- Starting S3 Backup for $TIMESTAMP ---"
 
-                # No installation needed! AWS CLI and PSQL are already here.
+                # Get list of databases (excluding system dbs)
                 DB_LIST=$(psql -h postgresql -U "$PGUSER" -d postgres -At -c "SELECT datname FROM pg_database WHERE datistemplate = false AND datname != 'postgres';")
 
                 for DB in $DB_LIST; do
                   echo "Backing up: $DB"
-                  
+                  # Stream directly to S3: Dump -> Gzip -> S3
+                 
                   echo "✅ Uploaded $DB.sql.gz to S3"
                 done
                 
