@@ -1,83 +1,48 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: postgresql-backup
+  name: postgresql-s3-backup
   namespace: postgresql
 spec:
-  schedule: "*/1 * * * *" 
-  concurrencyPolicy: Forbid
+  schedule: "*/1 * * * *" # Every minute for local testing
   jobTemplate:
     spec:
       template:
         spec:
-          securityContext:
-            fsGroup: 1001
-          restartPolicy: OnFailure
-
-          volumes:
-            - name: backup-storage
-              persistentVolumeClaim:
-                claimName: postgres-local-backups
-            - name: aws-tools 
-              emptyDir: {}
-
-          initContainers:
-          - name: install-aws
-            image: amazon/aws-cli:latest
-            command: ["/bin/sh", "-c", "cp -pr /usr/local/aws-cli /target/"]
-            volumeMounts:
-            - name: aws-tools
-              mountPath: /target
-
           containers:
-            - name: backup
-              image: registry-1.docker.io/bitnami/postgresql:latest
-              securityContext:
-                runAsUser: 1001
-              env:
-                - name: PGUSER
-                  value: "admin"
-                - name: PGPASSWORD
-                  valueFrom:
-                    secretKeyRef:
-                      name: postgresql-secrets # Uses your existing Opaque secret
-                      key: user_password
-                - name: BUCKET
-                  value: "postgresqlb-backup"
-                - name: PGHOST
-                  value: "postgresql"
-              volumeMounts:
-                - name: backup-storage
-                  mountPath: /backups
-                - name: aws-tools
-                  mountPath: /opt/aws-tools
-              command:
+          - name: backup-worker
+            image: ubuntu:24.04 # Stable LTS version
+            env:
+              - name: PGUSER
+                value: "admin"
+              - name: PGPASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: postgresql-secrets
+                    key: user_password
+              - name: PGHOST
+                value: "postgresql" # Your DB Service name
+              - name: BUCKET
+                value: "postgresqlb-backup"
+            command:
               - /bin/sh
               - -c
               - |
                 set -e
+                # 1. Update and install tools (This is why we use Ubuntu!)
+                apt-get update && apt-get install -y curl unzip postgresql-client gzip
                 
-                # 1. DYNAMICALLY find the version folder (Handles any AWS update)
-                VERSION_DIR=$(ls /opt/aws-tools/aws-cli/v2/ | grep -v current | head -n 1)
-                export AWS_HOME=/opt/aws-tools/aws-cli/v2/$VERSION_DIR
-                export PATH=$PATH:$AWS_HOME/dist:$AWS_HOME/bin
+                # 2. Install AWS CLI v2
+                curl "https://awscli.amazonaws.com" -o "awscliv2.zip"
+                unzip -q awscliv2.zip && ./aws/install
                 
-                echo "--- Tools Check ---"
-                # Use the dynamic path to verify
-                $AWS_HOME/dist/aws --version
-                
-                # Set alias for convenience
-                alias aws="$AWS_HOME/dist/aws"
-
+                # 3. Perform backup and upload to S3
                 TIMESTAMP=$(date +%Y-%m-%d)
-                echo "--- Starting Backup for $TIMESTAMP ---"
-
-                # DB Logic
+                # Get the list of databases from the Bitnami pod via the network
                 DB_LIST=$(psql -h $PGHOST -U "$PGUSER" -d postgres -At -c "SELECT datname FROM pg_database WHERE datistemplate = false AND datname != 'postgres';")
 
                 for DB in $DB_LIST; do
                   echo "Backing up: $DB"
-                  # REAL BACKUP COMMAND (Don't forget the pg_dump!)
-                  
-                  echo "✅ Uploaded $DB.sql.gz"
+                  pg_dump -h $PGHOST -U "$PGUSER" "$DB" | gzip | aws s3 cp - s3://$BUCKET/$TIMESTAMP/$DB.sql.gz
                 done
+          restartPolicy: OnFailure
