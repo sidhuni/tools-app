@@ -11,8 +11,6 @@ spec:
       template:
         spec:
           # This ensures the pod can write to the PVC on Rancher Desktop
-          template:
-        spec:
           serviceAccountName: "postgresql"
           volumes:
             - name: aws-cli-bin
@@ -24,15 +22,9 @@ spec:
             volumeMounts:
             - name: aws-cli-bin
               mountPath: /target
-          securityContext:
-            fsGroup: 1001
-          restartPolicy: OnFailure
           containers:
             - name: backup
               image: registry-1.docker.io/bitnami/postgresql:latest
-              imagePullPolicy: IfNotPresent
-              securityContext:
-                runAsUser: 1001
               env:
                 - name: PGUSER
                   value: "admin"
