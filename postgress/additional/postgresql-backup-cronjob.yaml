@@ -14,17 +14,24 @@ spec:
             fsGroup: 1001
           restartPolicy: OnFailure
 
+          # ONLY ONE VOLUMES LIST
           volumes:
             - name: backup-storage
               persistentVolumeClaim:
                 claimName: postgres-local-backups
-            - name: aws-tools # One shared volume is enough
+            - name: aws-tools 
               emptyDir: {}
+            # Keep your secret CSI volume if you are using it
+            - name: postgresql-secrets
+              csi:
+                driver: secrets-store.csi.k8s.io
+                readOnly: true
+                volumeAttributes:
+                  secretProviderClass: "postgresql-secrets"
 
           initContainers:
           - name: install-aws
             image: amazon/aws-cli:latest
-            # We copy the actual folder to the shared volume
             command: ["/bin/sh", "-c", "cp -pr /usr/local/aws-cli /target/"]
             volumeMounts:
             - name: aws-tools
@@ -46,12 +53,15 @@ spec:
                 - name: BUCKET
                   value: "postgresqlb-backup"
                 - name: PGHOST
-                  value: "postgresql" # Ensure this matches your service name
+                  value: "postgresql"
               volumeMounts:
                 - name: backup-storage
                   mountPath: /backups
-                - name: aws-tools
+                - name: aws-tools   # This name must match the name in the volumes list
                   mountPath: /opt/aws-tools
+                - name: postgresql-secrets
+                  mountPath: "/mnt/postgresql-secrets"
+                  readOnly: true
               command:
               - /bin/sh
               - -c
@@ -61,7 +71,8 @@ spec:
                 # Point to the dist folder where the 'aws' executable lives
                 export PATH=$PATH:/opt/aws-tools/aws-cli/v2/current/dist
                 
-                # Check tools
+                # Check tools (This will show up in your logs)
+                echo "--- Environment Check ---"
                 aws --version
                 
                 TIMESTAMP=$(date +%Y-%m-%d)
