@@ -1,18 +1,19 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: postgresql-s3-backup
+  name: postgresql-backup
   namespace: postgresql
 spec:
-  schedule: "0 22 * * *"
+  schedule: "*/1 * * * *"  # Once a minute for testing
   concurrencyPolicy: Forbid
   jobTemplate:
     spec:
       template:
         spec:
-          serviceAccountName: postgresql
+          # This ensures the pod can write to the PVC on Rancher Desktop
           securityContext:
             fsGroup: 1001
+          restartPolicy: OnFailure
           containers:
             - name: backup
               image: registry-1.docker.io/bitnami/postgresql:latest
@@ -27,38 +28,40 @@ spec:
                     secretKeyRef:
                       name: postgresql-secrets
                       key: user_password
-                - name: BUCKET
-                  value: "postgresqlb-backup"
+              volumeMounts:
+                - name: backup-storage
+                  mountPath: /backups
               command:
                 - /bin/sh
                 - -c
                 - |
                   set -e
+                  # 1. Create directory for current backup
+                  DATE=$(date +%Y-%m-%d_%H-%M-%S)
+                  BACKUP_DIR="/backups/$DATE"
+                  mkdir -p "$BACKUP_DIR"
 
-                  # Install AWS CLI to writable directory
-                  echo "Installing AWS CLI..."
-                  cd /tmp
-                  curl -s "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o awscliv2.zip
-                  python3 -c "import zipfile; zipfile.ZipFile('awscliv2.zip').extractall()"
-                  ./aws/install -i /tmp/aws-cli -b /tmp/bin > /dev/null
-                  export PATH=$PATH:/tmp/bin
-
-                  TIMESTAMP=$(date +%Y-%m-%d)
-                  echo "--- Starting S3 Backup for $TIMESTAMP ---"
-
-                  DB_LIST=$(psql -h postgresql -U "$PGUSER" -d postgres -At \
-                    -c "SELECT datname FROM pg_database WHERE datistemplate = false AND datname != 'postgres';")
+                  echo "--- Backup Started: $(date) ---"
+                  
+                  # 2. Get database list
+                  DB_LIST=$(psql -h postgresql -U "$PGUSER" -d postgres -At -c "SELECT datname FROM pg_database WHERE datistemplate = false AND datname != 'postgres';")
 
                   for DB in $DB_LIST; do
-                    echo "Backing up: $DB"
-
-                    pg_dump -h postgresql -U "$PGUSER" "$DB" | gzip > "/tmp/${DB}.sql.gz"
-
-                    aws s3 cp "/tmp/${DB}.sql.gz" \
-                      "s3://${BUCKET}/${TIMESTAMP}/${DB}.sql.gz"
-
-                    echo "Uploaded $DB.sql.gz to S3"
+                    FILE_PATH="$BACKUP_DIR/$DB.sql.gz"
+                    echo "Backing up: $DB ..."
+                    pg_dump -h postgresql -U "$PGUSER" "$DB" | gzip > "$FILE_PATH"
+                    SIZE=$(du -sh "$FILE_PATH" | cut -f1)
+                    echo "✅ Done: $DB.sql.gz (Size: $SIZE)"
                   done
 
+                  # 3. ROLLING DELETE: Keep only the 5 most recent folders
+                  # This lists directories by time (newest first), skips the first 5, and deletes the rest
+                  echo "Checking for old backups (Keeping latest 5)..."
+                  cd /backups
+                  ls -dt 20* | tail -n +6 | xargs -r rm -rf
+                  
                   echo "--- All backups finished successfully ---"
-          restartPolicy: OnFailure
+          volumes:
+            - name: backup-storage
+              persistentVolumeClaim:
+                claimName: postgres-local-backups
