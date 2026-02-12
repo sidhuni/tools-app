@@ -11,7 +11,7 @@ spec:
         spec:
           containers:
           - name: backup-worker
-            image: ubuntu:24.04 # Stable LTS version
+            image: public.ecr.aws/docker/library/ubuntu:24.04
             env:
               - name: PGUSER
                 value: "admin"
