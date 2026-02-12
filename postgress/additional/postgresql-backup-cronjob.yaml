@@ -21,14 +21,7 @@ spec:
                 claimName: postgres-local-backups
             - name: aws-tools 
               emptyDir: {}
-            # Keep your secret CSI volume if you are using it
-            - name: postgresql-secrets
-              csi:
-                driver: secrets-store.csi.k8s.io
-                readOnly: true
-                volumeAttributes:
-                  secretProviderClass: "postgresql-secrets"
-
+      
           initContainers:
           - name: install-aws
             image: amazon/aws-cli:latest
