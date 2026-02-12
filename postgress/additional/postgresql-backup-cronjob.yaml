@@ -40,7 +40,7 @@ spec:
                 - name: PGPASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: postgresql-secrets # Matches the secret from Step 1
+                      name: postgresql-secrets # Uses your existing Opaque secret
                       key: user_password
                 - name: BUCKET
                   value: "postgresqlb-backup"
@@ -56,6 +56,8 @@ spec:
               - -c
               - |
                 set -e
+                
+                # Point to the injected AWS CLI tools
                 export PATH=$PATH:/opt/aws-tools/aws-cli/v2/current/dist
                 
                 echo "--- Tools Check ---"
@@ -64,10 +66,14 @@ spec:
                 TIMESTAMP=$(date +%Y-%m-%d)
                 echo "--- Starting Backup for $TIMESTAMP ---"
 
+                # 1. Get DB List
                 DB_LIST=$(psql -h $PGHOST -U "$PGUSER" -d postgres -At -c "SELECT datname FROM pg_database WHERE datistemplate = false AND datname != 'postgres';")
 
                 for DB in $DB_LIST; do
                   echo "Backing up: $DB"
+                  # 2. Dump and stream to S3
                   pg_dump -h $PGHOST -U "$PGUSER" "$DB" | gzip | aws s3 cp - s3://$BUCKET/$TIMESTAMP/$DB.sql.gz
                   echo "✅ Uploaded $DB.sql.gz"
                 done
+                
+                echo "--- All backups finished successfully ---"
