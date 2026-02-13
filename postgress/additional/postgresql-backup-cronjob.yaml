@@ -36,11 +36,11 @@ spec:
                 
                 # 1. Use the official helper to add the Postgres 18 repository
                 # This avoids manual GPG folder and path errors.
-                # apt-get update && apt-get install -y curl ca-certificates postgresql-common
-                # yes | /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh
+                apt-get update && apt-get install -y curl ca-certificates postgresql-common
+                yes | /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh
                 
                 # 2. Install the Client (Notice version 18 to match your server)
-                # apt-get update && apt-get install -y postgresql-client-18 unzip gzip
+                apt-get update && apt-get install -y postgresql-client-18 unzip gzip
                 
                 # 3. Use the RELIABLE ARM64 download link for AWS CLI
                 # We use -L (follow redirects) and -k (ignore SSL if network is unstable)
