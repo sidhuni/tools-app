@@ -31,27 +31,30 @@ spec:
               - |
                 set -e
                 
-                # 1. Add Postgres 18 Repo
+                # 1. Update and install basic tools
                 apt-get update && apt-get install -y curl ca-certificates gnupg unzip gzip
                 
-                # Download key with retry and -k to bypass network SSL issues
-                curl -fsSLk https://www.postgresql.org | gpg --dearmor -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.gpg
+                # 2. CREATE THE MISSING DIRECTORY (This fixes your error)
+                mkdir -p /usr/share/postgresql-common/pgdg/
                 
+                # 3. Add Postgres 18 Repo
+                curl -fsSLk https://www.postgresql.org | gpg --dearmor -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.gpg
                 echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.gpg] http://apt.postgresql.org noble-pgdg main" > /etc/apt/sources.list.d/pgdg.list
 
-                # 2. Install Tools (Postgres 18)
+                # 4. Install Postgres Client 18
                 apt-get update && apt-get install -y postgresql-client-18
                 
-                # 3. Install AWS CLI v2 for ARM64 (Notice 'aarch64' instead of 'x86_64')
+                # 5. Install AWS CLI v2 for ARM64 (aarch64)
                 echo "Downloading AWS CLI for ARM64..."
                 curl -Lk "https://awscli.amazonaws.com" -o "awscliv2.zip"
                 unzip -q awscliv2.zip && ./aws/install
                 
-                # 4. Verification
+                # 6. Verification Check
+                echo "--- Tool Versions ---"
                 aws --version
                 pg_dump --version
 
-                # 5. Backup Logic
+                # 7. Backup Logic
                 TIMESTAMP=$(date +%Y-%m-%d)
                 DB_LIST=$(psql -h $PGHOST -U "$PGUSER" -d postgres -At -c "SELECT datname FROM pg_database WHERE datistemplate = false AND datname != 'postgres';")
 
