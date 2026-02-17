@@ -8,7 +8,7 @@ spec:
   sources:
   - repoURL: https://grafana.github.io/helm-charts
     chart: grafana
-    targetRevision: 8.4.2
+    targetRevision: 10.5.15
     helm:
       valueFiles:
       - $values/grafana/values.yaml
@@ -26,5 +26,5 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true     # ✅ THIS IS REQUIRED
+      - CreateNamespace=true 
       - Validate=false
