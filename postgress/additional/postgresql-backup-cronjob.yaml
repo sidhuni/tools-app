@@ -4,7 +4,7 @@ metadata:
   name: postgresql-s3-backup
   namespace: postgresql
 spec:
-  schedule: "*/50 * * * *" # Every minute for local testing
+  schedule: "*/1 * * * *" # Every minute for local testing
   timeZone: "Asia/Kolkata" # Requires K8s 1.27+
   jobTemplate:
     spec:
