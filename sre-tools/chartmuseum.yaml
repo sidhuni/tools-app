@@ -10,7 +10,7 @@ spec:
     targetRevision: main
     ref: values
   - repoURL: https://chartmuseum.github.io/charts
-    targetRevision: 3.10.1
+    targetRevision: 3.10.4
     chart: chartmuseum
     helm:
       valueFiles:
