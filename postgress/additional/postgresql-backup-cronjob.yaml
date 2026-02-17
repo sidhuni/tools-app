@@ -67,3 +67,29 @@ spec:
              
                   echo "✅ Uploaded $DB"
                 done
+
+                echo "--- Starting Retention Cleanup (Target: 5 days) ---"
+
+                # Get folders, sort them by name (date), and ensure we only get the directory names
+                # 'aws s3 ls' output looks like: PRE 2026-02-11/
+                BACKUPS=$(aws s3 ls "s3://$BUCKET/" | grep "PRE " | awk '{print $2}' | sort)
+
+                COUNT=$(echo "$BACKUPS" | grep -c / || true)
+
+                if [ "$COUNT" -gt 5 ]; then
+                    # Calculate how many need to be deleted
+                    # Example: If COUNT is 6, REMOVE_COUNT is 1
+                    REMOVE_COUNT=$((COUNT - 5))
+                    
+                    # Take the oldest ones (top of the sorted list)
+                    REMOVE_LIST=$(echo "$BACKUPS" | head -n "$REMOVE_COUNT")
+                    
+                    echo "Found $COUNT backup folders. Deleting the oldest $REMOVE_COUNT folder(s)."
+                    
+                    for OLD_FOLDER in $REMOVE_LIST; do
+                        echo "Permanently deleting oldest backup: $OLD_FOLDER"
+                        aws s3 rm "s3://$BUCKET/$OLD_FOLDER" --recursive
+                    done
+                else
+                    echo "Only $COUNT backups found. No deletion needed today."
+                fi
