@@ -1,35 +1,35 @@
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: postgresql
-  namespace: argocd
-spec:
-  project: default
-  sources:
-  - repoURL: 'registry-1.docker.io/bitnamicharts'
-    targetRevision: 18.2.4
-    chart: postgresql
-    helm:
-      valueFiles:
-      - $values/postgress/values.yaml
-  - repoURL: https://github.com/sidhuni/tools-app.git
-    targetRevision: main
-    ref: values
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: postgresql
+#   namespace: argocd
+# spec:
+#   project: default
+#   sources:
+#   - repoURL: 'registry-1.docker.io/bitnamicharts'
+#     targetRevision: 18.2.4
+#     chart: postgresql
+#     helm:
+#       valueFiles:
+#       - $values/postgress/values.yaml
+#   - repoURL: https://github.com/sidhuni/tools-app.git
+#     targetRevision: main
+#     ref: values
 
-  - repoURL: https://github.com/sidhuni/tools-app.git
-    targetRevision: main
-    path: postgress/additional
+#   - repoURL: https://github.com/sidhuni/tools-app.git
+#     targetRevision: main
+#     path: postgress/additional
 
   
 
-  destination:
-    server: "https://kubernetes.default.svc"
-    namespace: postgresql
+#   destination:
+#     server: "https://kubernetes.default.svc"
+#     namespace: postgresql
 
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-      - SkipDryRunOnMissingResource=true
+#   syncPolicy:
+#     automated:
+#       prune: true
+#       selfHeal: true
+#     syncOptions:
+#       - CreateNamespace=true
+#       - SkipDryRunOnMissingResource=true
