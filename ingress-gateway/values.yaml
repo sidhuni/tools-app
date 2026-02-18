@@ -2,7 +2,7 @@
 
 _internal_defaults_do_not_set:
   
-  name: ""
+  name: "istio-ingressgateway"
   
   revision: ""
 
@@ -115,6 +115,8 @@ _internal_defaults_do_not_set:
 
   
   labels:
+    istio: ingressgateway
+    app: istio-ingressgateway
     
     "istio.io/dataplane-mode": none
 
