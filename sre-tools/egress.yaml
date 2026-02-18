@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: egress-gateway
+  namespace: argocd
+spec:
+  project: default
+  sources:
+  - repoURL: https://helm.livekit.io
+    chart: egress-gateway
+    targetRevision: 1.8.4
+    helm:
+      valueFiles:
+      - $values/egress-gateway/values.yaml
+
+  - repoURL: https://github.com/sidhuni/apps-repo.git
+    targetRevision: main
+    ref: values
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: egress-gateway
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true 
+      - Validate=false
