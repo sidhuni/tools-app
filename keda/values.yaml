@@ -6,15 +6,15 @@ image:
   keda:
     registry: ghcr.io
     repository: kedacore/keda
-    tag: ""
+    tag: "2.19.0"
   metricsApiServer:
     registry: ghcr.io
     repository: kedacore/keda-metrics-apiserver
-    tag: ""
+    tag: "2.19.0"
   webhooks:
     registry: ghcr.io
     repository: kedacore/keda-admission-webhooks
-    tag: ""
+    tag: "2.19.0"
   pullPolicy: Always
 clusterName: kubernetes-default
 clusterDomain: cluster.local
