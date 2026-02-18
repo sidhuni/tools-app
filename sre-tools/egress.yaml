@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   sources:
-  - repoURL: https://helm.livekit.io
+  - repoURL: https://istio-release.storage.googleapis.com/charts
     chart: egress-gateway
     targetRevision: 1.8.4
     helm:
