@@ -2,6 +2,7 @@
 
 _internal_defaults_do_not_set:
   global:
+    externalIstiod: false 
 
     
     
@@ -19,7 +20,7 @@ _internal_defaults_do_not_set:
     
     resourceScope: all
   base:
-    
+    enableNamespaceRevisions: true 
     
     
     excludedCRDs: []
