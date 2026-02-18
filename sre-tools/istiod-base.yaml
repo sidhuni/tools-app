@@ -7,7 +7,7 @@ spec:
   project: default
   sources:
   - repoURL: https://istio-release.storage.googleapis.com/charts
-    chart: istiod
+    chart: istiod-base
     targetRevision: 1.29.0
     helm:
       valueFiles:
