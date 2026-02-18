@@ -2,7 +2,7 @@
 
 _internal_defaults_do_not_set:
   
-  name: ""
+  name: "istio-egressgateway"
   
   revision: ""
 
@@ -41,9 +41,7 @@ _internal_defaults_do_not_set:
 
   service:
     
-    type: LoadBalancer
-    
-    clusterIP: ""
+    type: ClusterIP
     
     selectorLabels: {}
     ports:
@@ -115,6 +113,8 @@ _internal_defaults_do_not_set:
 
   
   labels:
+    istio: egressgateway
+    app: istio-egressgateway
     
     "istio.io/dataplane-mode": none
 

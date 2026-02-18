@@ -7,7 +7,7 @@ spec:
   project: default
   sources:
   - repoURL: https://istio-release.storage.googleapis.com/charts
-    chart: egress-gateway
+    chart: gateway
     targetRevision: 1.29.0
     helm:
       valueFiles:
