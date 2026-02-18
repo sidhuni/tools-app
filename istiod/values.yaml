@@ -78,7 +78,7 @@ _internal_defaults_do_not_set:
   meshConfig:
     enablePrometheusMerge: true
   experimental:
-    stableValidationPolicy: false
+    stableValidationPolicy: true
   global:
     istioNamespace: istio-system
     certSigners: []
