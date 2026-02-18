@@ -1,13 +1,13 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: istiod
+  name: keda
   namespace: argocd
 spec:
   project: default
   sources:
   - repoURL: https://kedacore.github.io/charts
-    chart: istiod
+    chart: keda
     targetRevision: 2.19.0
     helm:
       valueFiles:
@@ -19,7 +19,7 @@ spec:
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: istio-system
+    namespace: keda
 
   syncPolicy:
     automated:
