@@ -1,55 +1,43 @@
-global:
-  image:
-    registry: null
-  dnsConfig: {}
 image:
   keda:
-    registry: ghcr.io
-    repository: kedacore/keda
+    repository: ghcr.io/kedacore/keda
     tag: "2.19.0"
   metricsApiServer:
-    registry: ghcr.io
-    repository: kedacore/keda-metrics-apiserver
+    repository: ghcr.io/kedacore/keda-metrics-apiserver
     tag: "2.19.0"
   webhooks:
-    registry: ghcr.io
-    repository: kedacore/keda-admission-webhooks
+    repository: ghcr.io/kedacore/keda-admission-webhooks
     tag: "2.19.0"
-  pullPolicy: Always
-clusterName: kubernetes-default
-clusterDomain: cluster.local
 operator:
-  name: keda-operator
-  revisionHistoryLimit: 10
   replicaCount: 1
-  disableCompression: true
-  dnsConfig: {}
-  dnsPolicy: ClusterFirst
-  useHostNetwork: false
-  affinity: {}
-  extraContainers: []
-  extraInitContainers: []
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchLabels:
+            app: keda-operator
+        topologyKey: kubernetes.io/hostname
 resources:
+  metricServer:
+    limits:
+      cpu: 1
+      memory: 100Mi
+    requests:
+      cpu: 1
+      memory: 100Mi
   operator:
     limits:
       cpu: 1
       memory: 1000Mi
     requests:
-      cpu: 100m
-      memory: 100Mi
-  metricServer:
-    limits:
       cpu: 1
       memory: 1000Mi
-    requests:
-      cpu: 100m
-      memory: 100Mi
   webhooks:
     limits:
-      cpu: 1
-      memory: 1000Mi
+      cpu: 50m
+      memory: 100Mi
     requests:
-      cpu: 100m
+      cpu: 50m
       memory: 100Mi
 prometheus:
   operator:
