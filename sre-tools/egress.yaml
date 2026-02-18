@@ -13,7 +13,7 @@ spec:
       valueFiles:
       - $values/egress-gateway/values.yaml
 
-  - repoURL: https://github.com/sidhuni/apps-repo.git
+  - repoURL: https://github.com/sidhuni/tools-app.git
     targetRevision: main
     ref: values
 
