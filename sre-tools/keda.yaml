@@ -6,12 +6,12 @@ metadata:
 spec:
   project: default
   sources:
-  - repoURL: https://istio-release.storage.googleapis.com/charts
+  - repoURL: https://kedacore.github.io/charts
     chart: istiod
-    targetRevision: 1.29.0
+    targetRevision: 2.19.0
     helm:
       valueFiles:
-      - $values/istiod/values.yaml
+      - $values/keda/values.yaml
 
   - repoURL: https://github.com/sidhuni/tools-app.git
     targetRevision: main
