@@ -41,9 +41,9 @@ _internal_defaults_do_not_set:
 
   service:
     
-    type: LoadBalancer
+    type: clusterIP
     
-    clusterIP: ""
+    
     
     selectorLabels: {}
     ports:
