@@ -29,7 +29,7 @@ externalIndexer:
 indexer:
   enabled: true
   serviceAccount:
-    create: false
+    create: true
     annotations: {}
     name: "wazuh-indexer"
   replicas: 1
