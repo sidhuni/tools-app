@@ -1,11 +1,3 @@
-global:
-  imagePullSecrets: []
-kubeVersion: ""
-nameOverride: ""
-fullnameOverride: ""
-clusterDomain: cluster.local
-commonLabels: {}
-commonAnnotations: {}
 agent:
   name: wazuh-agent
   image:
@@ -73,5 +65,4 @@ agent:
     rollingUpdate: {}
   extraVolumeMounts: []
   extraVolumes: []
-  extraPodSpec: 
-  automountServiceAccountToken: false
+  automountServiceAccountToken: false  # <-- move it here, under agent, not extraPodSpec
