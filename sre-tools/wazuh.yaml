@@ -7,8 +7,8 @@ spec:
   project: default
   sources:
   - repoURL: https://morgoved.github.io/wazuh-helm/
-    chart: wazuh-agent
-    targetRevision: 1.0.18
+    chart: wazuh
+    targetRevision: "0.1.0"
     helm:
       valueFiles:
       - $values/wazuh/values.yaml
