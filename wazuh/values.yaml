@@ -10,7 +10,7 @@ global:
 cert-manager:
   enabled: false
 certificates:
-  enabled: true
+  enabled: false
   requestPolicy:
     enabled: false
   issuer:
