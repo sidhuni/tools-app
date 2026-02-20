@@ -6,9 +6,9 @@ metadata:
 spec:
   project: default
   sources:
-  - repoURL: https://morgoved.github.io/wazuh-helm/
+  - repoURL: https://ca-moes.github.io/wazuh-helm/
     chart: wazuh
-    targetRevision: "0.1.0"
+    targetRevision: "*"
     helm:
       valueFiles:
       - $values/wazuh/values.yaml
