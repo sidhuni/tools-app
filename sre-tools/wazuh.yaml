@@ -6,9 +6,9 @@ metadata:
 spec:
   project: default
   sources:
-  - repoURL: https://promptlylabs.github.io/wazuh-helm-chart
+  - repoURL: https://morgoved.github.io/wazuh-helm/
     chart: wazuh-agent
-    targetRevision: 0.0.8
+    targetRevision: 1.0.18
     helm:
       valueFiles:
       - $values/wazuh/values.yaml
