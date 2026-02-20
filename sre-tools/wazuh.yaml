@@ -7,7 +7,7 @@ spec:
   project: default
   sources:
   - repoURL: https://avistotelecom.github.io/charts/
-    chart: Wazuh
+    chart: wazuh-agent
     targetRevision: 4.12.0
     helm:
       valueFiles:
