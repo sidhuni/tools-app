@@ -12,7 +12,7 @@ cert-manager:
 certificates:
   enabled: true
   requestPolicy:
-    enabled: true
+    enabled: false
   issuer:
     name: null
     type: issuer
