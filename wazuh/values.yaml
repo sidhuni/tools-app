@@ -74,4 +74,4 @@ agent:
   extraVolumeMounts: []
   extraVolumes: []
   extraPodSpec: 
-    automountServiceAccountToken: false
+  automountServiceAccountToken: false
