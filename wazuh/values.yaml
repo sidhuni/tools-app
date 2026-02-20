@@ -32,7 +32,7 @@ indexer:
     create: false
     annotations: {}
     name: "wazuh-indexer"
-  replicas: 3
+  replicas: 1
   annotations: {}
   extraPodLabels: {}
   updateStrategy: RollingUpdate
@@ -391,7 +391,7 @@ wazuh:
       container: {}
   worker:
     enabled: true
-    replicas: 2
+    replicas: 1
     annotations: {}
     extraPodLabels: {}
     resources:
