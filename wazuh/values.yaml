@@ -45,11 +45,11 @@ indexer:
       secret: {}
   resources:
     requests:
-      cpu: 500m
-      memory: 1Gi
+      memory: "512Mi"
+      cpu: "250m"
     limits:
-      cpu: 1000m
-      memory: 2Gi
+      memory: "1Gi"
+      cpu: "500m"
   pdb:
     enabled: true
     maxUnavailable: 1
