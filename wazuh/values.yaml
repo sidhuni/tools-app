@@ -43,13 +43,13 @@ indexer:
     imagePullSecrets:
       enabled: false
       secret: {}
-  resources:
-    requests:
-      memory: "512Mi"
-      cpu: "250m"
-    limits:
-      memory: "1Gi"
-      cpu: "500m"
+    resources:
+      requests:
+        cpu: "250m"
+        memory: "512Mi" # Default is often 2Gi+
+      limits:
+        cpu: "500m"
+        memory: "1Gi"
   pdb:
     enabled: true
     maxUnavailable: 1
@@ -148,11 +148,11 @@ dashboard:
     updateStrategy: OnDelete
   resources:
     requests:
-      cpu: 500m
-      memory: 512Mi
+      cpu: "100m"
+      memory: "256Mi"
     limits:
-      cpu: 1000m
-      memory: 1Gi
+      cpu: "200m"
+      memory: "512Mi"
   pdb:
     enabled: false
     maxUnavailable: 1
@@ -308,11 +308,12 @@ wazuh:
     image: alpine
     resources:
       requests:
-        cpu: 250m
-        memory: 512Mi
+        cpu: "250m"
+        memory: "512Mi"
       limits:
-        cpu: 1000m
-        memory: 1Gi
+        cpu: "500m"
+        memory: "1Gi"
+
   extraInitContainers: []
   localDecoder: |
     {{ include "wazuh.localDecoder" . }}
@@ -396,11 +397,12 @@ wazuh:
     extraPodLabels: {}
     resources:
       requests:
-        cpu: 500m
-        memory: 512Mi
+        cpu: "250m"
+        memory: "512Mi"
       limits:
-        cpu: 1000m
-        memory: 1Gi
+        cpu: "500m"
+        memory: "1Gi"
+
     tolerations: []
     affinity: {}
     dnsPolicy: ""
