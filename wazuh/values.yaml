@@ -305,7 +305,7 @@ wazuh:
     existingSecret: ""
     pass: "password"
   initContainer:
-    image: alpine
+    image: nginx
     resources:
       requests:
         cpu: "250m"
