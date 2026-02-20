@@ -114,7 +114,7 @@ indexer:
       tag: 12-debian-12-r43
   initContainers: []
   env:
-    OPENSEARCH_JAVA_OPTS: "-Xms1g -Xmx1g -Dlog4j2.formatMsgNoLookups=true"
+    OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m -Dlog4j2.formatMsgNoLookups=true"
     CLUSTER_NAME: "wazuh"
     NETWORK_HOST: "0.0.0.0"
     DISABLE_INSTALL_DEMO_CONFIG: "true"
@@ -128,14 +128,14 @@ indexer:
     password: "WazuhSecretPassword"
   extraSpec:
     statefulSet: {}
-    pod: {}
+    pod: {}x
     container: {}
   job:
     annotations: {}
 dashboard:
   enabled: true
   serviceAccount:
-    create: false
+    create: true
     annotations: {}
     name: "wazuh-dashboard"
   replicas: 1
@@ -275,7 +275,7 @@ dashboard:
 wazuh:
   enabled: true
   serviceAccount:
-    create: false
+    create: true
     annotations: {}
     name: "wazuh-manager"
   syslog_enable: true
@@ -465,7 +465,7 @@ agent:
   podAnnotations: {}
   extraPodLabels: {}
   images:
-    repository: kinseii/wazuh-agent
+    repository: wazuh/wazuh-agent
     tag: "4.7.2"
     pullPolicy: IfNotPresent
   podSecurityContext: {}
