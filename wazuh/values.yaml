@@ -128,7 +128,7 @@ indexer:
     password: "WazuhSecretPassword"
   extraSpec:
     statefulSet: {}
-    pod: {}x
+    pod: {}
     container: {}
   job:
     annotations: {}
