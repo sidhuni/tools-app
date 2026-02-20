@@ -1,17 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: keda
+  name: istiod
   namespace: argocd
 spec:
   project: default
   sources:
-  - repoURL: https://kedacore.github.io/charts
-    chart: keda
-    targetRevision: 2.19.0
+  - repoURL: https://avistotelecom.github.io/charts/
+    chart: Wazuh
+    targetRevision: 4.12.0
     helm:
       valueFiles:
-      - $values/keda/values.yaml
+      - $values/wazuh/values.yaml
 
   - repoURL: https://github.com/sidhuni/tools-app.git
     targetRevision: main
@@ -19,7 +19,7 @@ spec:
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: keda
+    namespace: wazuh-agent
 
   syncPolicy:
     automated:
