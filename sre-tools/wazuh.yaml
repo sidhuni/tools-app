@@ -1,31 +1,31 @@
-# apiVersion: argoproj.io/v1alpha1
-# kind: Application
-# metadata:
-#   name: wazuh
-#   namespace: argocd
-# spec:
-#   project: default
-#   sources:
-#   - repoURL: https://morgoved.github.io/wazuh-helm/
-#     chart: wazuh
-#     targetRevision: 1.0.15 
-#     helm:
-#       valueFiles:
-#       - $values/wazuh/values.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: wazuh-new
+  namespace: argocd
+spec:
+  project: default
+  sources:
+  - repoURL: https://morgoved.github.io/wazuh-helm/
+    chart: wazuh
+    targetRevision: 1.0.15 
+    helm:
+      valueFiles:
+      - $values/wazuh/values.yaml
 
-#   - repoURL: https://github.com/sidhuni/tools-app.git
-#     targetRevision: main
-#     ref: values
+  - repoURL: https://github.com/sidhuni/tools-app.git
+    targetRevision: main
+    ref: values
 
-#   destination:
-#     server: https://kubernetes.default.svc
-#     namespace: wazuh-azz
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: wazuh-new
 
-#   syncPolicy:
-#     automated:
-#       prune: false
-#       selfHeal: false
-#     syncOptions:
-#       - CreateNamespace=true
-#       - Replace=true   
-#       - Validate=false
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: false
+    syncOptions:
+      - CreateNamespace=true
+      - Replace=true   
+      - Validate=false
