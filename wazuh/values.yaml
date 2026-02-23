@@ -489,7 +489,7 @@ agent:
   dnsPolicy: ""
   dnsConfig: {}
   joinManager:
-    managerHost: ""
+    managerHost: "wazuh.wazuh-new.svc.cluster.local"
     apiPort: "55000"
     agentsEvents: "1514"
     workerHost: ""
