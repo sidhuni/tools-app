@@ -19,7 +19,7 @@ spec:
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: wazuh-az
+    namespace: wazuh-azz
 
   syncPolicy:
     automated:
