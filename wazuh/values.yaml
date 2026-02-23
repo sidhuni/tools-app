@@ -131,6 +131,7 @@ indexer:
     pod: {}
     container: {}
   job:
+    enabled: false
     annotations: {}
 dashboard:
   enabled: true
