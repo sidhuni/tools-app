@@ -385,12 +385,7 @@ wazuh:
     storageClass: null
     conf: |
       {{ include "wazuh.master.conf" . }}
-    extraConf: |
-      <vulnerability-detection>
-        <enabled>yes</enabled>
-        <index-status>yes</index-status>
-        <feed-update-interval>60m</feed-update-interval>
-      </vulnerability-detection>
+    extraConf: ""
     extraSpec:
       statefulSet: {}
       pod: {}
