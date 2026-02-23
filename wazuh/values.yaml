@@ -51,7 +51,7 @@ indexer:
         cpu: "500m"
         memory: "1Gi"
   pdb:
-    enabled: true
+    enabled: false
     maxUnavailable: 1
   livenessProbe:
     periodSeconds: 20
@@ -418,7 +418,7 @@ wazuh:
           port: 1514
           targetPort: 1514
     pdb:
-      enabled: true
+      enabled: false
       maxUnavailable: 1
     livenessProbe: {}
     readinessProbe: {}
