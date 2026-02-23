@@ -38,7 +38,7 @@ indexer:
   updateStrategy: RollingUpdate
   images:
     repository: wazuh/wazuh-indexer
-    tag: "4.7.2"
+    tag: "4.7.2-full"
     pullPolicy: IfNotPresent
     imagePullSecrets:
       enabled: false
