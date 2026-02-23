@@ -120,7 +120,7 @@ indexer:
     DISABLE_INSTALL_DEMO_CONFIG: "true"
   pvc:
     extraLabels: {}
-  storageSize: 5Gi
+  storageSize: 1Gi
   storageClass: null
   cred:
     existingSecret: ""
@@ -381,7 +381,7 @@ wazuh:
       extraEgresses: []
     pvc:
       extraLabels: {}
-    storageSize: 5Gi
+    storageSize: 1Gi
     storageClass: null
     conf: |
       {{ include "wazuh.master.conf" . }}
@@ -434,7 +434,7 @@ wazuh:
       extraEgresses: []
     pvc:
       extraLabels: {}
-    storageSize: 5Gi
+    storageSize: 1Gi
     storageClass: null
     conf: |
       {{ include "wazuh.worker.conf" . }}
