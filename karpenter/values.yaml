@@ -81,5 +81,10 @@ logLevel: debug
 logEncoding: console
 clusterName: "rancher-desktop"
 clusterEndpoint: "https://127.0.0.1:6443"
+AWS_REGION: "us-west-2"
+AWS_ACCESS_KEY_ID: "dummy"
+AWS_SECRET_ACCESS_KEY: "dummy"
+
+
 aws:
   defaultInstanceProfile: ""
