@@ -12,7 +12,7 @@ serviceMonitor:
   enabled: false
   additionalLabels: {}
   endpointConfig: {}
-replicas: 2
+replicas: 1
 revisionHistoryLimit: 10
 strategy:
   rollingUpdate:
