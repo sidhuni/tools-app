@@ -1,108 +1,108 @@
-nameOverride: ""
-fullnameOverride: ""
-additionalLabels: {}
-additionalAnnotations: {}
-imagePullPolicy: IfNotPresent
-imagePullSecrets: []
-service:
-  annotations: {}
-serviceAccount:
-  create: true
-  name: ""
-  annotations: {}
-additionalClusterRoleRules: []
-serviceMonitor:
-  enabled: false
-  additionalLabels: {}
-  relabelings: []
-  metricRelabelings: []
-  endpointConfig: {}
-  sampleLimit: null
-replicas: 1
-revisionHistoryLimit: 10
-strategy:
-  rollingUpdate:
-    maxUnavailable: 1
-podLabels: {}
-podAnnotations: {}
-podDisruptionBudget:
-  name: karpenter
-  maxUnavailable: 1
-podSecurityContext:
-  fsGroup: 65532
-  seccompProfile:
-    type: RuntimeDefault
-priorityClassName: system-cluster-critical
-terminationGracePeriodSeconds:
-hostNetwork: false
-schedulerName: default-scheduler
-dnsPolicy: ClusterFirst
-dnsConfig: {}
-initContainers: {}
-nodeSelector:
-  kubernetes.io/os: linux
-affinity:
-  nodeAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: karpenter.sh/nodepool
-              operator: DoesNotExist
-  podAntiAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      - topologyKey: "kubernetes.io/hostname"
-topologySpreadConstraints:
-  - maxSkew: 1
-    topologyKey: some-key
-    whenUnsatisfiable: DoNotSchedule
-tolerations:
-  - key: CriticalAddonsOnly
-    operator: Exists
-extraVolumes: []
-controller:
-  containerName: controller
-  image:
-    repository: public.ecr.aws/karpenter/controller
-    tag: 1.9.0
-    digest: sha256:30a506c64fbb1d8026cbfd9a1d662be3ab6e33a7999290a104085d78b49a69d7
-  env: []
-  envFrom: []
-  securityContext:
-    appArmorProfile: {}
-    seLinuxOptions: {}
-    seccompProfile: {}
-  resources: {}
-  extraVolumeMounts: []
-  sidecarContainer: []
-  sidecarVolumeMounts: []
-  metrics:
-    port: 8080
-  healthProbe:
-    port: 8081
-logLevel: info
-logOutputPaths:
-  - stdout
-logErrorOutputPaths:
-  - stderr
-settings:
-  batchMaxDuration: 10s
-  batchIdleDuration: 1s
-  preferencePolicy: Respect
-  minValuesPolicy: Strict
-  clusterCABundle: ""
-  clusterName: "local-cluster"
-  clusterEndpoint: ""
-  isolatedVPC: false
-  eksControlPlane: false
-  vmMemoryOverheadPercent: 0.075
-  interruptionQueue: ""
-  reservedENIs: "0"
-  ignoreDRARequests: true
-  disableClusterStateObservability: false
-  disableDryRun: false
-  featureGates:
-    nodeRepair: false
-    nodeOverlay: false
-    reservedCapacity: true
-    spotToSpotConsolidation: false
-    staticCapacity: false
+# nameOverride: ""
+# fullnameOverride: ""
+# additionalLabels: {}
+# additionalAnnotations: {}
+# imagePullPolicy: IfNotPresent
+# imagePullSecrets: []
+# service:
+#   annotations: {}
+# serviceAccount:
+#   create: true
+#   name: ""
+#   annotations: {}
+# additionalClusterRoleRules: []
+# serviceMonitor:
+#   enabled: false
+#   additionalLabels: {}
+#   relabelings: []
+#   metricRelabelings: []
+#   endpointConfig: {}
+#   sampleLimit: null
+# replicas: 1
+# revisionHistoryLimit: 10
+# strategy:
+#   rollingUpdate:
+#     maxUnavailable: 1
+# podLabels: {}
+# podAnnotations: {}
+# podDisruptionBudget:
+#   name: karpenter
+#   maxUnavailable: 1
+# podSecurityContext:
+#   fsGroup: 65532
+#   seccompProfile:
+#     type: RuntimeDefault
+# priorityClassName: system-cluster-critical
+# terminationGracePeriodSeconds:
+# hostNetwork: false
+# schedulerName: default-scheduler
+# dnsPolicy: ClusterFirst
+# dnsConfig: {}
+# initContainers: {}
+# nodeSelector:
+#   kubernetes.io/os: linux
+# affinity:
+#   nodeAffinity:
+#     requiredDuringSchedulingIgnoredDuringExecution:
+#       nodeSelectorTerms:
+#         - matchExpressions:
+#             - key: karpenter.sh/nodepool
+#               operator: DoesNotExist
+#   podAntiAffinity:
+#     requiredDuringSchedulingIgnoredDuringExecution:
+#       - topologyKey: "kubernetes.io/hostname"
+# topologySpreadConstraints:
+#   - maxSkew: 1
+#     topologyKey: some-key
+#     whenUnsatisfiable: DoNotSchedule
+# tolerations:
+#   - key: CriticalAddonsOnly
+#     operator: Exists
+# extraVolumes: []
+# controller:
+#   containerName: controller
+#   image:
+#     repository: public.ecr.aws/karpenter/controller
+#     tag: 1.9.0
+#     digest: sha256:30a506c64fbb1d8026cbfd9a1d662be3ab6e33a7999290a104085d78b49a69d7
+#   env: []
+#   envFrom: []
+#   securityContext:
+#     appArmorProfile: {}
+#     seLinuxOptions: {}
+#     seccompProfile: {}
+#   resources: {}
+#   extraVolumeMounts: []
+#   sidecarContainer: []
+#   sidecarVolumeMounts: []
+#   metrics:
+#     port: 8080
+#   healthProbe:
+#     port: 8081
+# logLevel: info
+# logOutputPaths:
+#   - stdout
+# logErrorOutputPaths:
+#   - stderr
+# settings:
+#   batchMaxDuration: 10s
+#   batchIdleDuration: 1s
+#   preferencePolicy: Respect
+#   minValuesPolicy: Strict
+#   clusterCABundle: ""
+#   clusterName: "local-cluster"
+#   clusterEndpoint: ""
+#   isolatedVPC: false
+#   eksControlPlane: false
+#   vmMemoryOverheadPercent: 0.075
+#   interruptionQueue: ""
+#   reservedENIs: "0"
+#   ignoreDRARequests: true
+#   disableClusterStateObservability: false
+#   disableDryRun: false
+#   featureGates:
+#     nodeRepair: false
+#     nodeOverlay: false
+#     reservedCapacity: true
+#     spotToSpotConsolidation: false
+#     staticCapacity: false
