@@ -93,3 +93,37 @@ spec:
                 else
                     echo "Only $COUNT backups found. No deletion needed today."
                 fi
+
+                echo "--- Starting Retention Cleanup (Keep last 5 days) ---"
+
+                # 1. Get all folder names (e.g., 2026-02-11_22-00-59-IST/)
+                BACKUPS=$(aws s3 ls "s3://$BUCKET/" | grep "PRE " | awk '{print $2}' | sort)
+
+                # 2. Extract unique dates (YYYY-MM-DD)
+                DATES=$(echo "$BACKUPS" | cut -c 1-10 | sort | uniq)
+
+                # 3. Count unique dates
+                DATE_COUNT=$(echo "$DATES" | grep -c . || echo 0)
+
+                if [ "$DATE_COUNT" -gt 5 ]; then
+                    REMOVE_COUNT=$((DATE_COUNT - 5))
+                    REMOVE_DATES=$(echo "$DATES" | head -n "$REMOVE_COUNT")
+                    
+                    echo "Found $DATE_COUNT unique dates. Deleting folders for the oldest $REMOVE_COUNT date(s):"
+                    
+                    for OLD_DATE in $REMOVE_DATES; do
+                        echo "Searching for folders matching date: $OLD_DATE"
+                        
+                        # We look for any folder in our BACKUPS list that starts with that date
+                        echo "$BACKUPS" | grep "^$OLD_DATE" | while read -r OLD_FOLDER; do
+                            # Remove any trailing whitespace/slashes for safety, then execute
+                            TARGET=$(echo "$OLD_FOLDER" | xargs)
+                            if [ -n "$TARGET" ]; then
+                                echo "Permanently deleting: $TARGET"
+                                aws s3 rm "s3://$BUCKET/$TARGET" --recursive
+                            fi
+                        done
+                    done
+                else
+                    echo "Only $DATE_COUNT unique backup dates found ($DATE_COUNT/5). No deletion needed."
+                fi
