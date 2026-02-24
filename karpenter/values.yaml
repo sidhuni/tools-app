@@ -79,7 +79,7 @@ webhook:
   extraVolumeMounts: []
 logLevel: debug
 logEncoding: console
-clusterName: ""
-clusterEndpoint: ""
+clusterName: "rancher-desktop"
+clusterEndpoint: "https://127.0.0.1:6443"
 aws:
   defaultInstanceProfile: ""
