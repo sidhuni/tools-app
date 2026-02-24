@@ -384,8 +384,6 @@ wazuh:
       extraLabels: {}
     storageSize: 1Gi
     storageClass: null
-    conf: |
-      {{ include "wazuh.master.conf" . }}
     extraConf: ""
     extraSpec:
       statefulSet: {}
@@ -437,8 +435,6 @@ wazuh:
       extraLabels: {}
     storageSize: 1Gi
     storageClass: null
-    conf: |
-      {{ include "wazuh.worker.conf" . }}
     extraConf: ""
     extraSpec:
       statefulSet: {}
