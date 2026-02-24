@@ -50,6 +50,8 @@ controller:
   image: "public.ecr.aws/karpenter/controller:v0.16.3@sha256:68db4f092cf9cc83f5ef9e2fbc5407c2cb682e81f64dfaa700a7602ede38b1cf"
   securityContext: {}
   env: 
+    - name: KARPNTER_DISABLE_AWS
+      value: "true"
     - name: CLUSTER_NAME
       value: rancher-desktop
     - name: CLUSTER_ENDPOINT
