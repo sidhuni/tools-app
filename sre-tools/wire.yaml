@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: WireMock
+  name: wiremock
   namespace: argocd
 spec:
   project: default
@@ -19,7 +19,7 @@ spec:
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: WireMock
+    namespace: wiremock
 
   syncPolicy:
     automated:
