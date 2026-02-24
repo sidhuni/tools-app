@@ -1,30 +1,30 @@
-# apiVersion: argoproj.io/v1alpha1
-# kind: Application
-# metadata:
-#   name: WireMock
-#   namespace: argocd
-# spec:
-#   project: default
-#   sources:
-#   - repoURL: deliveryhero/wiremock 
-#     chart: 
-#     targetRevision: 2.26.0
-#     helm:
-#       valueFiles:
-#       - $values/wiremock/values.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: WireMock
+  namespace: argocd
+spec:
+  project: default
+  sources:
+  - repoURL: deliveryhero/wiremock 
+    chart: 
+    targetRevision: 2.26.0
+    helm:
+      valueFiles:
+      - $values/wiremock/values.yaml
 
-#   - repoURL: https://github.com/sidhuni/tools-app.git
-#     targetRevision: main
-#     ref: values
+  - repoURL: https://github.com/sidhuni/tools-app.git
+    targetRevision: main
+    ref: values
 
-#   destination:
-#     server: https://kubernetes.default.svc
-#     namespace: WireMock
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: WireMock
 
-#   syncPolicy:
-#     automated:
-#       prune: true
-#       selfHeal: true
-#     syncOptions:
-#       - CreateNamespace=true 
-#       - Validate=false
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true 
+      - Validate=false
