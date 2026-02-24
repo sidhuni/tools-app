@@ -1,34 +1,34 @@
-fullnameOverride: postgresql
+# fullnameOverride: postgresql
 
-auth:
-  enablePostgresUser: true
-  username: admin
-  database: ""
-  existingSecret: "postgresql-secrets"
-  secretKeys:
-    adminPasswordKey: postgres_password
-    userPasswordKey: user_password
+# auth:
+#   enablePostgresUser: true
+#   username: admin
+#   database: ""
+#   existingSecret: "postgresql-secrets"
+#   secretKeys:
+#     adminPasswordKey: postgres_password
+#     userPasswordKey: user_password
 
-primary:
-  resourcesPreset: none
+# primary:
+#   resourcesPreset: none
   
-  # Ensures the bitnami user (1001) has permission to read the secret
-  podSecurityContext:
-    fsGroup: 1001
+#   # Ensures the bitnami user (1001) has permission to read the secret
+#   podSecurityContext:
+#     fsGroup: 1001
 
-  persistence:
-    enabled: true
-    storageClass: local-path
-    size: 8Gi
-    mountPath: /bitnami/postgresql
+#   persistence:
+#     enabled: true
+#     storageClass: local-path
+#     size: 8Gi
+#     mountPath: /bitnami/postgresql
 
-  service:
-    type: NodePort
+#   service:
+#     type: NodePort
 
-# Disabling things that aren't needed for local dev to save RAM
-readReplicas:
-  replicaCount: 0
-networkPolicy:
-  enabled: false
-pdb:
-  create: false
+# # Disabling things that aren't needed for local dev to save RAM
+# readReplicas:
+#   replicaCount: 0
+# networkPolicy:
+#   enabled: false
+# pdb:
+#   create: false
