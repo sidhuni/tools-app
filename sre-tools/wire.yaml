@@ -6,9 +6,9 @@ metadata:
 spec:
   project: default
   sources:
-  - repoURL: https://charts.deliveryhero.io
+  - repoURL: oci://ghcr.io/deliveryhero/helm-charts/wiremock
     chart: wiremock
-    targetRevision: 2.26.0
+    targetRevision: 1.4.6
     helm:
       valueFiles:
       - $values/wiremock/values.yaml
