@@ -189,7 +189,9 @@ dashboard:
   affinity: {}
   dnsPolicy: ""
   dnsConfig: {}
-  additionalEnv: []
+  additionalEnv: 
+    - name: OPENSEARCH_HOSTS
+      value: "http://wazuh-news-indexer:9200"
   enable_ssl: false
   config: |
     {{ include "wazuh.dashboard.config" . }}
