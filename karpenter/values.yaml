@@ -75,6 +75,8 @@ controller:
   batchMaxDuration: 10s
   batchIdleDuration: 1s
 webhook:
+  livenessProbe: {}
+  readinessProbe: {}
   image: "public.ecr.aws/karpenter/webhook:v0.16.3@sha256:96a2d9b06d6bc5127801f358f74b1cf2d289b423a2e9ba40c573c0b14b17dafa"
   securityContext: {}
   port: 8443
