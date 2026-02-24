@@ -1,555 +1,555 @@
-nameOverride: null
-fullnameOverride: null
-autoreload:
-  enabled: false
-global:
-  dualStack:
-    enabled: false
-    ipFamilyPolicy: ""
-    ipFamilies: []
-cert-manager:
-  enabled: false
-certificates:
-  enabled: true
-  requestPolicy:
-    enabled: false
-  issuer:
-    name: null
-    type: issuer
-  duration: 2160h 
-  renewBefore: 360h 
-  subject:
-    organization: Company
-    country: US
-    locality: California
-externalIndexer:
-  enabled: false
-  host: https://wazuh-indexer.example.com
-  port: 9200
-indexer:
-  enabled: true
-  serviceAccount:
-    create: true
-    annotations: {}
-    name: "wazuh-indexer"
-  replicas: 1
-  annotations: {}
-  extraPodLabels: {}
-  updateStrategy: RollingUpdate
-  images:
-    repository: wazuh/wazuh-indexer
-    tag: "4.7.2"
-    pullPolicy: IfNotPresent
-    imagePullSecrets:
-      enabled: false
-      secret: {}
-    resources:
-      requests:
-        cpu: "250m"
-        memory: "512Mi" # Default is often 2Gi+
-      limits:
-        cpu: "500m"
-        memory: "1Gi"
-  pdb:
-    enabled: false
-    maxUnavailable: 1
-  livenessProbe:
-    periodSeconds: 20
-    timeoutSeconds: 5
-    failureThreshold: 10
-    successThreshold: 1
-    initialDelaySeconds: 10
-    tcpSocket:
-      port: 9200
-  readinessProbe:
-    periodSeconds: 20
-    timeoutSeconds: 5
-    failureThreshold: 10
-    successThreshold: 1
-    initialDelaySeconds: 10
-    tcpSocket:
-      port: 9200
-  securityContext:
-    fsGroup: 1000
-  networkPolicy:
-    enabled: true
-    extraIngresses: []
-    extraEgresses: []
-  service:
-    type: ClusterIP
-    annotations: {}
-    httpPort: 9200
-    nodes: 9300
-    metrics: 9600
-  nodeSelector: {}
-  tolerations: []
-  affinity: {}
-  dnsPolicy: ""
-  dnsConfig: {}
-  additionalEnv: []
-  additionalVolumes: []
-  additionalVolumeMounts: []
-  config:
-    opensearch: |-
-      {{ include "wazuh.indexer.opensearchConfig" . }}
-    internalUsers: |-
-      {{ include "wazuh.indexer.internalUsers" . }}
-    securityConfig: |-
-      {{ include "wazuh.indexer.securityConfig" . }}
-    rolesMapping: |-
-      {{ include "wazuh.indexer.rolesMapping" . }}
-    roles: |-
-      {{ include "wazuh.indexer.roles" . }}
-    tenants: |-
-      {{ include "wazuh.indexer.tenants" . }}
-    nodesDn: |-
-      {{ include "wazuh.indexer.nodes_dn" . }}
-    whitelist: |-
-      {{ include "wazuh.indexer.whitelist" . }}
-  additionalConfigs: {}
-  sysctlImage:
-    enabled: false
-    images:
-      repository: bitnamilegacy/os-shell
-      tag: 12-debian-12-r43
-  initContainers: []
-  env:
-    OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m -Dlog4j2.formatMsgNoLookups=true"
-    CLUSTER_NAME: "wazuh"
-    NETWORK_HOST: "0.0.0.0"
-    DISABLE_INSTALL_DEMO_CONFIG: "true"
-  pvc:
-    extraLabels: {}
-  storageSize: 1Gi
-  storageClass: null
-  cred:
-    existingSecret: ""
-    passwordHash: "$2a$12$zGWIT7wkPKT/zww3bmMyp.KuWXH4RzgxiB91Q8NGFcqpyPy.R2Rcq"
-    password: "WazuhSecretPassword"
-  extraSpec:
-    statefulSet: {}
-    pod: {}
-    container: {}
-  job:
-    annotations: {}
-dashboard:
-  enabled: true
-  serviceAccount:
-    create: true
-    annotations: {}
-    name: "wazuh-dashboard"
-  replicas: 1
-  annotations: {}
-  extraPodLabels: {}
-  images:
-    repository: wazuh/wazuh-dashboard
-    tag: "4.7.2"
-    pullPolicy: IfNotPresent
-    updateStrategy: OnDelete
-  resources:
-    requests:
-      cpu: "500m"
-      memory: "1Gi"
-    limits:
-      cpu: "1000m"
-      memory: "2Gi"
-  pdb:
-    enabled: false
-    maxUnavailable: 1
-  livenessProbe:
-    periodSeconds: 20
-    timeoutSeconds: 5
-    failureThreshold: 10
-    successThreshold: 1
-    initialDelaySeconds: 10
-    httpGet:
-      path: /api/status
-      port: 5601
-  readinessProbe:
-    periodSeconds: 20
-    timeoutSeconds: 5
-    failureThreshold: 10
-    successThreshold: 1
-    initialDelaySeconds: 10
-    httpGet:
-      path: /api/status
-      port: 5601
-  securityContext: {}
-  networkPolicy:
-    enabled: true
-    extraIngresses: []
-    extraEgresses: []
-  service:
-    type: ClusterIP
-    annotations: {}
-    httpPort: 5601
-  nodeSelector: {}
-  tolerations: []
-  affinity: {}
-  dnsPolicy: ""
-  dnsConfig: {}
-  additionalEnv: 
-    - name: OPENSEARCH_HOSTS
-      value: "http://wazuh-news-indexer:9200"
-  enable_ssl: false
-  config: |
-    {{ include "wazuh.dashboard.config" . }}
-  cred:
-    existingSecret: ""
-    username: "kibanaserver"
-    password: "kibanaserver"
-    passwordHash: "$2a$12$7NCZ.l9ntPhou5zNjZIU4uqXNNWMF7SyF6Y6mcjhHTB6Z1eQubHC."
-  basicAuth:
-    enabled: true
-    order: 4
-    challenge: true
-  server:
-    extraConf: {}
-  sso:
-    oidc:
-      enabled: false
-      primary: false
-      url: ""
-      logoutUrl: ""
-      baseRedirectUrl: ""
-      scope: "openid profile email address phone"
-      issuer: ""
-      order: 1
-      existingSecret: ""
-      clientIdKey: "OPENSEARCH_OIDC_CLIENT_ID"
-      clientSecretKey: "OPENSEARCH_OIDC_CLIENT_SECRET"
-      config:
-        subjectKey: "preferred_username"
-        rolesKey: "roles"
-      roleMappings:
-        allAccess:
-          backendRoles: []
-        kibanaServer:
-          backendRoles: []
-        kibanaUser:
-          backendRoles: []
-      extraRoleMappings: {}
-      customizeLoginButton:
-        enabled: false
-        text: "Log In with Single sign-on (OIDC)"
-        imageUrl: ""
-        showImage: false
-      idp:
-        enableSSL: false
-        pemtrustedcasFilePath: ""
-        pemtrustedcasContent: |-
-          -----BEGIN CERTIFICATE-----
-          -----END CERTIFICATE-----
-    saml:
-      enabled: false
-      primary: false
-      metadataUrl: ""
-      idpEntityId: ""
-      enableSSL: false
-      pemtrustedcasFilePath: ""
-      pemtrustedcasContent: |-
-        -----BEGIN CERTIFICATE-----
-        -----END CERTIFICATE-----
-      spEntityId: "wazuh-saml"
-      kibanaUrl: ""
-      order: 1
-      exchangeKey: ""
-      config:
-        rolesKey: "Roles"
-      roleMappings:
-        allAccess:
-          backendRoles: []
-        kibanaServer:
-          backendRoles: []
-        kibanaUser:
-          backendRoles: []
-      extraRoleMappings: {}
-  ingress:
-    enabled: false
-    className: ""
-    tls: []
-    annotations: {}
-    host: "wazuh.example.com"
-  extraSpec:
-    deployment: {}
-    pod: {}
-    container: {}
-wazuh:
-  enabled: true
-  serviceAccount:
-    create: true
-    annotations: {}
-    name: "wazuh-manager"
-  syslog_enable: true
-  key: "c98b62a9b6169ac5f67dae55ae4a9088"
-  images:
-    repository: wazuh/wazuh-manager
-    tag: "4.7.2"
-    pullPolicy: IfNotPresent
-    imagePullSecrets:
-      enabled: false
-      secret: {}
-  loadBalancer:
-    enabled: false
-    annotations: {}
-  service:
-    annotations: {}
-    port: 1516
-  nodeSelector: {}
-  env:
-    FILEBEAT_SSL_VERIFICATION_MODE: full
-  apiCred:
-    existingSecret: ""
-    username: "wazuh-wui"
-    password: "MyS3cr37P450r.*-"
-  authd:
-    enabled: true
-    existingSecret: ""
-    pass: "password"
-  initContainer:
-    image: nginx
-    resources:
-      requests:
-        cpu: "250m"
-        memory: "512Mi"
-      limits:
-        cpu: "500m"
-        memory: "1Gi"
+# nameOverride: null
+# fullnameOverride: null
+# autoreload:
+#   enabled: false
+# global:
+#   dualStack:
+#     enabled: false
+#     ipFamilyPolicy: ""
+#     ipFamilies: []
+# cert-manager:
+#   enabled: false
+# certificates:
+#   enabled: true
+#   requestPolicy:
+#     enabled: false
+#   issuer:
+#     name: null
+#     type: issuer
+#   duration: 2160h 
+#   renewBefore: 360h 
+#   subject:
+#     organization: Company
+#     country: US
+#     locality: California
+# externalIndexer:
+#   enabled: false
+#   host: https://wazuh-indexer.example.com
+#   port: 9200
+# indexer:
+#   enabled: true
+#   serviceAccount:
+#     create: true
+#     annotations: {}
+#     name: "wazuh-indexer"
+#   replicas: 1
+#   annotations: {}
+#   extraPodLabels: {}
+#   updateStrategy: RollingUpdate
+#   images:
+#     repository: wazuh/wazuh-indexer
+#     tag: "4.7.2"
+#     pullPolicy: IfNotPresent
+#     imagePullSecrets:
+#       enabled: false
+#       secret: {}
+#     resources:
+#       requests:
+#         cpu: "250m"
+#         memory: "512Mi" # Default is often 2Gi+
+#       limits:
+#         cpu: "500m"
+#         memory: "1Gi"
+#   pdb:
+#     enabled: false
+#     maxUnavailable: 1
+#   livenessProbe:
+#     periodSeconds: 20
+#     timeoutSeconds: 5
+#     failureThreshold: 10
+#     successThreshold: 1
+#     initialDelaySeconds: 10
+#     tcpSocket:
+#       port: 9200
+#   readinessProbe:
+#     periodSeconds: 20
+#     timeoutSeconds: 5
+#     failureThreshold: 10
+#     successThreshold: 1
+#     initialDelaySeconds: 10
+#     tcpSocket:
+#       port: 9200
+#   securityContext:
+#     fsGroup: 1000
+#   networkPolicy:
+#     enabled: true
+#     extraIngresses: []
+#     extraEgresses: []
+#   service:
+#     type: ClusterIP
+#     annotations: {}
+#     httpPort: 9200
+#     nodes: 9300
+#     metrics: 9600
+#   nodeSelector: {}
+#   tolerations: []
+#   affinity: {}
+#   dnsPolicy: ""
+#   dnsConfig: {}
+#   additionalEnv: []
+#   additionalVolumes: []
+#   additionalVolumeMounts: []
+#   config:
+#     opensearch: |-
+#       {{ include "wazuh.indexer.opensearchConfig" . }}
+#     internalUsers: |-
+#       {{ include "wazuh.indexer.internalUsers" . }}
+#     securityConfig: |-
+#       {{ include "wazuh.indexer.securityConfig" . }}
+#     rolesMapping: |-
+#       {{ include "wazuh.indexer.rolesMapping" . }}
+#     roles: |-
+#       {{ include "wazuh.indexer.roles" . }}
+#     tenants: |-
+#       {{ include "wazuh.indexer.tenants" . }}
+#     nodesDn: |-
+#       {{ include "wazuh.indexer.nodes_dn" . }}
+#     whitelist: |-
+#       {{ include "wazuh.indexer.whitelist" . }}
+#   additionalConfigs: {}
+#   sysctlImage:
+#     enabled: false
+#     images:
+#       repository: bitnamilegacy/os-shell
+#       tag: 12-debian-12-r43
+#   initContainers: []
+#   env:
+#     OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m -Dlog4j2.formatMsgNoLookups=true"
+#     CLUSTER_NAME: "wazuh"
+#     NETWORK_HOST: "0.0.0.0"
+#     DISABLE_INSTALL_DEMO_CONFIG: "true"
+#   pvc:
+#     extraLabels: {}
+#   storageSize: 1Gi
+#   storageClass: null
+#   cred:
+#     existingSecret: ""
+#     passwordHash: "$2a$12$zGWIT7wkPKT/zww3bmMyp.KuWXH4RzgxiB91Q8NGFcqpyPy.R2Rcq"
+#     password: "WazuhSecretPassword"
+#   extraSpec:
+#     statefulSet: {}
+#     pod: {}
+#     container: {}
+#   job:
+#     annotations: {}
+# dashboard:
+#   enabled: true
+#   serviceAccount:
+#     create: true
+#     annotations: {}
+#     name: "wazuh-dashboard"
+#   replicas: 1
+#   annotations: {}
+#   extraPodLabels: {}
+#   images:
+#     repository: wazuh/wazuh-dashboard
+#     tag: "4.7.2"
+#     pullPolicy: IfNotPresent
+#     updateStrategy: OnDelete
+#   resources:
+#     requests:
+#       cpu: "500m"
+#       memory: "1Gi"
+#     limits:
+#       cpu: "1000m"
+#       memory: "2Gi"
+#   pdb:
+#     enabled: false
+#     maxUnavailable: 1
+#   livenessProbe:
+#     periodSeconds: 20
+#     timeoutSeconds: 5
+#     failureThreshold: 10
+#     successThreshold: 1
+#     initialDelaySeconds: 10
+#     httpGet:
+#       path: /api/status
+#       port: 5601
+#   readinessProbe:
+#     periodSeconds: 20
+#     timeoutSeconds: 5
+#     failureThreshold: 10
+#     successThreshold: 1
+#     initialDelaySeconds: 10
+#     httpGet:
+#       path: /api/status
+#       port: 5601
+#   securityContext: {}
+#   networkPolicy:
+#     enabled: true
+#     extraIngresses: []
+#     extraEgresses: []
+#   service:
+#     type: ClusterIP
+#     annotations: {}
+#     httpPort: 5601
+#   nodeSelector: {}
+#   tolerations: []
+#   affinity: {}
+#   dnsPolicy: ""
+#   dnsConfig: {}
+#   additionalEnv: 
+#     - name: OPENSEARCH_HOSTS
+#       value: "http://wazuh-news-indexer:9200"
+#   enable_ssl: false
+#   config: |
+#     {{ include "wazuh.dashboard.config" . }}
+#   cred:
+#     existingSecret: ""
+#     username: "kibanaserver"
+#     password: "kibanaserver"
+#     passwordHash: "$2a$12$7NCZ.l9ntPhou5zNjZIU4uqXNNWMF7SyF6Y6mcjhHTB6Z1eQubHC."
+#   basicAuth:
+#     enabled: true
+#     order: 4
+#     challenge: true
+#   server:
+#     extraConf: {}
+#   sso:
+#     oidc:
+#       enabled: false
+#       primary: false
+#       url: ""
+#       logoutUrl: ""
+#       baseRedirectUrl: ""
+#       scope: "openid profile email address phone"
+#       issuer: ""
+#       order: 1
+#       existingSecret: ""
+#       clientIdKey: "OPENSEARCH_OIDC_CLIENT_ID"
+#       clientSecretKey: "OPENSEARCH_OIDC_CLIENT_SECRET"
+#       config:
+#         subjectKey: "preferred_username"
+#         rolesKey: "roles"
+#       roleMappings:
+#         allAccess:
+#           backendRoles: []
+#         kibanaServer:
+#           backendRoles: []
+#         kibanaUser:
+#           backendRoles: []
+#       extraRoleMappings: {}
+#       customizeLoginButton:
+#         enabled: false
+#         text: "Log In with Single sign-on (OIDC)"
+#         imageUrl: ""
+#         showImage: false
+#       idp:
+#         enableSSL: false
+#         pemtrustedcasFilePath: ""
+#         pemtrustedcasContent: |-
+#           -----BEGIN CERTIFICATE-----
+#           -----END CERTIFICATE-----
+#     saml:
+#       enabled: false
+#       primary: false
+#       metadataUrl: ""
+#       idpEntityId: ""
+#       enableSSL: false
+#       pemtrustedcasFilePath: ""
+#       pemtrustedcasContent: |-
+#         -----BEGIN CERTIFICATE-----
+#         -----END CERTIFICATE-----
+#       spEntityId: "wazuh-saml"
+#       kibanaUrl: ""
+#       order: 1
+#       exchangeKey: ""
+#       config:
+#         rolesKey: "Roles"
+#       roleMappings:
+#         allAccess:
+#           backendRoles: []
+#         kibanaServer:
+#           backendRoles: []
+#         kibanaUser:
+#           backendRoles: []
+#       extraRoleMappings: {}
+#   ingress:
+#     enabled: false
+#     className: ""
+#     tls: []
+#     annotations: {}
+#     host: "wazuh.example.com"
+#   extraSpec:
+#     deployment: {}
+#     pod: {}
+#     container: {}
+# wazuh:
+#   enabled: true
+#   serviceAccount:
+#     create: true
+#     annotations: {}
+#     name: "wazuh-manager"
+#   syslog_enable: true
+#   key: "c98b62a9b6169ac5f67dae55ae4a9088"
+#   images:
+#     repository: wazuh/wazuh-manager
+#     tag: "4.7.2"
+#     pullPolicy: IfNotPresent
+#     imagePullSecrets:
+#       enabled: false
+#       secret: {}
+#   loadBalancer:
+#     enabled: false
+#     annotations: {}
+#   service:
+#     annotations: {}
+#     port: 1516
+#   nodeSelector: {}
+#   env:
+#     FILEBEAT_SSL_VERIFICATION_MODE: full
+#   apiCred:
+#     existingSecret: ""
+#     username: "wazuh-wui"
+#     password: "MyS3cr37P450r.*-"
+#   authd:
+#     enabled: true
+#     existingSecret: ""
+#     pass: "password"
+#   initContainer:
+#     image: nginx
+#     resources:
+#       requests:
+#         cpu: "250m"
+#         memory: "512Mi"
+#       limits:
+#         cpu: "500m"
+#         memory: "1Gi"
 
-  extraInitContainers: []
-  localDecoder: |
-    {{ include "wazuh.localDecoder" . }}
-  localRules: |
-    {{ include "wazuh.localRules" . }}
-  internalOptions: |
-    {{ include "wazuh.internalOptions" . }}
-  agentGroupConf:
-    - name: example
-      agent: |
-        <agent_config>
-          <localfile>
-            <location>journald</location>
-            <log_format>journald</log_format>
-          </localfile>
-          <localfile>
-            <location>/var/log/falco.log</location>
-            <log_format>json</log_format>
-          </localfile>
-          <wodle name="docker-listener">
-            <interval>10m</interval>
-            <attempts>5</attempts>
-            <run_on_start>no</run_on_start>
-            <disabled>no</disabled>
-          </wodle>
-        </agent_config>
-  master:
-    enabled: true
-    annotations: {}
-    extraPodLabels: {}
-    resources:
-      requests:
-        cpu: 500m
-        memory: 512Mi
-      limits:
-        cpu: 1000m
-        memory: 1Gi
-    tolerations: []
-    affinity: {}
-    dnsPolicy: ""
-    dnsConfig: {}
-    service:
-      type: ClusterIP
-      annotations: {}
-      ports:
-        - name: registration
-          protocol: TCP
-          port: 1515
-          targetPort: 1515
-        - name: api
-          protocol: TCP
-          port: 55000
-          targetPort: 55000
-    livenessProbe: {}
-    readinessProbe: {}
-    additionalEnv: []
-    additionalVolumes: []
-    additionalVolumeMounts: []
-    securityContext:
-      capabilities:
-        add: ["SYS_CHROOT"]
-    networkPolicy:
-      enabled: true
-      extraIngresses: []
-      extraEgresses: []
-    pvc:
-      extraLabels: {}
-    storageSize: 1Gi
-    storageClass: null
-    extraConf: ""
-    extraSpec:
-      statefulSet: {}
-      pod: {}
-      container: {}
-  worker:
-    enabled: true
-    replicas: 1
-    annotations: {}
-    extraPodLabels: {}
-    resources:
-      requests:
-        cpu: "250m"
-        memory: "512Mi"
-      limits:
-        cpu: "500m"
-        memory: "1Gi"
+#   extraInitContainers: []
+#   localDecoder: |
+#     {{ include "wazuh.localDecoder" . }}
+#   localRules: |
+#     {{ include "wazuh.localRules" . }}
+#   internalOptions: |
+#     {{ include "wazuh.internalOptions" . }}
+#   agentGroupConf:
+#     - name: example
+#       agent: |
+#         <agent_config>
+#           <localfile>
+#             <location>journald</location>
+#             <log_format>journald</log_format>
+#           </localfile>
+#           <localfile>
+#             <location>/var/log/falco.log</location>
+#             <log_format>json</log_format>
+#           </localfile>
+#           <wodle name="docker-listener">
+#             <interval>10m</interval>
+#             <attempts>5</attempts>
+#             <run_on_start>no</run_on_start>
+#             <disabled>no</disabled>
+#           </wodle>
+#         </agent_config>
+#   master:
+#     enabled: true
+#     annotations: {}
+#     extraPodLabels: {}
+#     resources:
+#       requests:
+#         cpu: 500m
+#         memory: 512Mi
+#       limits:
+#         cpu: 1000m
+#         memory: 1Gi
+#     tolerations: []
+#     affinity: {}
+#     dnsPolicy: ""
+#     dnsConfig: {}
+#     service:
+#       type: ClusterIP
+#       annotations: {}
+#       ports:
+#         - name: registration
+#           protocol: TCP
+#           port: 1515
+#           targetPort: 1515
+#         - name: api
+#           protocol: TCP
+#           port: 55000
+#           targetPort: 55000
+#     livenessProbe: {}
+#     readinessProbe: {}
+#     additionalEnv: []
+#     additionalVolumes: []
+#     additionalVolumeMounts: []
+#     securityContext:
+#       capabilities:
+#         add: ["SYS_CHROOT"]
+#     networkPolicy:
+#       enabled: true
+#       extraIngresses: []
+#       extraEgresses: []
+#     pvc:
+#       extraLabels: {}
+#     storageSize: 1Gi
+#     storageClass: null
+#     extraConf: ""
+#     extraSpec:
+#       statefulSet: {}
+#       pod: {}
+#       container: {}
+#   worker:
+#     enabled: true
+#     replicas: 1
+#     annotations: {}
+#     extraPodLabels: {}
+#     resources:
+#       requests:
+#         cpu: "250m"
+#         memory: "512Mi"
+#       limits:
+#         cpu: "500m"
+#         memory: "1Gi"
 
-    tolerations: []
-    affinity: {}
-    dnsPolicy: ""
-    dnsConfig: {}
-    podAntiAffinity: "soft"
-    podAntiAffinityTopologyKey: kubernetes.io/hostname
-    service:
-      type: ClusterIP
-      annotations: {}
-      ports:
-        - name: agents-events
-          protocol: TCP
-          port: 1514
-          targetPort: 1514
-    pdb:
-      enabled: false
-      maxUnavailable: 1
-    livenessProbe: {}
-    readinessProbe: {}
-    additionalEnv: []
-    additionalVolumes: []
-    additionalVolumeMounts: []
-    securityContext:
-      capabilities:
-        add: ["SYS_CHROOT"]
-    networkPolicy:
-      enabled: true
-      extraIngresses: []
-      extraEgresses: []
-    pvc:
-      extraLabels: {}
-    storageSize: 1Gi
-    storageClass: null
-    extraConf: ""
-    extraSpec:
-      statefulSet: {}
-      pod: {}
-      container: {}
-agent:
-  enabled: true
-  namePrefix: ""
-  serviceAccount:
-    create: false
-    annotations: {}
-    name: "wazuh-agent"
-  debug:
-    enabled: false
-    level: 1
-    modules:
-      - agent
-      - wazuh_modules
-  service:
-    port: 5000
-    type: ClusterIP
-    annotations: {}
-  labels: {}
-  annotations: {}
-  podAnnotations: {}
-  extraPodLabels: {}
-  images:
-    repository: wazuh/wazuh-agent
-    tag: "4.14.1"
-    pullPolicy: IfNotPresent
-  podSecurityContext: {}
-  securityContext:
-    privileged: true
-  resources:
-    requests:
-      cpu: 50m
-      memory: 64Mi
-    limits:
-      cpu: 100m
-      memory: 128Mi
-  nodeSelector: {}
-  affinity: {}
-  tolerations: []
-  dnsPolicy: ""
-  dnsConfig: {}
-  joinManager:
-    managerHost: "wazuh.wazuh-new.svc.cluster.local"
-    apiPort: "55000"
-    agentsEvents: "1514"
-    workerHost: ""
-    scheme: https
-    wazuh:
-      group: default
-  apiCred:
-    existingSecret: ""
-    username: "wazuh-wui"
-    password: "MyS3cr37P450r.*-"
-  livenessProbe: {}
-  volumes:
-    - name: var-run
-      hostPath:
-        path: /var/run
-    - name: dev
-      hostPath:
-        path: /dev
-    - name: sys
-      hostPath:
-        path: /sys
-    - name: proc
-      hostPath:
-        path: /proc
-    - name: etc
-      hostPath:
-        path: /etc
-    - name: boot
-      hostPath:
-        path: /boot
-    - name: usr
-      hostPath:
-        path: /usr
-    - name: modules
-      hostPath:
-        path: /lib/modules
-    - name: log
-      hostPath:
-        path: /var/log
-  volumeMounts:
-    - mountPath: /var/run
-      name: var-run
-    - mountPath: /host/dev
-      name: dev
-    - mountPath: /host/sys
-      name: sys
-      readOnly: true
-    - mountPath: /host/proc
-      name: proc
-      readOnly: true
-    - mountPath: /host/etc
-      name: etc
-      readOnly: true
-    - mountPath: /host/boot
-      name: boot
-      readOnly: true
-    - mountPath: /host/usr
-      name: usr
-      readOnly: true
-    - mountPath: /host/lib/modules
-      name: modules
-      readOnly: true
-    - mountPath: /host/var/log
-      name: log
-      readOnly: true
-  extraSpec:
-    daemonSet: {}
-    pod: {}
-    container: {}
-  extraContainers: []
+#     tolerations: []
+#     affinity: {}
+#     dnsPolicy: ""
+#     dnsConfig: {}
+#     podAntiAffinity: "soft"
+#     podAntiAffinityTopologyKey: kubernetes.io/hostname
+#     service:
+#       type: ClusterIP
+#       annotations: {}
+#       ports:
+#         - name: agents-events
+#           protocol: TCP
+#           port: 1514
+#           targetPort: 1514
+#     pdb:
+#       enabled: false
+#       maxUnavailable: 1
+#     livenessProbe: {}
+#     readinessProbe: {}
+#     additionalEnv: []
+#     additionalVolumes: []
+#     additionalVolumeMounts: []
+#     securityContext:
+#       capabilities:
+#         add: ["SYS_CHROOT"]
+#     networkPolicy:
+#       enabled: true
+#       extraIngresses: []
+#       extraEgresses: []
+#     pvc:
+#       extraLabels: {}
+#     storageSize: 1Gi
+#     storageClass: null
+#     extraConf: ""
+#     extraSpec:
+#       statefulSet: {}
+#       pod: {}
+#       container: {}
+# agent:
+#   enabled: true
+#   namePrefix: ""
+#   serviceAccount:
+#     create: false
+#     annotations: {}
+#     name: "wazuh-agent"
+#   debug:
+#     enabled: false
+#     level: 1
+#     modules:
+#       - agent
+#       - wazuh_modules
+#   service:
+#     port: 5000
+#     type: ClusterIP
+#     annotations: {}
+#   labels: {}
+#   annotations: {}
+#   podAnnotations: {}
+#   extraPodLabels: {}
+#   images:
+#     repository: wazuh/wazuh-agent
+#     tag: "4.14.1"
+#     pullPolicy: IfNotPresent
+#   podSecurityContext: {}
+#   securityContext:
+#     privileged: true
+#   resources:
+#     requests:
+#       cpu: 50m
+#       memory: 64Mi
+#     limits:
+#       cpu: 100m
+#       memory: 128Mi
+#   nodeSelector: {}
+#   affinity: {}
+#   tolerations: []
+#   dnsPolicy: ""
+#   dnsConfig: {}
+#   joinManager:
+#     managerHost: "wazuh.wazuh-new.svc.cluster.local"
+#     apiPort: "55000"
+#     agentsEvents: "1514"
+#     workerHost: ""
+#     scheme: https
+#     wazuh:
+#       group: default
+#   apiCred:
+#     existingSecret: ""
+#     username: "wazuh-wui"
+#     password: "MyS3cr37P450r.*-"
+#   livenessProbe: {}
+#   volumes:
+#     - name: var-run
+#       hostPath:
+#         path: /var/run
+#     - name: dev
+#       hostPath:
+#         path: /dev
+#     - name: sys
+#       hostPath:
+#         path: /sys
+#     - name: proc
+#       hostPath:
+#         path: /proc
+#     - name: etc
+#       hostPath:
+#         path: /etc
+#     - name: boot
+#       hostPath:
+#         path: /boot
+#     - name: usr
+#       hostPath:
+#         path: /usr
+#     - name: modules
+#       hostPath:
+#         path: /lib/modules
+#     - name: log
+#       hostPath:
+#         path: /var/log
+#   volumeMounts:
+#     - mountPath: /var/run
+#       name: var-run
+#     - mountPath: /host/dev
+#       name: dev
+#     - mountPath: /host/sys
+#       name: sys
+#       readOnly: true
+#     - mountPath: /host/proc
+#       name: proc
+#       readOnly: true
+#     - mountPath: /host/etc
+#       name: etc
+#       readOnly: true
+#     - mountPath: /host/boot
+#       name: boot
+#       readOnly: true
+#     - mountPath: /host/usr
+#       name: usr
+#       readOnly: true
+#     - mountPath: /host/lib/modules
+#       name: modules
+#       readOnly: true
+#     - mountPath: /host/var/log
+#       name: log
+#       readOnly: true
+#   extraSpec:
+#     daemonSet: {}
+#     pod: {}
+#     container: {}
+#   extraContainers: []
