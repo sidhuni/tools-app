@@ -49,7 +49,17 @@ extraVolumes: []
 controller:
   image: "public.ecr.aws/karpenter/controller:v0.16.3@sha256:68db4f092cf9cc83f5ef9e2fbc5407c2cb682e81f64dfaa700a7602ede38b1cf"
   securityContext: {}
-  env: []
+  env: 
+    - name: CLUSTER_NAME
+      value: rancher-desktop
+    - name: CLUSTER_ENDPOINT
+      value: https://127.0.0.1:6443
+    - name: AWS_REGION
+      value: us-west-2
+    - name: AWS_ACCESS_KEY_ID
+      value: dummy
+    - name: AWS_SECRET_ACCESS_KEY
+      value: dummy
   resources:
     requests:
       cpu: 1
@@ -79,12 +89,5 @@ webhook:
   extraVolumeMounts: []
 logLevel: debug
 logEncoding: console
-clusterName: "rancher-desktop"
-clusterEndpoint: "https://127.0.0.1:6443"
-AWS_REGION: "us-west-2"
-AWS_ACCESS_KEY_ID: "dummy"
-AWS_SECRET_ACCESS_KEY: "dummy"
-
-
 aws:
   defaultInstanceProfile: ""
