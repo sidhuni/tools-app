@@ -1,0 +1,85 @@
+nameOverride: ""
+fullnameOverride: ""
+additionalLabels: {}
+additionalAnnotations: {}
+imagePullPolicy: IfNotPresent
+imagePullSecrets: []
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+serviceMonitor:
+  enabled: false
+  additionalLabels: {}
+  endpointConfig: {}
+replicas: 2
+revisionHistoryLimit: 10
+strategy:
+  rollingUpdate:
+    maxUnavailable: 1
+podLabels: {}
+podAnnotations: {}
+podDisruptionBudget:
+  name: karpenter
+  maxUnavailable: 1
+podSecurityContext:
+  fsGroup: 1000
+priorityClassName: system-cluster-critical
+terminationGracePeriodSeconds:
+hostNetwork: false
+dnsPolicy: Default
+dnsConfig: {}
+nodeSelector:
+  kubernetes.io/os: linux
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: karpenter.sh/provisioner-name
+              operator: DoesNotExist
+topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: topology.kubernetes.io/zone
+    whenUnsatisfiable: ScheduleAnyway
+tolerations:
+  - key: CriticalAddonsOnly
+    operator: Exists
+extraVolumes: []
+controller:
+  image: "public.ecr.aws/karpenter/controller:v0.16.3@sha256:68db4f092cf9cc83f5ef9e2fbc5407c2cb682e81f64dfaa700a7602ede38b1cf"
+  securityContext: {}
+  env: []
+  resources:
+    requests:
+      cpu: 1
+      memory: 1Gi
+    limits:
+      cpu: 1
+      memory: 1Gi
+  logLevel: ""
+  logEncoding: ""
+  extraVolumeMounts: []
+  batchMaxDuration: 10s
+  batchIdleDuration: 1s
+webhook:
+  image: "public.ecr.aws/karpenter/webhook:v0.16.3@sha256:96a2d9b06d6bc5127801f358f74b1cf2d289b423a2e9ba40c573c0b14b17dafa"
+  securityContext: {}
+  port: 8443
+  env: []
+  resources:
+    requests:
+      cpu: 200m
+      memory: 100Mi
+    limits:
+      cpu: 200m
+      memory: 100Mi
+  logLevel: ""
+  logEncoding: ""
+  extraVolumeMounts: []
+logLevel: debug
+logEncoding: console
+clusterName: ""
+clusterEndpoint: ""
+aws:
+  defaultInstanceProfile: ""
