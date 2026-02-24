@@ -90,7 +90,7 @@ settings:
   preferencePolicy: Respect
   minValuesPolicy: Strict
   clusterCABundle: ""
-  clusterName: ""
+  clusterName: "local-cluster"
   clusterEndpoint: ""
   isolatedVPC: false
   eksControlPlane: false
