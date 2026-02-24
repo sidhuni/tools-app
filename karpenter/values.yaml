@@ -81,7 +81,7 @@ webhook:
     httpGet:
       path: /
       port: 8443
-      scheme: HTTPS
+      scheme: HTTP
       httpHeaders:
       - name: Host
         value: karpenter.karpenter.svc
@@ -89,7 +89,7 @@ webhook:
     httpGet:
       path: /
       port: 8443
-      scheme: HTTPS
+      scheme: HTTP
       httpHeaders:
       - name: Host
         value: karpenter.karpenter.svc
