@@ -18,7 +18,7 @@ serviceMonitor:
   metricRelabelings: []
   endpointConfig: {}
   sampleLimit: null
-replicas: 2
+replicas: 1
 revisionHistoryLimit: 10
 strategy:
   rollingUpdate:
