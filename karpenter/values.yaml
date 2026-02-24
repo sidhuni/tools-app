@@ -4,15 +4,21 @@ additionalLabels: {}
 additionalAnnotations: {}
 imagePullPolicy: IfNotPresent
 imagePullSecrets: []
+service:
+  annotations: {}
 serviceAccount:
   create: true
   name: ""
   annotations: {}
+additionalClusterRoleRules: []
 serviceMonitor:
   enabled: false
   additionalLabels: {}
+  relabelings: []
+  metricRelabelings: []
   endpointConfig: {}
-replicas: 1
+  sampleLimit: null
+replicas: 2
 revisionHistoryLimit: 10
 strategy:
   rollingUpdate:
@@ -23,12 +29,16 @@ podDisruptionBudget:
   name: karpenter
   maxUnavailable: 1
 podSecurityContext:
-  fsGroup: 1000
+  fsGroup: 65532
+  seccompProfile:
+    type: RuntimeDefault
 priorityClassName: system-cluster-critical
 terminationGracePeriodSeconds:
 hostNetwork: false
-dnsPolicy: Default
+schedulerName: default-scheduler
+dnsPolicy: ClusterFirst
 dnsConfig: {}
+initContainers: {}
 nodeSelector:
   kubernetes.io/os: linux
 affinity:
@@ -36,78 +46,63 @@ affinity:
     requiredDuringSchedulingIgnoredDuringExecution:
       nodeSelectorTerms:
         - matchExpressions:
-            - key: karpenter.sh/provisioner-name
+            - key: karpenter.sh/nodepool
               operator: DoesNotExist
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      - topologyKey: "kubernetes.io/hostname"
 topologySpreadConstraints:
   - maxSkew: 1
     topologyKey: topology.kubernetes.io/zone
-    whenUnsatisfiable: ScheduleAnyway
+    whenUnsatisfiable: DoNotSchedule
 tolerations:
   - key: CriticalAddonsOnly
     operator: Exists
 extraVolumes: []
 controller:
-  image: "public.ecr.aws/karpenter/controller:v0.16.3@sha256:68db4f092cf9cc83f5ef9e2fbc5407c2cb682e81f64dfaa700a7602ede38b1cf"
-  securityContext: {}
-  env: 
-    - name: DISABLE_WEBHOOK_TLS
-      value: "true"
-    - name: KARPNTER_DISABLE_AWS
-      value: "true"
-    - name: CLUSTER_NAME
-      value: rancher-desktop
-    - name: CLUSTER_ENDPOINT
-      value: https://127.0.0.1:6443
-    - name: AWS_REGION
-      value: us-west-2
-    - name: AWS_ACCESS_KEY_ID
-      value: dummy
-    - name: AWS_SECRET_ACCESS_KEY
-      value: dummy
-  resources:
-    requests:
-      cpu: 1
-      memory: 1Gi
-    limits:
-      cpu: 1
-      memory: 1Gi
-  logLevel: ""
-  logEncoding: ""
+  containerName: controller
+  image:
+    repository: public.ecr.aws/karpenter/controller
+    tag: 1.9.0
+    digest: sha256:30a506c64fbb1d8026cbfd9a1d662be3ab6e33a7999290a104085d78b49a69d7
+  env: []
+  envFrom: []
+  securityContext:
+    appArmorProfile: {}
+    seLinuxOptions: {}
+    seccompProfile: {}
+  resources: {}
   extraVolumeMounts: []
+  sidecarContainer: []
+  sidecarVolumeMounts: []
+  metrics:
+    port: 8080
+  healthProbe:
+    port: 8081
+logLevel: info
+logOutputPaths:
+  - stdout
+logErrorOutputPaths:
+  - stderr
+settings:
   batchMaxDuration: 10s
   batchIdleDuration: 1s
-webhook:
-  livenessProbe:
-    httpGet:
-      path: /
-      port: 8443
-      scheme: HTTP
-      httpHeaders:
-      - name: Host
-        value: karpenter.karpenter.svc
-  readinessProbe:
-    httpGet:
-      path: /
-      port: 8443
-      scheme: HTTP
-      httpHeaders:
-      - name: Host
-        value: karpenter.karpenter.svc
-  image: "public.ecr.aws/karpenter/webhook:v0.16.3@sha256:96a2d9b06d6bc5127801f358f74b1cf2d289b423a2e9ba40c573c0b14b17dafa"
-  securityContext: {}
-  port: 8443
-  env: []
-  resources:
-    requests:
-      cpu: 200m
-      memory: 100Mi
-    limits:
-      cpu: 200m
-      memory: 100Mi
-  logLevel: ""
-  logEncoding: ""
-  extraVolumeMounts: []
-logLevel: debug
-logEncoding: console
-aws:
-  defaultInstanceProfile: ""
+  preferencePolicy: Respect
+  minValuesPolicy: Strict
+  clusterCABundle: ""
+  clusterName: ""
+  clusterEndpoint: ""
+  isolatedVPC: false
+  eksControlPlane: false
+  vmMemoryOverheadPercent: 0.075
+  interruptionQueue: ""
+  reservedENIs: "0"
+  ignoreDRARequests: true
+  disableClusterStateObservability: false
+  disableDryRun: false
+  featureGates:
+    nodeRepair: false
+    nodeOverlay: false
+    reservedCapacity: true
+    spotToSpotConsolidation: false
+    staticCapacity: false
