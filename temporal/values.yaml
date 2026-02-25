@@ -59,7 +59,7 @@ server:
           sql:
             pluginName: "postgres12"
             driverName: "postgres12"
-            connectAddr: "postgresql:5432" 
+            connectAddr: "postgresql.postgresql.svc.cluster.local:5432"
             connectProtocol: "tcp"
             databaseName: "temporal"
             user: "admin"
@@ -69,7 +69,7 @@ server:
           sql:
             pluginName: "postgres12"
             driverName: "postgres12"
-            connectAddr: "postgresql:5432" 
+            connectAddr: "postgresql.postgresql.svc.cluster.local:5432"
             connectProtocol: "tcp"
             databaseName: "temporal_visibility"
             user: "admin"
