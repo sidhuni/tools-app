@@ -66,7 +66,7 @@ server:
             databaseName: "temporal"
             user: "postgres"
             existingSecret: "postgresql-secrets"
-            secretKey: "user_password"
+            secretKey: "postgres_password"
         visibility:
           sql:
             maxConns: 5
@@ -78,7 +78,7 @@ server:
             databaseName: "temporal_visibility"
             user: "postgres"
             existingSecret: "postgresql-secrets"
-            secretKey: "user_password"
+            secretKey: "postgres_password"
     namespaces:
       create: false
       namespace:
