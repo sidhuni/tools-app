@@ -57,8 +57,8 @@ server:
       datastores:
         default:
           sql:
-            maxConns: 20
-            maxIdleConns: 10
+            maxConns: 10
+            maxIdleConns: 5
             pluginName: "postgres12"
             driverName: "postgres12"
             connectAddr: "postgresql.postgresql.svc.cluster.local:5432"
@@ -69,8 +69,8 @@ server:
             secretKey: "user_password"
         visibility:
           sql:
-            maxConns: 20
-            maxIdleConns: 10
+            maxConns: 10
+            maxIdleConns: 5
             pluginName: "postgres12"
             driverName: "postgres12"
             connectAddr: "postgresql.postgresql.svc.cluster.local:5432"
