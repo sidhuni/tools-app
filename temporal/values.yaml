@@ -9,18 +9,6 @@ serviceAccount:
 additionalAnnotations: {}
 additionalLabels: {}
 server:
-  additionalVolumes:
-    - name: secrets-store-inline
-      csi:
-        driver: secrets-store.csi.k8s.io
-        readOnly: true
-        volumeAttributes:
-          secretProviderClass: "postgresql-secrets"
-  additionalVolumeMounts:
-    - name: secrets-store-inline
-      mountPath: "/mnt/secrets-store"
-      readOnly: true
-
   enabled: true
   image:
     repository: temporalio/server
@@ -53,6 +41,8 @@ server:
   tolerations: []
   affinity: {}
   minReadySeconds: 0
+  additionalVolumes: []
+  additionalVolumeMounts: []
   additionalEnv: []
   additionalInitContainers: []
   securityContext:
@@ -305,20 +295,6 @@ web:
   minReadySeconds: 0
   podDisruptionBudget: {}
 schema:
-  # ... existing config ...
-  extraVolumes: # Note: Schema section often uses 'extraVolumes' instead of 'additionalVolumes'
-    - name: secrets-store-inline
-      csi:
-        driver: secrets-store.csi.k8s.io
-        readOnly: true
-        volumeAttributes:
-          secretProviderClass: "postgresql-secrets"
-  extraVolumeMounts:
-    - name: secrets-store-inline
-      mountPath: "/mnt/secrets-store"
-      readOnly: true
-
-
   backoffLimit: 100
   jobAnnotations: {}
   podAnnotations: {}
