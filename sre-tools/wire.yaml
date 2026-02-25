@@ -1,30 +1,30 @@
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: wiremock
-  namespace: argocd
-spec:
-  project: default
-  sources:
-  - repoURL: oci://ghcr.io/deliveryhero/helm-charts/wiremock
-    chart: wiremock
-    targetRevision: 1.4.6
-    helm:
-      valueFiles:
-      - $values/wiremock/values.yaml
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: wiremock
+#   namespace: argocd
+# spec:
+#   project: default
+#   sources:
+#   - repoURL: oci://ghcr.io/deliveryhero/helm-charts/wiremock
+#     chart: wiremock
+#     targetRevision: 1.4.6
+#     helm:
+#       valueFiles:
+#       - $values/wiremock/values.yaml
 
-  - repoURL: https://github.com/sidhuni/tools-app.git
-    targetRevision: main
-    ref: values
+#   - repoURL: https://github.com/sidhuni/tools-app.git
+#     targetRevision: main
+#     ref: values
 
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: wiremock
+#   destination:
+#     server: https://kubernetes.default.svc
+#     namespace: wiremock
 
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true 
-      - Validate=false
+#   syncPolicy:
+#     automated:
+#       prune: true
+#       selfHeal: true
+#     syncOptions:
+#       - CreateNamespace=true 
+#       - Validate=false
