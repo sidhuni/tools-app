@@ -3,7 +3,7 @@ fullnameOverride: postgresql
 auth:
   enablePostgresUser: true
   username: admin
-  database: "appdb"
+  database: "appdb"                  # Must not be empty
   existingSecret: "postgresql-secrets"
   secretKeys:
     adminPasswordKey: postgres_password
@@ -11,38 +11,20 @@ auth:
 
 primary:
   resourcesPreset: none
-  
   podSecurityContext:
     fsGroup: 1001
-
   persistence:
     enabled: true
     storageClass: local-path
     size: 8Gi
     mountPath: /bitnami/postgresql
-
   service:
     type: NodePort
 
-  extraVolumes:
-    - name: postgresql-secrets-store
-      csi:
-        driver: secrets-store.csi.k8s.io
-        readOnly: true
-        volumeAttributes:
-          secretProviderClass: "postgresql-secrets"
-
-  extraVolumeMounts:
-    - name: postgresql-secrets-store
-      mountPath: "/mnt/secrets-store"
-      readOnly: true
-
-# Disabling things that aren't needed for local dev to save RAM
+# Disabling unnecessary features for local dev
 readReplicas:
   replicaCount: 0
-
 networkPolicy:
   enabled: false
-
 pdb:
   create: false
