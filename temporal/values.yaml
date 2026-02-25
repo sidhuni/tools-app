@@ -148,7 +148,7 @@ server:
             pluginName: "postgres12"
             driverName: "postgres12"
             connectAddr: "postgresql:5432" # <--- Combine host and port here
-            database: "temporal"
+            databaseName: "temporal"
             user: "admin"
             existingSecret: "postgresql-secrets"
             secretKey: "user_password"
@@ -157,7 +157,7 @@ server:
             pluginName: "postgres12"
             driverName: "postgres12"
             connectAddr: "postgresql:5432" # <--- And here
-            database: "temporal_visibility"
+            databaseName: "temporal_visibility"
             user: "admin"
             existingSecret: "postgresql-secrets"
             secretKey: "user_password"
