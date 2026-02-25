@@ -64,7 +64,7 @@ server:
             connectAddr: "postgresql.postgresql.svc.cluster.local:5432"
             connectProtocol: "tcp"
             databaseName: "temporal"
-            user: "admin"
+            user: "postgres"
             existingSecret: "postgresql-secrets"
             secretKey: "user_password"
         visibility:
@@ -76,7 +76,7 @@ server:
             connectAddr: "postgresql.postgresql.svc.cluster.local:5432"
             connectProtocol: "tcp"
             databaseName: "temporal_visibility"
-            user: "admin"
+            user: "postgres"
             existingSecret: "postgresql-secrets"
             secretKey: "user_password"
     namespaces:
