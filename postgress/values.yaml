@@ -12,7 +12,6 @@ auth:
 primary:
   resourcesPreset: none
   
-  # Ensures the bitnami user (1001) has permission to read the secret
   podSecurityContext:
     fsGroup: 1001
 
@@ -24,14 +23,6 @@ primary:
 
   service:
     type: NodePort
-
-# Disabling things that aren't needed for local dev to save RAM
-readReplicas:
-  replicaCount: 0
-networkPolicy:
-  enabled: false
-pdb:
-  create: false
 
   extraVolumes:
     - name: postgresql-secrets-store
@@ -45,3 +36,13 @@ pdb:
     - name: postgresql-secrets-store
       mountPath: "/mnt/secrets-store"
       readOnly: true
+
+# Disabling things that aren't needed for local dev to save RAM
+readReplicas:
+  replicaCount: 0
+
+networkPolicy:
+  enabled: false
+
+pdb:
+  create: false
