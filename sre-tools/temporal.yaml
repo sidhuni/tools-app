@@ -7,7 +7,7 @@ spec:
   project: default
   sources:
   - repoURL: https://temporalio.github.io/helm-charts
-    chart: opentelemetry-collector
+    chart: temporal
     targetRevision: 1.0.0-rc.2
     helm:
       valueFiles:
