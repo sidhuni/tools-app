@@ -145,6 +145,7 @@ server:
       datastores:
         default:
           sql:
+            pluginName: "postgres12"
             driverName: "postgres12"
             host: "postgresql"  # Matches your fullnameOverride
             port: 5432
@@ -154,6 +155,7 @@ server:
             secretKey: "user_password" # Matches your postgresql.auth.secretKeys
         visibility:
           sql:
+            pluginName: "postgres12"
             driverName: "postgres12"
             host: "postgresql"
             port: 5432
