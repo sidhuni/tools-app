@@ -32,3 +32,16 @@ networkPolicy:
   enabled: false
 pdb:
   create: false
+
+  extraVolumes:
+    - name: postgresql-secrets-store
+      csi:
+        driver: secrets-store.csi.k8s.io
+        readOnly: true
+        volumeAttributes:
+          secretProviderClass: "postgresql-secrets"
+
+  extraVolumeMounts:
+    - name: postgresql-secrets-store
+      mountPath: "/mnt/secrets-store"
+      readOnly: true
