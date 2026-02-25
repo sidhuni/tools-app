@@ -147,22 +147,21 @@ server:
           sql:
             pluginName: "postgres12"
             driverName: "postgres12"
-            host: "postgresql"  # Matches your fullnameOverride
-            port: 5432
-            database: "temporal" # Ensure this DB is created or matches your PG config
-            user: "admin"        # Matches your postgresql.auth.username
+            connectAddr: "postgresql:5432" # <--- Combine host and port here
+            database: "temporal"
+            user: "admin"
             existingSecret: "postgresql-secrets"
-            secretKey: "user_password" # Matches your postgresql.auth.secretKeys
+            secretKey: "user_password"
         visibility:
           sql:
             pluginName: "postgres12"
             driverName: "postgres12"
-            host: "postgresql"
-            port: 5432
+            connectAddr: "postgresql:5432" # <--- And here
             database: "temporal_visibility"
             user: "admin"
             existingSecret: "postgresql-secrets"
             secretKey: "user_password"
+
 
  
    
