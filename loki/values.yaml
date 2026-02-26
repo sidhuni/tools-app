@@ -17,7 +17,7 @@ fullnameOverride: null
 namespaceOverride: null
 clusterLabelOverride: null
 imagePullSecrets: []
-deploymentMode: SingleBinary
+deploymentMode: SimpleScalable
 loki:
   livenessProbe: {}
   readinessProbe:
@@ -253,7 +253,7 @@ loki:
     operational_config:
       {{- tpl (. | toYaml) $ | nindent 4 }}
     {{- end }}
-  auth_enabled: false
+  auth_enabled: true
   memberlistConfig: {}
   extraMemberlistConfig: {}
   tenants: []
@@ -274,14 +274,10 @@ loki:
   runtimeConfig: {}
   commonConfig:
     path_prefix: /var/loki
-    replication_factor: 1
+    replication_factor: 3
     compactor_grpc_address: '{{ include "loki.compactorAddress" . }}'
   storage:
-    type: 'filesystem'
-    bucketNames:
-      chunks: chunks
-      ruler: ruler
-      admin: admin
+    type: s3
     s3:
       s3: null
       endpoint: null
@@ -471,7 +467,7 @@ enterprise:
     extraVolumeMounts: []
     extraVolumes: []
 test:
-  enabled: false
+  enabled: true
   canaryServiceAddress: 'http://{{ include "loki-canary.fullname" $ }}.{{ include "loki.namespace" $ }}.svc.{{ .Values.global.clusterDomain }}:3500/metrics'
   prometheusAddress: ""
   timeout: 1m
@@ -882,7 +878,7 @@ singleBinary:
     enabled: true
     accessModes:
       - ReadWriteOnce
-    size: 5gi
+    size: 5Gi
     storageClass: null
     selector: null
     annotations: {}
@@ -955,7 +951,7 @@ write:
     dataVolumeParameters:
       emptyDir: {}
     enableStatefulSetAutoDeletePVC: false
-    size: 5gi
+    size: 5Gi
     storageClass: null
     volumeAttributesClassName: null
     selector: null
@@ -1017,7 +1013,7 @@ read:
     enableStatefulSetAutoDeletePVC: true
     accessModes:
       - ReadWriteOnce
-    size: 5gi
+    size: 5Gi
     storageClass: null
     volumeAttributesClassName: null
     selector: null
@@ -1078,7 +1074,7 @@ backend:
     dataVolumeParameters:
       emptyDir: {}
     enableStatefulSetAutoDeletePVC: true
-    size: 5gi
+    size: 5Gi
     storageClass: null
     volumeAttributesClassName: null
     selector: null
@@ -1155,7 +1151,7 @@ ingester:
       - name: data
         accessModes:
           - ReadWriteOnce
-        size: 5gi
+        size: 5Gi
         storageClass: null
         volumeAttributesClassName: null
     enableStatefulSetAutoDeletePVC: false
@@ -1439,7 +1435,7 @@ indexGateway:
     accessModes:
       - ReadWriteOnce
     inMemory: false
-    size: 5gi
+    size: 5Gi
     storageClass: null
     volumeAttributesClassName: null
     annotations: {}
@@ -1499,7 +1495,7 @@ compactor:
       - name: data
         accessModes:
           - ReadWriteOnce
-        size: 5gi
+        size: 5Gi
         storageClass: null
         volumeAttributesClassName: null
         annotations: {}
@@ -1561,7 +1557,7 @@ bloomGateway:
       - name: data
         accessModes:
           - ReadWriteOnce
-        size: 5gi
+        size: 5Gi
         storageClass: null
         volumeAttributesClassName: null
     enableStatefulSetAutoDeletePVC: false
@@ -1619,7 +1615,7 @@ bloomPlanner:
       - name: data
         accessModes:
           - ReadWriteOnce
-        size: 5gi
+        size: 5Gi
         storageClass: null
         volumeAttributesClassName: null
         annotations: {}
@@ -1726,13 +1722,13 @@ patternIngester:
     grpc: ""
   persistence:
     enabled: false
-    size: 5gi
+    size: 5Gi
     storageClass: null
     claims:
       - name: data
         accessModes:
           - ReadWriteOnce
-        size: 5gi
+        size: 5Gi
         storageClass: null
         volumeAttributesClassName: null
         annotations: {}
@@ -1789,7 +1785,7 @@ ruler:
     enabled: false
     accessModes:
       - ReadWriteOnce
-    size: 5gi
+    size: 5Gi
     storageClass: null
     volumeAttributesClassName: null
     annotations: {}
@@ -1941,7 +1937,7 @@ resultsCache:
     labels: {}
   persistence:
     enabled: false
-    storageSize: 10G
+    storageSize: 5G
     storageClass: null
     volumeAttributesClassName: null
     mountPath: /data
@@ -1989,7 +1985,7 @@ chunksCache:
     labels: {}
   persistence:
     enabled: false
-    storageSize: 10G
+    storageSize: 5G
     storageClass: null
     volumeAttributesClassName: null
     mountPath: /data
@@ -2038,7 +2034,7 @@ chunksCache:
       labels: {}
     persistence:
       enabled: false
-      storageSize: 10G
+      storageSize: 5G
       storageClass: null
       volumeAttributesClassName: null
       mountPath: /data
