@@ -277,56 +277,14 @@ loki:
     replication_factor: 3
     compactor_grpc_address: '{{ include "loki.compactorAddress" . }}'
   storage:
-    type: s3
-    s3:
-      s3: null
-      endpoint: null
-      region: null
-      secretAccessKey: null
-      accessKeyId: null
-      signatureVersion: null
-      s3ForcePathStyle: false
-      insecure: false
-      http_config: {}
-      backoff_config: {}
-      disable_dualstack: false
-    gcs:
-      chunkBufferSize: 0
-      requestTimeout: "0s"
-      enableHttp2: true
-    azure:
-      accountName: null
-      accountKey: null
-      connectionString: null
-      useManagedIdentity: false
-      useFederatedToken: false
-      userAssignedId: null
-      requestTimeout: null
-      endpointSuffix: null
-      chunkDelimiter: null
-    swift:
-      auth_version: null
-      auth_url: null
-      internal: null
-      username: null
-      user_domain_name: null
-      user_domain_id: null
-      user_id: null
-      password: null
-      domain_id: null
-      domain_name: null
-      project_id: null
-      project_name: null
-      project_domain_id: null
-      project_domain_name: null
-      region_name: null
-      container_name: null
-      max_retries: null
-      connect_timeout: null
-      request_timeout: null
+    type: filesystem
     filesystem:
-      chunks_directory: /temp/loki/chunks
-      rules_directory: /temp/loki/rules
+      chunks_directory: /tmp/loki/chunks
+      rules_directory: /tmp/loki/rules
+    # Dummy bucket names to satisfy templates that reference them
+    bucketNames:
+      chunks: dummy-chunks
+      index: dummy-index
     use_thanos_objstore: false
     object_store:
       type: s3
