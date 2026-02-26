@@ -17,7 +17,7 @@ fullnameOverride: null
 namespaceOverride: null
 clusterLabelOverride: null
 imagePullSecrets: []
-deploymentMode: SimpleScalable
+deploymentMode: SingleBinary
 loki:
   livenessProbe: {}
   readinessProbe:
@@ -878,7 +878,7 @@ singleBinary:
     enabled: true
     accessModes:
       - ReadWriteOnce
-    size: 10Gi
+    size: 5gi
     storageClass: null
     selector: null
     annotations: {}
@@ -951,7 +951,7 @@ write:
     dataVolumeParameters:
       emptyDir: {}
     enableStatefulSetAutoDeletePVC: false
-    size: 10Gi
+    size: 5gi
     storageClass: null
     volumeAttributesClassName: null
     selector: null
@@ -1013,7 +1013,7 @@ read:
     enableStatefulSetAutoDeletePVC: true
     accessModes:
       - ReadWriteOnce
-    size: 10Gi
+    size: 5gi
     storageClass: null
     volumeAttributesClassName: null
     selector: null
@@ -1074,7 +1074,7 @@ backend:
     dataVolumeParameters:
       emptyDir: {}
     enableStatefulSetAutoDeletePVC: true
-    size: 10Gi
+    size: 5gi
     storageClass: null
     volumeAttributesClassName: null
     selector: null
@@ -1151,7 +1151,7 @@ ingester:
       - name: data
         accessModes:
           - ReadWriteOnce
-        size: 10Gi
+        size: 5gi
         storageClass: null
         volumeAttributesClassName: null
     enableStatefulSetAutoDeletePVC: false
@@ -1435,7 +1435,7 @@ indexGateway:
     accessModes:
       - ReadWriteOnce
     inMemory: false
-    size: 10Gi
+    size: 5gi
     storageClass: null
     volumeAttributesClassName: null
     annotations: {}
@@ -1495,7 +1495,7 @@ compactor:
       - name: data
         accessModes:
           - ReadWriteOnce
-        size: 10Gi
+        size: 5gi
         storageClass: null
         volumeAttributesClassName: null
         annotations: {}
@@ -1557,7 +1557,7 @@ bloomGateway:
       - name: data
         accessModes:
           - ReadWriteOnce
-        size: 10Gi
+        size: 5gi
         storageClass: null
         volumeAttributesClassName: null
     enableStatefulSetAutoDeletePVC: false
@@ -1615,7 +1615,7 @@ bloomPlanner:
       - name: data
         accessModes:
           - ReadWriteOnce
-        size: 10Gi
+        size: 5gi
         storageClass: null
         volumeAttributesClassName: null
         annotations: {}
@@ -1722,13 +1722,13 @@ patternIngester:
     grpc: ""
   persistence:
     enabled: false
-    size: 10Gi
+    size: 5gi
     storageClass: null
     claims:
       - name: data
         accessModes:
           - ReadWriteOnce
-        size: 10Gi
+        size: 5gi
         storageClass: null
         volumeAttributesClassName: null
         annotations: {}
@@ -1785,7 +1785,7 @@ ruler:
     enabled: false
     accessModes:
       - ReadWriteOnce
-    size: 10Gi
+    size: 5gi
     storageClass: null
     volumeAttributesClassName: null
     annotations: {}
