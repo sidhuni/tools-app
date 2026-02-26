@@ -325,8 +325,8 @@ loki:
       connect_timeout: null
       request_timeout: null
     filesystem:
-      chunks_directory: /var/loki/chunks
-      rules_directory: /var/loki/rules
+      chunks_directory: /temp/loki/chunks
+      rules_directory: /temp/loki/rules
     use_thanos_objstore: false
     object_store:
       type: s3
