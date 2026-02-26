@@ -274,13 +274,13 @@ loki:
   runtimeConfig: {}
   commonConfig:
     path_prefix: /var/loki
-    replication_factor: 3
+    replication_factor: 1
     compactor_grpc_address: '{{ include "loki.compactorAddress" . }}'
   storage:
     type: filesystem
     filesystem:
-      chunks_directory: /tmp/loki/chunks
-      rules_directory: /tmp/loki/rules
+      chunks_directory: /var/loki/chunks
+      rules_directory: /var/loki/rules
     # Dummy bucket names to satisfy templates that reference them
     bucketNames:
       chunks: dummy-chunks
@@ -328,19 +328,6 @@ loki:
       dir: /var/loki/ruler-wal
   structuredConfig: {}
   query_scheduler: {}
-  storage_config:
-    boltdb_shipper:
-      index_gateway_client:
-        server_address: '{{ include "loki.indexGatewayAddress" . }}'
-    tsdb_shipper:
-      index_gateway_client:
-        server_address: '{{ include "loki.indexGatewayAddress" . }}'
-    bloom_shipper:
-      working_directory: /var/loki/data/bloomshipper
-    hedging:
-      at: "250ms"
-      max_per_second: 20
-      up_to: 3
   compactor: {}
   compactor_grpc_client: {}
   pattern_ingester:
@@ -355,8 +342,6 @@ loki:
   ingester: {}
   ingester_client: {}
   block_builder: {}
-  index_gateway:
-    mode: Single
   frontend:
     scheduler_address: '{{ include "loki.querySchedulerAddress" . }}'
     tail_proxy_url: '{{ include "loki.querierAddress" . }}'
