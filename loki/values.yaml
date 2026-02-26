@@ -253,13 +253,7 @@ loki:
     operational_config:
       {{- tpl (. | toYaml) $ | nindent 4 }}
     {{- end }}
-  auth_enabled: true
-  storage:
-    type: 'filesystem'
-    bucketNames:
-      chunks: chunks
-      ruler: ruler
-      admin: admin
+  auth_enabled: false
   memberlistConfig: {}
   extraMemberlistConfig: {}
   tenants: []
@@ -280,10 +274,14 @@ loki:
   runtimeConfig: {}
   commonConfig:
     path_prefix: /var/loki
-    replication_factor: 3
+    replication_factor: 1
     compactor_grpc_address: '{{ include "loki.compactorAddress" . }}'
   storage:
-    type: s3
+    type: 'filesystem'
+    bucketNames:
+      chunks: chunks
+      ruler: ruler
+      admin: admin
     s3:
       s3: null
       endpoint: null
@@ -473,7 +471,7 @@ enterprise:
     extraVolumeMounts: []
     extraVolumes: []
 test:
-  enabled: true
+  enabled: false
   canaryServiceAddress: 'http://{{ include "loki-canary.fullname" $ }}.{{ include "loki.namespace" $ }}.svc.{{ .Values.global.clusterDomain }}:3500/metrics'
   prometheusAddress: ""
   timeout: 1m
