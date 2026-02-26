@@ -254,6 +254,12 @@ loki:
       {{- tpl (. | toYaml) $ | nindent 4 }}
     {{- end }}
   auth_enabled: true
+  storage:
+    type: 'filesystem'
+    bucketNames:
+      chunks: chunks
+      ruler: ruler
+      admin: admin
   memberlistConfig: {}
   extraMemberlistConfig: {}
   tenants: []
@@ -325,9 +331,8 @@ loki:
       connect_timeout: null
       request_timeout: null
     filesystem:
-      chunks: chunks
-      ruler: ruler
-      admin: admin
+      chunks_directory: /var/loki/chunks
+      rules_directory: /var/loki/rules
     use_thanos_objstore: false
     object_store:
       type: s3
