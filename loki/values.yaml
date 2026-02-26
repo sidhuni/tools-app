@@ -1850,7 +1850,7 @@ memcachedExporter:
     failureThreshold: 3
   startupProbe: {}
 resultsCache:
-  enabled: true
+  enabled: false
   addresses: dnssrvnoa+_memcached-client._tcp.{{ include "loki.resourceName" (dict "ctx" $ "component" "results-cache") }}.{{ include "loki.namespace" $ }}.svc.{{ .Values.global.clusterDomain }}
   defaultValidity: 12h
   timeout: 500ms
@@ -1896,7 +1896,7 @@ resultsCache:
     labels: {}
 chunksCache:
   suffix: ""
-  enabled: true
+  enabled: false
   addresses: 'dnssrvnoa+_memcached-client._tcp.{{ include "loki.resourceName" (dict "ctx" $ "component" "chunks-cache" "suffix" $.Values.chunksCache.suffix ) }}.{{ include "loki.namespace" $ }}.svc.{{ .Values.global.clusterDomain }}'
   batchSize: 4
   parallelism: 5
