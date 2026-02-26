@@ -17,7 +17,7 @@ fullnameOverride: null
 namespaceOverride: null
 clusterLabelOverride: null
 imagePullSecrets: []
-deploymentMode: Single
+deploymentMode: SingleBinary
 loki:
   livenessProbe: {}
   readinessProbe:
