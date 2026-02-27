@@ -34,8 +34,8 @@ mongodb:
   tolerations: []
   image:
     registry: docker.io
-    repository: appsmith/mongodb
-    tag: 6.0.27
+    repository: bitnami/os-shell
+    tag: 12-debian-12-r23 
   arbiter:
     nodeSelector: {}
     affinity: {}
