@@ -71,6 +71,8 @@ prometheus:
     tag: v0.74.0
 global:
   storageClass: ""
+  security:
+    allowInsecureImages: true
   namespaceOverride: ""
 fullnameOverride: ""
 containerName: "appsmith"
