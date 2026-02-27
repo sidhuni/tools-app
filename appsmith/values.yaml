@@ -20,8 +20,8 @@ diagnosticMode:
     - infinity
 image:
   registry: docker.io
-  repository: bitnami/appsmith
-  tag: 1.9.38-debian-11-r1
+  repository: appsmith/appsmith-ce
+  tag: release
   digest: ""
   pullPolicy: IfNotPresent
   pullSecrets: []
@@ -97,6 +97,7 @@ client:
   extraEnvVarsSecret: ""
   extraVolumes: []
   extraVolumeMounts: []
+  initContainers: []
   sidecars: []
   service:
     type: LoadBalancer
@@ -138,6 +139,7 @@ backend:
   existingSecretPasswordKey: "admin-password"
   existingSecretEncryptionSaltKey: "encryption-salt"
   existingSecretEncryptionPasswordKey: "encryption-password"
+  initContainers: []
   containerPorts:
     http: 8080
   livenessProbe:
@@ -263,6 +265,7 @@ rts:
   customLivenessProbe: {}
   customReadinessProbe: {}
   customStartupProbe: {}
+  initContainers: []
   resources:
     limits: {}
     requests: {}
