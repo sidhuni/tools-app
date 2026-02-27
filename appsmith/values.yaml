@@ -19,6 +19,8 @@ redis:
     tag: 7.0.15
 mongodb:
   enabled: true
+  volumePermissions:
+    enabled: true  
   service:
     nameOverride: appsmith-mongodb
   auth:
