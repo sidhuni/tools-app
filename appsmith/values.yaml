@@ -2,6 +2,8 @@ global:
   imageRegistry: ""
   imagePullSecrets: []
   storageClass: ""
+  security:
+    allowInsecureImages: true
 kubeVersion: ""
 nameOverride: ""
 fullnameOverride: ""
