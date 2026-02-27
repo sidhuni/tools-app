@@ -132,7 +132,7 @@ client:
 backend:
   replicaCount: 1
   volumePermissions:
-    enabled: true
+    enabled: false
   adminUser: user
   adminEmail: user@example.com
   adminPassword: ""
