@@ -20,8 +20,8 @@ diagnosticMode:
     - infinity
 image:
   registry: docker.io
-  repository: appsmith/appsmith-ce
-  tag: latest
+  repository: appsmith/appsmith
+  tag: 1.9.38-debian-11-r1
   digest: ""
   pullPolicy: IfNotPresent
   pullSecrets: []
