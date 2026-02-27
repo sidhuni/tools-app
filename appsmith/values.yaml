@@ -13,11 +13,9 @@ commonAnnotations: {}
 clusterDomain: cluster.local
 extraDeploy: []
 diagnosticMode:
-  enabled: false
-  command:
-    - sleep
-  args:
-    - infinity
+  enabled: true
+  command: ["/bin/sh", "-c"]
+  args: ["mkdir -p /appsmith-logs && /entrypoint.sh"]
 image:
   registry: docker.io
   repository: appsmith/appsmith-ce
@@ -74,8 +72,8 @@ client:
       drop: []
     seccompProfile:
       type: "Unconfined"
-  command: ["/bin/sh", "-c"]
-  args: ["/entrypoint.sh"]
+  command: ["/bin/sh"]
+  args: ["-c", "mkdir -p /appsmith-logs && /entrypoint.sh"]
   hostAliases: []
   podLabels: {}
   podAnnotations: {}
@@ -184,8 +182,8 @@ backend:
       drop: []
     seccompProfile:
       type: "Unconfined"
-  command: ["/bin/sh", "-c"]
-  args: ["/entrypoint.sh"]
+  command: ["/bin/sh"]
+  args: ["-c", "mkdir -p /appsmith-logs && /entrypoint.sh"]
   initContainers: []
   hostAliases: []
   podLabels: {}
