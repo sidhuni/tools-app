@@ -20,7 +20,7 @@ diagnosticMode:
     - infinity
 image:
   registry: docker.io
-  repository: appsmith/appsmith-ce
+  repository: appsmith/appsmith
   tag: release
   digest: ""
   pullPolicy: IfNotPresent
