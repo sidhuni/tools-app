@@ -97,7 +97,6 @@ client:
   extraEnvVarsSecret: ""
   extraVolumes: []
   extraVolumeMounts: []
-  initContainers: []
   sidecars: []
   service:
     type: LoadBalancer
