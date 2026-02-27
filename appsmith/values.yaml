@@ -20,6 +20,7 @@ image:
   registry: docker.io
   repository: appsmith/appsmith
   tag: latest
+  digest: ""
   pullPolicy: IfNotPresent
   pullSecrets: []
   debug: false
@@ -359,7 +360,7 @@ redis:
   image:
     registry: docker.io
     repository: bitnami/redis
-    tag: latest-metadata  
+    tag: 7.2.4-debian-12-r9
   existingSecret: ""
   master:
     service:
