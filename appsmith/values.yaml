@@ -71,8 +71,8 @@ client:
       drop: ["ALL"]
     seccompProfile:
       type: "RuntimeDefault"
-  command: []
-  args: []
+  command: ["/bin/sh", "-c"]
+  args: ["/entrypoint.sh"]
   hostAliases: []
   podLabels: {}
   podAnnotations: {}
@@ -183,8 +183,7 @@ backend:
     seccompProfile:
       type: "RuntimeDefault"
   command: ["/bin/sh", "-c"]
-  args: 
-    - "/entrypoint.sh"
+  args: ["/entrypoint.sh"]
   hostAliases: []
   podLabels: {}
   podAnnotations: {}
