@@ -53,6 +53,7 @@ client:
     successThreshold: 1
   customLivenessProbe: {}
   customReadinessProbe: {}
+  initContainers: []
   customStartupProbe: {}
   resources:
     limits: {}
@@ -183,6 +184,7 @@ backend:
       type: "RuntimeDefault"
   command: ["/bin/sh", "-c"]
   args: ["/entrypoint.sh"]
+  initContainers: []
   hostAliases: []
   podLabels: {}
   podAnnotations: {}
@@ -263,6 +265,7 @@ rts:
   customLivenessProbe: {}
   customReadinessProbe: {}
   customStartupProbe: {}
+  initContainers: []
   resources:
     limits: {}
     requests: {}
