@@ -184,9 +184,7 @@ backend:
       type: "RuntimeDefault"
   command: ["/bin/sh", "-c"]
   args: 
-    - |
-      # Updated path for modern Appsmith images
-      /entrypoint.sh
+    - "/entrypoint.sh"
   hostAliases: []
   podLabels: {}
   podAnnotations: {}
