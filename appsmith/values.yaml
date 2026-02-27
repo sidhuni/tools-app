@@ -35,7 +35,7 @@ mongodb:
   image:
     registry: docker.io
     repository: bitnami/mongodb
-    tag: latest
+    tag: v1.9.31
 
   arbiter:
     nodeSelector: {}
@@ -139,8 +139,8 @@ nodeSelector: {}
 tolerations: []
 affinity: {}
 persistence:
-  enabled: false
-  storageClass: ""
+  enabled: true
+  storageClass: "local-path"
   annotations: {}
   localStorage: false
   storagePath: /tmp/hostpath_pv
