@@ -100,7 +100,10 @@ client:
   extraEnvVarsSecret: ""
   extraVolumes: []
   extraVolumeMounts: []
-  sidecars: []
+  sidecars: 
+    - name: preserve-logs-symlinks
+      image: docker.io/appsmith/appsmith-ce:release
+      command: ["/bin/sh", "-c", "exit 0"] # Force a successful exit
   service:
     type: LoadBalancer
     ports:
@@ -331,8 +334,8 @@ volumePermissions:
   enabled: true
   image:
     registry: docker.io
-    repository: bitnami/os-shell
-    tag: 12-debian-12-r0
+    repository: debian
+    tag: bullseye-slim
     pullPolicy: IfNotPresent
     pullSecrets: []
   resources:
