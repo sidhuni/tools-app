@@ -121,10 +121,12 @@ ingress:
   className: "nginx"
 customCAcert:
 resources:
-  limits: {}
   requests:
-     cpu: 500m
-     memory: 3000Mi
+    cpu: 500m
+    memory: 1500Mi
+  limits:
+    cpu: 1
+    memory: 3000Mi
 workload:
   kind: StatefulSet
 replicas: 1
