@@ -29,7 +29,7 @@ image:
 client:
   replicaCount: 1
   volumePermissions:
-    enabled: false
+    enabled: true
   containerPorts:
     http: 8080
   livenessProbe:
@@ -66,9 +66,9 @@ client:
   containerSecurityContext:
     enabled: true
     runAsUser: 1001
-    runAsNonRoot: true
+    runAsNonRoot: false
     readOnlyRootFilesystem: false
-    privileged: false
+    privileged: true
     allowPrivilegeEscalation: false
     capabilities:
       drop: ["ALL"]
@@ -183,7 +183,7 @@ backend:
     privileged: true
     allowPrivilegeEscalation: true
     capabilities:
-      drop: ["CHOWN", "FOWNER", "DAC_OVERRIDE"]
+      drop: []
     seccompProfile:
       type: "RuntimeDefault"
   command: ["/bin/sh", "-c"]
@@ -280,7 +280,6 @@ rts:
     enabled: true
     runAsUser: 1001
     runAsNonRoot: true
-    readOnlyRootFilesystem: false
     privileged: false
     allowPrivilegeEscalation: false
     capabilities:
@@ -329,7 +328,7 @@ rts:
     sessionAffinity: None
     sessionAffinityConfig: {}
 volumePermissions:
-  enabled: false
+  enabled: true
   image:
     registry: docker.io
     repository: bitnami/os-shell
