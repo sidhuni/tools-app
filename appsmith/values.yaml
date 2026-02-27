@@ -100,10 +100,6 @@ client:
   extraEnvVarsSecret: ""
   extraVolumes: []
   extraVolumeMounts: []
-  sidecars: 
-    - name: preserve-logs-symlinks
-      image: docker.io/appsmith/appsmith-ce:release
-      command: ["/bin/sh", "-c", "exit 0"] # Force a successful exit
   service:
     type: LoadBalancer
     ports:
@@ -182,7 +178,6 @@ backend:
     enabled: true
     runAsUser: 1001
     runAsNonRoot: false
-    readOnlyRootFilesystem: false
     privileged: true
     allowPrivilegeEscalation: true
     capabilities:
