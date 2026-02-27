@@ -133,7 +133,7 @@ client:
 backend:
   replicaCount: 1
   volumePermissions:
-    enabled: false
+    enabled: true
   adminUser: user
   adminEmail: user@example.com
   adminPassword: ""
@@ -174,10 +174,10 @@ backend:
     requests: {}
   podSecurityContext:
     enabled: true
-    fsGroup: 0
+    fsGroup: 1001
   containerSecurityContext:
     enabled: true
-    runAsUser: 0
+    runAsUser: 1001
     runAsNonRoot: false
     readOnlyRootFilesystem: false
     privileged: true
