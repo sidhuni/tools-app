@@ -185,6 +185,8 @@ backend:
   command: ["/bin/sh", "-c"]
   args: ["/entrypoint.sh"]
   initContainers: []
+  volumePermissions:
+    enabled: false
   hostAliases: []
   podLabels: {}
   podAnnotations: {}
@@ -210,8 +212,6 @@ backend:
   extraVolumes: []
   extraVolumeMounts: []
   sidecars: []
-volumePermissions:
-  enabled: false
   service:
     type: ClusterIP
     ports:
