@@ -29,7 +29,7 @@ image:
 client:
   replicaCount: 1
   volumePermissions:
-    enabled: true
+    enabled: false
   containerPorts:
     http: 8080
   livenessProbe:
@@ -326,7 +326,7 @@ rts:
     sessionAffinity: None
     sessionAffinityConfig: {}
 volumePermissions:
-  enabled: true
+  enabled: false
   image:
     registry: docker.io
     repository: debian
