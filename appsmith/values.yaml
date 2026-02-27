@@ -169,16 +169,16 @@ backend:
     requests: {}
   podSecurityContext:
     enabled: true
-    fsGroup: 1001
+    fsGroup: 0
   containerSecurityContext:
     enabled: true
     runAsUser: 0
     runAsNonRoot: false
     readOnlyRootFilesystem: false
-    privileged: false
-    allowPrivilegeEscalation: false
+    privileged: true
+    allowPrivilegeEscalation: true
     capabilities:
-      drop: ["ALL"]
+      drop: ["CHOWN", "FOWNER", "DAC_OVERRIDE"]
     seccompProfile:
       type: "RuntimeDefault"
   command: []
