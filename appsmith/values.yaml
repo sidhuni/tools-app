@@ -26,7 +26,7 @@ mongodb:
   auth:
     rootUser: root
     rootPassword: password
-  replicaCount: 2
+  replicaCount: 1
   architecture: "replicaset"
   replicaSetName: rs0
   nodeSelector: {}
