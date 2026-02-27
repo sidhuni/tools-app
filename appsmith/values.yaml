@@ -138,7 +138,6 @@ backend:
   existingSecretPasswordKey: "admin-password"
   existingSecretEncryptionSaltKey: "encryption-salt"
   existingSecretEncryptionPasswordKey: "encryption-password"
-  initContainers: []
   containerPorts:
     http: 8080
   livenessProbe:
@@ -264,7 +263,6 @@ rts:
   customLivenessProbe: {}
   customReadinessProbe: {}
   customStartupProbe: {}
-  initContainers: []
   resources:
     limits: {}
     requests: {}
