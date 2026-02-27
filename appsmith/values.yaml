@@ -54,6 +54,8 @@ client:
   customLivenessProbe: {}
   customReadinessProbe: {}
   initContainers: []
+  volumePermissions:
+    enabled: false
   customStartupProbe: {}
   resources:
     limits: {}
@@ -268,6 +270,8 @@ rts:
   customReadinessProbe: {}
   customStartupProbe: {}
   initContainers: []
+  volumePermissions:
+    enabled: false
   resources:
     limits: {}
     requests: {}
