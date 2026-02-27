@@ -172,8 +172,8 @@ backend:
     fsGroup: 1001
   containerSecurityContext:
     enabled: true
-    runAsUser: 1001
-    runAsNonRoot: true
+    runAsUser: 0
+    runAsNonRoot: false
     readOnlyRootFilesystem: false
     privileged: false
     allowPrivilegeEscalation: false
@@ -227,7 +227,7 @@ backend:
     mountPath: /bitnami/appsmith
     subPath: ""
     gitDataPath: ""
-    storageClass: ""
+    storageClass: "local-path"
     annotations: {}
     accessModes:
       - ReadWriteOnce
@@ -322,7 +322,7 @@ rts:
     sessionAffinity: None
     sessionAffinityConfig: {}
 volumePermissions:
-  enabled: false
+  enabled: true
   image:
     registry: docker.io
     repository: bitnami/os-shell
