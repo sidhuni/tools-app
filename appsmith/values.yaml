@@ -1,398 +1,219 @@
-global:
-  imageRegistry: ""
-  imagePullSecrets: []
-  storageClass: ""
-  security:
-    allowInsecureImages: true
-kubeVersion: ""
-nameOverride: ""
-fullnameOverride: ""
-namespaceOverride: ""
-commonLabels: {}
-commonAnnotations: {}
-clusterDomain: cluster.local
-extraDeploy: []
-diagnosticMode:
+redis:
   enabled: true
-  command: ["/bin/sh", "-c"]
-  args: ["mkdir -p /appsmith-logs && /entrypoint.sh"]
-image:
-  registry: docker.io
-  repository: appsmith/appsmith-ce
-  tag: release
-  digest: ""
-  pullPolicy: IfNotPresent
-  pullSecrets: []
-  debug: false
-client:
-  replicaCount: 1
-  volumePermissions:
+  auth:
     enabled: false
-  containerPorts:
-    http: 8080
-  livenessProbe:
-    enabled: true
-    initialDelaySeconds: 30
-    periodSeconds: 10
-    timeoutSeconds: 5
-    failureThreshold: 6
-    successThreshold: 1
-  readinessProbe:
-    enabled: true
-    initialDelaySeconds: 30
-    periodSeconds: 10
-    timeoutSeconds: 5
-    failureThreshold: 6
-    successThreshold: 1
-  startupProbe:
-    enabled: false
-    initialDelaySeconds: 30
-    periodSeconds: 10
-    timeoutSeconds: 5
-    failureThreshold: 6
-    successThreshold: 1
-  customLivenessProbe: {}
-  customReadinessProbe: {}
-  initContainers: []
-  customStartupProbe: {}
-  resources:
-    limits: {}
-    requests: {}
-  podSecurityContext:
-    enabled: true
-    fsGroup: 1001
-  containerSecurityContext:
-    enabled: true
-    runAsUser: 1001
-    runAsNonRoot: false
-    readOnlyRootFilesystem: false
-    privileged: true
-    allowPrivilegeEscalation: true
-    capabilities:
-      drop: []
-    seccompProfile:
-      type: "Unconfined"
-  command: ["/bin/sh"]
-  args: 
-    - "-c"
-    - |
-      mkdir -p /appsmith-logs
-      /entrypoint.sh
-  hostAliases: []
-  podLabels: {}
-  podAnnotations: {}
-  podAffinityPreset: ""
-  podAntiAffinityPreset: soft
-  nodeAffinityPreset:
-    type: ""
-    key: ""
-    values: []
-  affinity: {}
-  nodeSelector: {}
-  tolerations: []
-  updateStrategy:
-    type: RollingUpdate
-  priorityClassName: ""
-  topologySpreadConstraints: []
-  schedulerName: ""
-  terminationGracePeriodSeconds: ""
-  lifecycleHooks: {}
-  extraEnvVars: []
-  extraEnvVarsCM: ""
-  extraEnvVarsSecret: ""
-  extraVolumes: []
-  extraVolumeMounts: []
-  service:
-    type: LoadBalancer
-    ports:
-      http: 80
-    nodePorts:
-      http: ""
-    clusterIP: ""
-    loadBalancerIP: ""
-    loadBalancerSourceRanges: []
-    externalTrafficPolicy: Cluster
-    annotations: {}
-    extraPorts: []
-    sessionAffinity: None
-    sessionAffinityConfig: {}
-  ingress:
-    enabled: false
-    pathType: ImplementationSpecific
-    apiVersion: ""
-    hostname: appsmith.local
-    ingressClassName: ""
-    path: /
-    annotations: {}
-    tls: false
-    selfSigned: false
-    extraHosts: []
-    extraPaths: []
-    extraTls: []
-    secrets: []
-    extraRules: []
-backend:
-  replicaCount: 1
-  volumePermissions:
-    enabled: false
-  adminUser: user
-  adminEmail: user@example.com
-  adminPassword: ""
-  encryptionSalt: ""
-  encryptionPassword: ""
-  existingSecret: ""
-  existingSecretPasswordKey: "admin-password"
-  existingSecretEncryptionSaltKey: "encryption-salt"
-  existingSecretEncryptionPasswordKey: "encryption-password"
-  containerPorts:
-    http: 8080
-  livenessProbe:
-    enabled: true
-    initialDelaySeconds: 30
-    periodSeconds: 10
-    timeoutSeconds: 5
-    failureThreshold: 6
-    successThreshold: 1
-  readinessProbe:
-    enabled: true
-    initialDelaySeconds: 30
-    periodSeconds: 10
-    timeoutSeconds: 5
-    failureThreshold: 6
-    successThreshold: 1
-  startupProbe:
-    enabled: false
-    initialDelaySeconds: 30
-    periodSeconds: 10
-    timeoutSeconds: 5
-    failureThreshold: 6
-    successThreshold: 1
-  customLivenessProbe: {}
-  customReadinessProbe: {}
-  customStartupProbe: {}
-  resources:
-    limits: {}
-    requests: {}
-  podSecurityContext:
-    enabled: true
-    fsGroup: 1001
-  containerSecurityContext:
-    enabled: true
-    runAsUser: 0
-    runAsNonRoot: false
-    privileged: true
-    allowPrivilegeEscalation: true
-    capabilities:
-      drop: []
-    seccompProfile:
-      type: "Unconfined"
-  command: ["/bin/sh"]
-  args: 
-    - "-c"
-    - |
-      mkdir -p /appsmith-logs
-      /entrypoint.sh
-  initContainers: []
-  hostAliases: []
-  podLabels: {}
-  podAnnotations: {}
-  podAffinityPreset: ""
-  podAntiAffinityPreset: soft
-  nodeAffinityPreset:
-    type: ""
-    key: ""
-    values: []
-  affinity: {}
-  nodeSelector: {}
-  tolerations: []
-  updateStrategy:
-    type: RollingUpdate
-  priorityClassName: ""
-  topologySpreadConstraints: []
-  schedulerName: ""
-  terminationGracePeriodSeconds: ""
-  lifecycleHooks: {}
-  extraEnvVars: []
-  extraEnvVarsCM: ""
-  extraEnvVarsSecret: ""
-  extraVolumes: []
-  extraVolumeMounts: []
-  sidecars: []
-  service:
-    type: ClusterIP
-    ports:
-      http: 80
-    nodePorts:
-      http: ""
-    clusterIP: ""
-    loadBalancerIP: ""
-    loadBalancerSourceRanges: []
-    externalTrafficPolicy: Cluster
-    annotations: {}
-    extraPorts: []
-    sessionAffinity: None
-    sessionAffinityConfig: {}
-  persistence:
-    enabled: true
-    mountPath: /bitnami/appsmith
-    subPath: ""
-    gitDataPath: ""
-    storageClass: "local-path"
-    annotations: {}
-    accessModes:
-      - ReadWriteOnce
-    size: 5Gi
-    existingClaim: ""
-    selector: {}
-    dataSource: {}
-rts:
-  replicaCount: 1
-  containerPorts:
-    http: 8080
-  livenessProbe:
-    enabled: true
-    initialDelaySeconds: 30
-    periodSeconds: 10
-    timeoutSeconds: 5
-    failureThreshold: 6
-    successThreshold: 1
-  readinessProbe:
-    enabled: true
-    initialDelaySeconds: 30
-    periodSeconds: 10
-    timeoutSeconds: 5
-    failureThreshold: 6
-    successThreshold: 1
-  startupProbe:
-    enabled: false
-    initialDelaySeconds: 30
-    periodSeconds: 10
-    timeoutSeconds: 5
-    failureThreshold: 6
-    successThreshold: 1
-  customLivenessProbe: {}
-  customReadinessProbe: {}
-  customStartupProbe: {}
-  initContainers: []
-  resources:
-    limits: {}
-    requests: {}
-  podSecurityContext:
-    enabled: true
-    fsGroup: 1001
-  containerSecurityContext:
-    enabled: true
-    runAsUser: 1001
-    runAsNonRoot: true
-    privileged: false
-    allowPrivilegeEscalation: false
-    capabilities:
-      drop: ["ALL"]
-    seccompProfile:
-      type: "Unconfined"
-  command: []
-  args: []
-  hostAliases: []
-  podLabels: {}
-  podAnnotations: {}
-  podAffinityPreset: ""
-  podAntiAffinityPreset: soft
-  nodeAffinityPreset:
-    type: ""
-    key: ""
-    values: []
-  affinity: {}
-  nodeSelector: {}
-  tolerations: []
-  updateStrategy:
-    type: RollingUpdate
-  priorityClassName: ""
-  topologySpreadConstraints: []
-  schedulerName: ""
-  terminationGracePeriodSeconds: ""
-  lifecycleHooks: {}
-  extraEnvVars: []
-  extraEnvVarsCM: ""
-  extraEnvVarsSecret: ""
-  extraVolumes: []
-  extraVolumeMounts: []
-  sidecars: []
-  service:
-    type: ClusterIP
-    ports:
-      http: 80
-    nodePorts:
-      http: ""
-    clusterIP: ""
-    loadBalancerIP: ""
-    loadBalancerSourceRanges: []
-    externalTrafficPolicy: Cluster
-    annotations: {}
-    extraPorts: []
-    sessionAffinity: None
-    sessionAffinityConfig: {}
-volumePermissions:
-  enabled: false
+  master:
+    nodeSelector: {}
+    disableCommands: []
+    affinity: {}
+    tolerations: []
+  replica:
+    replicaCount: 1
+    nodeSelector: {}
+    disableCommands: []
+    affinity: {}
+    tolerations: []
   image:
     registry: docker.io
-    repository: debian
-    tag: bullseye-slim
-    pullPolicy: IfNotPresent
-    pullSecrets: []
-  resources:
-    limits: {}
-    requests: {}
-  containerSecurityContext:
-    runAsUser: 0
+    repository: redis
+    tag: 7.0.15
+mongodb:
+  enabled: true
+  service:
+    nameOverride: appsmith-mongodb
+  auth:
+    rootUser: root
+    rootPassword: password
+  replicaCount: 2
+  architecture: "replicaset"
+  replicaSetName: rs0
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
+  image:
+    registry: docker.io
+    repository: appsmith/mongodb
+    tag: 6.0.27
+  arbiter:
+    nodeSelector: {}
+    affinity: {}
+    tolerations: []
+  hidden:
+    nodeSelector: {}
+    affinity: {}
+    tolerations: []
+postgresql:
+  enabled: true
+  auth:
+    username: root
+    password: password
+    postgresPassword: password
+    database: keycloak
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/postgresql
+    tag: 14.12.0
+  primary:
+    affinity: {}
+    nodeSelector: {}
+    tolerations: []
+  readReplicas:
+    affinity: {}
+    nodeSelector: {}
+    tolerations: []
+externalSecrets:
+  enabled: false
+  refreshInterval: 1m
+  remoteNameSecret: "" 
+prometheus:
+  enabled: false
+  image:
+    tag: v0.74.0
+global:
+  storageClass: ""
+  namespaceOverride: ""
+fullnameOverride: ""
+containerName: "appsmith"
+commonLabels: {}
+commonAnnotations: {}
+schedulerName: ""
+strategyType: RollingUpdate
+initContainer: {}
+image:
+  registry: index.docker.io
+  repository: appsmith/appsmith-ee
+  pullPolicy: IfNotPresent
+  pullSecrets: ""
+  tag: "latest"
 serviceAccount:
   create: true
   name: ""
   annotations: {}
-  automountServiceAccountToken: true
-externalDatabase:
+annotations: {}
+podAnnotations: {}
+podLabels: {}
+podSecurityContext: {}
+securityContext: {}
+extraVolumes: []
+extraVolumeMounts: []
+service:
+  type: ClusterIP
+  port: 80
+  nodePort: 8000
+  portName: appsmith
+  clusterIP: ""
+  loadBalancerIP: ""
+  loadBalancerSourceRanges: []
+  annotations: {}
+ingress:
+  enabled: false
+  annotations: {}
   hosts: []
-  port: 27017
-  username: root
-  database: appsmith
-  password: ""
-  existingSecret: ""
-  existingSecretPasswordKey: ""
-externalRedis:
-  host: ""
-  port: 6379
-  password: ""
-  existingSecret: ""
-  existingSecretPasswordKey: ""
-redis:
+  tls: false
+  secrets: []
+  certManager: false
+  certManagerTls: []
+  className: "nginx"
+customCAcert:
+resources:
+  limits: {}
+  requests:
+     cpu: 500m
+     memory: 3000Mi
+workload:
+  kind: StatefulSet
+replicas: 1
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 2
+  targetCPUUtilizationPercentage: 5
+nodeSelector: {}
+tolerations: []
+affinity: {}
+persistence:
   enabled: true
-  architecture: standalone
-  image:
-    registry: docker.io
-    repository: redis
-    tag: 7.2
-  existingSecret: ""
-  master:
-    service:
-      ports:
-        redis: 6379
-  auth:
-    enabled: true
-    password: ""
-    existingSecret: ""
-mongodb:
+  storageClass: ""
+  annotations: {}
+  localStorage: false
+  storagePath: /tmp/hostpath_pv
+  localCluster: {}
+  accessModes:
+    - ReadWriteMany
+  size: 10Gi
+  reclaimPolicy: Retain
+  pvNameOverride: ""
+  existingClaim:
+    enabled:
+    name:
+    claimName:
+  efs:
+    enabled:
+    driver:
+    volumeHandle:
+  volumeClaimTemplates:
+    selector: {}
+    requests: {}
+    dataSource: {}
+storageClass:
+  enabled: false
+  bindingMode: Immediate
+  defaultClass: false
+  allowVolumeExpansion: true
+  reclaimPolicy: Delete
+  provisioner: ""
+  annotations: {}
+  mountOptions: {}
+  parameters: {}
+podDisruptionBudgets:
   enabled: true
-  architecture: replicaset
-  replicaCount: 1
-  image:
-    registry: docker.io
-    repository: bitnami/mongodb
-    tag: latest
-  auth:
-    usernames:
-      - bn_appsmith
-    databases:
-      - bitnami_appsmith
-  containerPorts:
-    mongodb: 27017
-  arbiter:
-    enabled: false
+  minAvailable: 1
+metrics:
+  enabled: false
+  port: 2019
+keda:
+  enabled: false
+  pollingInterval: 30
+  cooldownPeriod: 60
+  minReplicaCount: 1
+  maxReplicaCount: 6
+  fallback:
+    failureThreshold: 3
+    replicas: 4
+  triggers: []
+autoupdate:
+  enabled: false
+  scheduler: "0 * * * *"
+secretName: ""
+applicationConfig:
+  APPSMITH_OAUTH2_GOOGLE_CLIENT_ID: ""
+  APPSMITH_OAUTH2_GOOGLE_CLIENT_SECRET: ""
+  APPSMITH_OAUTH2_GITHUB_CLIENT_ID: ""
+  APPSMITH_OAUTH2_GITHUB_CLIENT_SECRET: ""
+  APPSMITH_FORM_LOGIN_DISABLED: ""
+  APPSMITH_SIGNUP_DISABLED: ""
+  APPSMITH_CLIENT_LOG_LEVEL: ""
+  APPSMITH_MAIL_ENABLED: ""
+  APPSMITH_MAIL_HOST: ""
+  APPSMITH_MAIL_PORT: ""
+  APPSMITH_MAIL_USERNAME: ""
+  APPSMITH_MAIL_PASSWORD: ""
+  APPSMITH_MAIL_FROM: ""
+  APPSMITH_REPLY_TO: ""
+  APPSMITH_MAIL_SMTP_AUTH: ""
+  APPSMITH_MAIL_SMTP_TLS_ENABLED: ""
+  APPSMITH_DISABLE_TELEMETRY: ""
+  APPSMITH_RECAPTCHA_SITE_KEY: ""
+  APPSMITH_RECAPTCHA_SECRET_KEY: ""
+  APPSMITH_RECAPTCHA_ENABLED: ""
+  APPSMITH_DB_URL: ""
+  APPSMITH_REDIS_URL: ""
+  APPSMITH_ENCRYPTION_PASSWORD: ""
+  APPSMITH_ENCRYPTION_SALT: ""
+  APPSMITH_CUSTOM_DOMAIN: ""
+  APPSMITH_DISABLE_IFRAME_WIDGET_SANDBOX: "false"
+  APPSMITH_LICENSE_KEY: ""
+  APPSMITH_KEYCLOAK_DB_DRIVER: ""
+  APPSMITH_KEYCLOAK_DB_USERNAME: ""
+  APPSMITH_KEYCLOAK_DB_PASSWORD: ""
+  APPSMITH_KEYCLOAK_DB_URL: ""
