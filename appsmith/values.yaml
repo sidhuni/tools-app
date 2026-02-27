@@ -13,7 +13,7 @@ commonAnnotations: {}
 clusterDomain: cluster.local
 extraDeploy: []
 diagnosticMode:
-  enabled: true
+  enabled: false
   command:
     - sleep
   args:
@@ -176,7 +176,7 @@ backend:
     fsGroup: 1001
   containerSecurityContext:
     enabled: true
-    runAsUser: 1001
+    runAsUser: 0
     runAsNonRoot: false
     privileged: true
     allowPrivilegeEscalation: true
