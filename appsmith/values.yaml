@@ -132,6 +132,8 @@ client:
     extraRules: []
 backend:
   replicaCount: 1
+  volumePermissions:
+    enabled: false
   adminUser: user
   adminEmail: user@example.com
   adminPassword: ""
@@ -187,8 +189,6 @@ backend:
   command: ["/bin/sh", "-c"]
   args: ["/entrypoint.sh"]
   initContainers: []
-  volumePermissions:
-    enabled: false
   hostAliases: []
   podLabels: {}
   podAnnotations: {}
@@ -270,8 +270,6 @@ rts:
   customReadinessProbe: {}
   customStartupProbe: {}
   initContainers: []
-  volumePermissions:
-    enabled: false
   resources:
     limits: {}
     requests: {}
