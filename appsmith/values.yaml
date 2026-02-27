@@ -231,7 +231,7 @@ backend:
     annotations: {}
     accessModes:
       - ReadWriteOnce
-    size: 8Gi
+    size: 5Gi
     existingClaim: ""
     selector: {}
     dataSource: {}
@@ -369,7 +369,7 @@ redis:
 mongodb:
   enabled: true
   architecture: replicaset
-  replicaCount: 2
+  replicaCount: 1
   auth:
     usernames:
       - bn_appsmith
