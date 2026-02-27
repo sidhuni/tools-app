@@ -1,30 +1,30 @@
-# apiVersion: argoproj.io/v1alpha1
-# kind: Application
-# metadata:
-#   name: appsmith
-#   namespace: argocd
-# spec:
-#   project: default
-#   sources:
-#   - repoURL: https://charts.bitnami.com/bitnami
-#     chart: appsmith
-#     targetRevision: 7.0.3
-#     helm:
-#       valueFiles:
-#       - $values/appsmith/values.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: appsm
+  namespace: argocd
+spec:
+  project: default
+  sources:
+  - repoURL: https://charts.bitnami.com/bitnami
+    chart: appsmith
+    targetRevision: 7.0.3
+    helm:
+      valueFiles:
+      - $values/appsmith/values.yaml
 
-#   - repoURL: https://github.com/sidhuni/tools-app.git
-#     targetRevision: main
-#     ref: values
+  - repoURL: https://github.com/sidhuni/tools-app.git
+    targetRevision: main
+    ref: values
 
-#   destination:
-#     server: https://kubernetes.default.svc
-#     namespace: appsmith
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: appsm
 
-#   syncPolicy:
-#     automated:
-#       prune: true
-#       selfHeal: true
-#     syncOptions:
-#       - CreateNamespace=true 
-#       - Validate=false
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true 
+      - Validate=false
