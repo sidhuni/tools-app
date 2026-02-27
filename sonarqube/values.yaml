@@ -1,7 +1,6 @@
 deploymentType: "StatefulSet"
 replicaCount: 1
 revisionHistoryLimit: 10
-edition: "developer"
 deploymentStrategy:
   type: Recreate
 OpenShift:
