@@ -73,7 +73,7 @@ client:
     capabilities:
       drop: []
     seccompProfile:
-      type: "RuntimeDefault"
+      type: "Unconfined"
   command: ["/bin/sh", "-c"]
   args: ["/entrypoint.sh"]
   hostAliases: []
@@ -185,7 +185,7 @@ backend:
     capabilities:
       drop: []
     seccompProfile:
-      type: "RuntimeDefault"
+      type: "Unconfined"
   command: ["/bin/sh", "-c"]
   args: ["/entrypoint.sh"]
   initContainers: []
@@ -285,7 +285,7 @@ rts:
     capabilities:
       drop: ["ALL"]
     seccompProfile:
-      type: "RuntimeDefault"
+      type: "Unconfined"
   command: []
   args: []
   hostAliases: []
@@ -332,7 +332,7 @@ volumePermissions:
   image:
     registry: docker.io
     repository: bitnami/os-shell
-    tag: 11-debian-11-r90
+    tag: 11-debian-11-r95
     pullPolicy: IfNotPresent
     pullSecrets: []
   resources:
