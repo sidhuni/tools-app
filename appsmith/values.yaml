@@ -208,7 +208,6 @@ backend:
   extraVolumes: []
   extraVolumeMounts: []
   sidecars: []
-  initContainers: []
   service:
     type: ClusterIP
     ports:
@@ -308,7 +307,6 @@ rts:
   extraVolumes: []
   extraVolumeMounts: []
   sidecars: []
-  initContainers: []
   service:
     type: ClusterIP
     ports:
