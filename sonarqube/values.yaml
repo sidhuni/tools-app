@@ -20,6 +20,11 @@ community:
 
 monitoringPasscode: "rancher-local-dev-123"
 
+spec:
+  containers:
+  - name: sonarqube
+    image: sonarqube:lts-community 
+
 image:
   repository: sonarqube
   pullPolicy: IfNotPresent
