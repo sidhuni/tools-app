@@ -28,6 +28,8 @@ image:
   debug: false
 client:
   replicaCount: 1
+  volumePermissions:
+    enabled: false
   containerPorts:
     http: 8080
   livenessProbe:
@@ -54,8 +56,6 @@ client:
   customLivenessProbe: {}
   customReadinessProbe: {}
   initContainers: []
-  volumePermissions:
-    enabled: false
   customStartupProbe: {}
   resources:
     limits: {}
