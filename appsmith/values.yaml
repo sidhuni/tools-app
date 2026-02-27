@@ -210,6 +210,8 @@ backend:
   extraVolumes: []
   extraVolumeMounts: []
   sidecars: []
+volumePermissions:
+  enabled: false
   service:
     type: ClusterIP
     ports:
