@@ -17,6 +17,9 @@ OpenShift:
 community:
   enabled: false
   buildNumber: "26.1.0.118079"
+
+monitoringPasscode: "rancher-local-dev-123"
+
 image:
   repository: sonarqube
   pullPolicy: IfNotPresent
