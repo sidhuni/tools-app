@@ -181,8 +181,11 @@ backend:
       drop: ["CHOWN", "FOWNER", "DAC_OVERRIDE"]
     seccompProfile:
       type: "RuntimeDefault"
-  command: []
-  args: []
+  command: ["/bin/sh", "-c"]
+  args: 
+    - |
+      # This bypasses the preserve-logs-symlinks logic and starts the app directly
+      /opt/bitnami/scripts/appsmith/entrypoint.sh /opt/bitnami/scripts/appsmith/run.sh
   hostAliases: []
   podLabels: {}
   podAnnotations: {}
