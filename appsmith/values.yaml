@@ -35,8 +35,8 @@ mongodb:
   image:
     registry: docker.io
     repository: bitnami/mongodb
-    tag: 6.0.15 
-    pullPolicy: Always
+    tag: 6.0.13-debian-11-r0 
+    pullPolicy: IfNotPresent
 
   arbiter:
     nodeSelector: {}
@@ -146,7 +146,7 @@ persistence:
   localCluster: {}
   accessModes:
     - ReadWriteMany
-  size: 10Gi
+  size: 5Gi
   reclaimPolicy: Retain
   pvNameOverride: ""
   existingClaim: {}
