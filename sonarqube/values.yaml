@@ -1,6 +1,7 @@
 deploymentType: "StatefulSet"
 replicaCount: 1
 revisionHistoryLimit: 10
+edition: "developer"
 deploymentStrategy:
   type: Recreate
 OpenShift:
@@ -15,7 +16,7 @@ OpenShift:
     wildcardPolicy: None
     annotations: {}
 community:
-  enabled: false
+  enabled: true
   buildNumber: "26.1.0.118079"
 
 monitoringPasscode: "rancher-local-dev-123"
