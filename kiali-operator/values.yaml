@@ -118,3 +118,14 @@ server:
       enabled: true
       port: 9090
   web_root: ""
+cr:
+  create: true
+  namespace: istio-system
+  spec:
+    auth:
+      strategy: "anonymous" # Recommended for easy local access
+    deployment:
+      image_version: "v2.22.0"
+    external_services:
+      prometheus:
+        url: "http://prometheus.istio-system:9090"
