@@ -357,6 +357,10 @@ externalRedis:
 redis:
   enabled: true
   architecture: standalone
+  image:
+    registry: docker.io
+    repository: bitnami/redis
+    tag: 7.2.4-debian-12-r11
   existingSecret: ""
   master:
     service:
