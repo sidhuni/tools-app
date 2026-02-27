@@ -73,7 +73,11 @@ client:
     seccompProfile:
       type: "Unconfined"
   command: ["/bin/sh"]
-  args: ["-c", "mkdir -p /appsmith-logs && /entrypoint.sh"]
+  args: 
+    - "-c"
+    - |
+      mkdir -p /appsmith-logs
+      /entrypoint.sh
   hostAliases: []
   podLabels: {}
   podAnnotations: {}
@@ -183,7 +187,11 @@ backend:
     seccompProfile:
       type: "Unconfined"
   command: ["/bin/sh"]
-  args: ["-c", "mkdir -p /appsmith-logs && /entrypoint.sh"]
+  args: 
+    - "-c"
+    - |
+      mkdir -p /appsmith-logs
+      /entrypoint.sh
   initContainers: []
   hostAliases: []
   podLabels: {}
