@@ -13,7 +13,7 @@ commonAnnotations: {}
 clusterDomain: cluster.local
 extraDeploy: []
 diagnosticMode:
-  enabled: false
+  enabled: true
   command:
     - sleep
   args:
