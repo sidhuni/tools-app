@@ -19,14 +19,11 @@ community:
   buildNumber: "26.1.0.118079"
 
 monitoringPasscode: "rancher-local-dev-123"
-
-spec:
-  containers:
-  - name: sonarqube
-    image: sonarqube:lts-community 
+ 
 
 image:
   repository: sonarqube
+  tag: 10.7.0-community
   pullPolicy: IfNotPresent
 securityContext:
   fsGroup: 0
