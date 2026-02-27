@@ -69,9 +69,9 @@ client:
     runAsNonRoot: false
     readOnlyRootFilesystem: false
     privileged: true
-    allowPrivilegeEscalation: false
+    allowPrivilegeEscalation: true
     capabilities:
-      drop: ["ALL"]
+      drop: []
     seccompProfile:
       type: "RuntimeDefault"
   command: ["/bin/sh", "-c"]
