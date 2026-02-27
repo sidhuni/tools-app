@@ -1,0 +1,381 @@
+global:
+  imageRegistry: ""
+  imagePullSecrets: []
+  storageClass: ""
+kubeVersion: ""
+nameOverride: ""
+fullnameOverride: ""
+namespaceOverride: ""
+commonLabels: {}
+commonAnnotations: {}
+clusterDomain: cluster.local
+extraDeploy: []
+diagnosticMode:
+  enabled: false
+  command:
+    - sleep
+  args:
+    - infinity
+image:
+  registry: docker.io
+  repository: bitnami/appsmith
+  tag: 1.9.38-debian-11-r1
+  digest: ""
+  pullPolicy: IfNotPresent
+  pullSecrets: []
+  debug: false
+client:
+  replicaCount: 1
+  containerPorts:
+    http: 8080
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+  startupProbe:
+    enabled: false
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+  customLivenessProbe: {}
+  customReadinessProbe: {}
+  customStartupProbe: {}
+  resources:
+    limits: {}
+    requests: {}
+  podSecurityContext:
+    enabled: true
+    fsGroup: 1001
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1001
+    runAsNonRoot: true
+    readOnlyRootFilesystem: false
+    privileged: false
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop: ["ALL"]
+    seccompProfile:
+      type: "RuntimeDefault"
+  command: []
+  args: []
+  hostAliases: []
+  podLabels: {}
+  podAnnotations: {}
+  podAffinityPreset: ""
+  podAntiAffinityPreset: soft
+  nodeAffinityPreset:
+    type: ""
+    key: ""
+    values: []
+  affinity: {}
+  nodeSelector: {}
+  tolerations: []
+  updateStrategy:
+    type: RollingUpdate
+  priorityClassName: ""
+  topologySpreadConstraints: []
+  schedulerName: ""
+  terminationGracePeriodSeconds: ""
+  lifecycleHooks: {}
+  extraEnvVars: []
+  extraEnvVarsCM: ""
+  extraEnvVarsSecret: ""
+  extraVolumes: []
+  extraVolumeMounts: []
+  sidecars: []
+  initContainers: []
+  service:
+    type: LoadBalancer
+    ports:
+      http: 80
+    nodePorts:
+      http: ""
+    clusterIP: ""
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+    externalTrafficPolicy: Cluster
+    annotations: {}
+    extraPorts: []
+    sessionAffinity: None
+    sessionAffinityConfig: {}
+  ingress:
+    enabled: false
+    pathType: ImplementationSpecific
+    apiVersion: ""
+    hostname: appsmith.local
+    ingressClassName: ""
+    path: /
+    annotations: {}
+    tls: false
+    selfSigned: false
+    extraHosts: []
+    extraPaths: []
+    extraTls: []
+    secrets: []
+    extraRules: []
+backend:
+  replicaCount: 1
+  adminUser: user
+  adminEmail: user@example.com
+  adminPassword: ""
+  encryptionSalt: ""
+  encryptionPassword: ""
+  existingSecret: ""
+  existingSecretPasswordKey: "admin-password"
+  existingSecretEncryptionSaltKey: "encryption-salt"
+  existingSecretEncryptionPasswordKey: "encryption-password"
+  containerPorts:
+    http: 8080
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+  startupProbe:
+    enabled: false
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+  customLivenessProbe: {}
+  customReadinessProbe: {}
+  customStartupProbe: {}
+  resources:
+    limits: {}
+    requests: {}
+  podSecurityContext:
+    enabled: true
+    fsGroup: 1001
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1001
+    runAsNonRoot: true
+    readOnlyRootFilesystem: false
+    privileged: false
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop: ["ALL"]
+    seccompProfile:
+      type: "RuntimeDefault"
+  command: []
+  args: []
+  hostAliases: []
+  podLabels: {}
+  podAnnotations: {}
+  podAffinityPreset: ""
+  podAntiAffinityPreset: soft
+  nodeAffinityPreset:
+    type: ""
+    key: ""
+    values: []
+  affinity: {}
+  nodeSelector: {}
+  tolerations: []
+  updateStrategy:
+    type: RollingUpdate
+  priorityClassName: ""
+  topologySpreadConstraints: []
+  schedulerName: ""
+  terminationGracePeriodSeconds: ""
+  lifecycleHooks: {}
+  extraEnvVars: []
+  extraEnvVarsCM: ""
+  extraEnvVarsSecret: ""
+  extraVolumes: []
+  extraVolumeMounts: []
+  sidecars: []
+  initContainers: []
+  service:
+    type: ClusterIP
+    ports:
+      http: 80
+    nodePorts:
+      http: ""
+    clusterIP: ""
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+    externalTrafficPolicy: Cluster
+    annotations: {}
+    extraPorts: []
+    sessionAffinity: None
+    sessionAffinityConfig: {}
+  persistence:
+    enabled: true
+    mountPath: /bitnami/appsmith
+    subPath: ""
+    gitDataPath: ""
+    storageClass: ""
+    annotations: {}
+    accessModes:
+      - ReadWriteOnce
+    size: 8Gi
+    existingClaim: ""
+    selector: {}
+    dataSource: {}
+rts:
+  replicaCount: 1
+  containerPorts:
+    http: 8080
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+  startupProbe:
+    enabled: false
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+  customLivenessProbe: {}
+  customReadinessProbe: {}
+  customStartupProbe: {}
+  resources:
+    limits: {}
+    requests: {}
+  podSecurityContext:
+    enabled: true
+    fsGroup: 1001
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1001
+    runAsNonRoot: true
+    readOnlyRootFilesystem: false
+    privileged: false
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop: ["ALL"]
+    seccompProfile:
+      type: "RuntimeDefault"
+  command: []
+  args: []
+  hostAliases: []
+  podLabels: {}
+  podAnnotations: {}
+  podAffinityPreset: ""
+  podAntiAffinityPreset: soft
+  nodeAffinityPreset:
+    type: ""
+    key: ""
+    values: []
+  affinity: {}
+  nodeSelector: {}
+  tolerations: []
+  updateStrategy:
+    type: RollingUpdate
+  priorityClassName: ""
+  topologySpreadConstraints: []
+  schedulerName: ""
+  terminationGracePeriodSeconds: ""
+  lifecycleHooks: {}
+  extraEnvVars: []
+  extraEnvVarsCM: ""
+  extraEnvVarsSecret: ""
+  extraVolumes: []
+  extraVolumeMounts: []
+  sidecars: []
+  initContainers: []
+  service:
+    type: ClusterIP
+    ports:
+      http: 80
+    nodePorts:
+      http: ""
+    clusterIP: ""
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+    externalTrafficPolicy: Cluster
+    annotations: {}
+    extraPorts: []
+    sessionAffinity: None
+    sessionAffinityConfig: {}
+volumePermissions:
+  enabled: false
+  image:
+    registry: docker.io
+    repository: bitnami/os-shell
+    tag: 11-debian-11-r90
+    pullPolicy: IfNotPresent
+    pullSecrets: []
+  resources:
+    limits: {}
+    requests: {}
+  containerSecurityContext:
+    runAsUser: 0
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+  automountServiceAccountToken: true
+externalDatabase:
+  hosts: []
+  port: 27017
+  username: root
+  database: appsmith
+  password: ""
+  existingSecret: ""
+  existingSecretPasswordKey: ""
+externalRedis:
+  host: ""
+  port: 6379
+  password: ""
+  existingSecret: ""
+  existingSecretPasswordKey: ""
+redis:
+  enabled: true
+  architecture: standalone
+  existingSecret: ""
+  master:
+    service:
+      ports:
+        redis: 6379
+  auth:
+    enabled: true
+    password: ""
+    existingSecret: ""
+mongodb:
+  enabled: true
+  architecture: replicaset
+  replicaCount: 2
+  auth:
+    usernames:
+      - bn_appsmith
+    databases:
+      - bitnami_appsmith
+  containerPorts:
+    mongodb: 27017
+  arbiter:
+    enabled: false
