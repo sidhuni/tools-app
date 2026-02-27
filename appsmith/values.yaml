@@ -18,9 +18,8 @@ diagnosticMode:
     - infinity
 image:
   registry: docker.io
-  repository: bitnami/appsmith
-  tag: 1.9.38-debian-11-r1
-  digest: ""
+  repository: appsmith/appsmith
+  tag: latest
   pullPolicy: IfNotPresent
   pullSecrets: []
   debug: false
