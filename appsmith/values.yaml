@@ -98,7 +98,6 @@ client:
   extraVolumes: []
   extraVolumeMounts: []
   sidecars: []
-  initContainers: []
   service:
     type: LoadBalancer
     ports:
