@@ -7,7 +7,7 @@ spec:
   project: default
   sources:
   - repoURL: https://charts.bitnami.com/bitnami
-    chart: gateway
+    chart: appsmith
     targetRevision: 7.0.3
     helm:
       valueFiles:
