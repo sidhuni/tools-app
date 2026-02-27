@@ -20,7 +20,7 @@ redis:
 mongodb:
   enabled: true
   volumePermissions:
-    enabled: true  
+    enabled: false
   service:
     nameOverride: appsmith-mongodb
   auth:
