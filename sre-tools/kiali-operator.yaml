@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kiali-operator
+  namespace: argocd
+spec:
+  project: default
+  sources:
+  - repoURL: https://kiali.org/helm-charts
+    chart: kiali-operator
+    targetRevision: 2.22.0
+    helm:
+      valueFiles:
+      - $values/kiali-operator/values.yaml
+
+  - repoURL: https://github.com/sidhuni/tools-app.git
+    targetRevision: main
+    ref: values
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kiali-operator
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - Replace=true   
+      - Validate=false
