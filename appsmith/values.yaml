@@ -137,11 +137,12 @@ nodeSelector: {}
 tolerations: []
 affinity: {}
 persistence:
-  enabled: true
+  enabled: false
   storageClass: ""
   annotations: {}
   localStorage: false
   storagePath: /tmp/hostpath_pv
+  mountPath: /bitnami/data 
   localCluster: {}
   accessModes:
     - ReadWriteMany
