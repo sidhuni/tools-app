@@ -85,7 +85,7 @@ image:
   registry: index.docker.io
   repository: appsmith/appsmith-ee
   pullPolicy: IfNotPresent
-  pullSecrets: ""
+  pullSecrets: []
   tag: "latest"
 serviceAccount:
   create: true
@@ -145,10 +145,7 @@ persistence:
   size: 10Gi
   reclaimPolicy: Retain
   pvNameOverride: ""
-  existingClaim:
-    enabled:
-    name:
-    claimName:
+  existingClaim: {}
   efs:
     enabled:
     driver:
