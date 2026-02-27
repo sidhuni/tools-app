@@ -376,6 +376,10 @@ mongodb:
   enabled: true
   architecture: replicaset
   replicaCount: 1
+  image:
+    registry: docker.io
+    repository: bitnami/mongodb
+    tag: 8.0.12-debian-11-r0
   auth:
     usernames:
       - bn_appsmith
