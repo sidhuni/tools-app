@@ -98,6 +98,7 @@ client:
   extraVolumes: []
   extraVolumeMounts: []
   sidecars: []
+  initContainers: []
   service:
     type: LoadBalancer
     ports:
@@ -184,8 +185,8 @@ backend:
   command: ["/bin/sh", "-c"]
   args: 
     - |
-      # This bypasses the preserve-logs-symlinks logic and starts the app directly
-      /opt/bitnami/scripts/appsmith/run.sh
+      # Updated path for modern Appsmith images
+      /entrypoint.sh
   hostAliases: []
   podLabels: {}
   podAnnotations: {}
