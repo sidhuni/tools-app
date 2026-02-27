@@ -35,7 +35,9 @@ mongodb:
   image:
     registry: docker.io
     repository: bitnami/os-shell
-    tag: 12-debian-12-r23 
+    tag: latest
+    pullPolicy: Always
+
   arbiter:
     nodeSelector: {}
     affinity: {}
