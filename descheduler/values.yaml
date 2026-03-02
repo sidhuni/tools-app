@@ -28,8 +28,6 @@ nameOverride: ""
 fullnameOverride: ""
 namespaceOverride: ""
 commonLabels: {}
-cronJobApiVersion: "batch/v1"
-schedule: "*/2 * * * *"
 suspend: false
 deschedulingInterval: 5m
 replicas: 1
