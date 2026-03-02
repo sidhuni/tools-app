@@ -111,7 +111,7 @@ configReloader:
       memory: "50Mi"
   securityContext: {}
 controller:
-  type: 'daemonset'
+  type: 'statefulset'
   replicas: 1
   extraLabels: {}
   extraAnnotations: {}
