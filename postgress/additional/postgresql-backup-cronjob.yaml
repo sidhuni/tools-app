@@ -120,7 +120,7 @@ spec:
                             TARGET=$(echo "$OLD_FOLDER" | xargs)
                             if [ -n "$TARGET" ]; then
                                 echo "Permanently deleting: $TARGET"
-                                aws s3 rm "s3://$BUCKET/$TARGET" --recursive
+                                aws s3 rm "s3://$BUCKET/$TARGET" --recursive --dryrun
                             fi
                         done
                     done
