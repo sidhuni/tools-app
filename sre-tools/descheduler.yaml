@@ -6,9 +6,9 @@ metadata:
 spec:
   project: default
   sources:
-  - repoURL: https://charts.bitnami.com/bitnami
+  - repoURL: https://kubernetes-sigs.github.io/descheduler
     chart: descheduler
-    targetRevision: 7.0.3
+    targetRevision: 0.35.0
     helm:
       valueFiles:
       - $values/descheduler/values.yaml
