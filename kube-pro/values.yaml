@@ -5,7 +5,7 @@ kubeVersionOverride: ""
 fullnameOverride: ""
 commonLabels: {}
 crds:
-  enabled: false
+  enabled: true
   upgradeJob:
     enabled: false
     forceConflicts: false
