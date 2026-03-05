@@ -68,6 +68,7 @@ grafana:
   enabled: false
 
 prometheus-node-exporter:
+  
   namespaceOverride: ""
   podLabels:
     jobLabel: node-exporter
@@ -92,6 +93,7 @@ prometheus-node-exporter:
           targetLabel: node
 
 prometheusOperator:
+  extraArgs: []
   enabled: false
   fullnameOverride: ""
   revisionHistoryLimit: 10
@@ -426,6 +428,7 @@ prometheus:
       token: token
     name: amnic-remote-write
   prometheusSpec:
+    additionalArgs: []
     serviceMonitorSelector:
       matchLabels:
         release: prometheus
