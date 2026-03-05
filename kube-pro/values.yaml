@@ -260,6 +260,166 @@ prometheusOperator:
         annotations: {}
        
 prometheus:
+  enabled: false
+  agentMode: false
+  annotations: {}
+  networkPolicy:
+    enabled: false
+    flavor: kubernetes
+  serviceAccount:
+    create: true
+    name: ""
+    annotations: {}
+    automountServiceAccountToken: true
+  thanosService:
+    enabled: false
+    annotations: {}
+    labels: {}
+    externalTrafficPolicy: Cluster
+    type: ClusterIP
+    ipDualStack:
+      enabled: false
+      ipFamilies: ["IPv6", "IPv4"]
+      ipFamilyPolicy: "PreferDualStack"
+    portName: grpc
+    port: 10901
+    targetPort: "grpc"
+    httpPortName: http
+    httpPort: 10902
+    targetHttpPort: "http"
+    clusterIP: "None"
+    nodePort: 30901
+    httpNodePort: 30902
+  thanosServiceMonitor:
+    enabled: false
+    interval: ""
+    additionalLabels: {}
+    scheme: ""
+    tlsConfig: {}
+    bearerTokenFile:
+    metricRelabelings: []
+    relabelings: []
+  thanosServiceExternal:
+    enabled: false
+    annotations: {}
+    labels: {}
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+    portName: grpc
+    port: 10901
+    targetPort: "grpc"
+    httpPortName: http
+    httpPort: 10902
+    targetHttpPort: "http"
+    externalTrafficPolicy: Cluster
+    type: LoadBalancer
+    nodePort: 30901
+    httpNodePort: 30902
+  service:
+    annotations: {}
+    labels: {}
+    clusterIP: ""
+    ipDualStack:
+      enabled: false
+      ipFamilies: ["IPv6", "IPv4"]
+      ipFamilyPolicy: "PreferDualStack"
+    port: 9090
+    targetPort: 9090
+    reloaderWebPort: 8080
+    externalIPs: []
+    nodePort: 30090
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+    externalTrafficPolicy: Cluster
+    type: ClusterIP
+    additionalPorts: []
+    publishNotReadyAddresses: false
+    sessionAffinity: None
+    sessionAffinityConfig:
+      clientIP:
+        timeoutSeconds: 10800
+  servicePerReplica:
+    enabled: false
+    annotations: {}
+    port: 9090
+    targetPort: 9090
+    nodePort: 30091
+    loadBalancerSourceRanges: []
+    externalTrafficPolicy: Cluster
+    type: ClusterIP
+    ipDualStack:
+      enabled: false
+      ipFamilies: ["IPv6", "IPv4"]
+      ipFamilyPolicy: "PreferDualStack"
+  podDisruptionBudget:
+    enabled: false
+    minAvailable: 1
+    maxUnavailable: ""
+  thanosIngress:
+    enabled: false
+    annotations: {}
+    labels: {}
+    servicePort: 10901
+    nodePort: 30901
+    hosts: []
+    paths: []
+    tls: []
+  extraSecret:
+    annotations: {}
+    data: {}
+  ingress:
+    enabled: false
+    annotations: {}
+    labels: {}
+    hosts: []
+    paths: []
+    tls: []
+  route:
+    main:
+      enabled: false
+      apiVersion: gateway.networking.k8s.io/v1
+      kind: HTTPRoute
+      annotations: {}
+      labels: {}
+      hostnames: []
+      parentRefs: []
+      httpsRedirect: false
+      matches:
+        - path:
+            type: PathPrefix
+            value: /
+      filters: []
+      additionalRules: []
+  ingressPerReplica:
+    enabled: false
+    annotations: {}
+    labels: {}
+    hostPrefix: ""
+    hostDomain: ""
+    paths: []
+    tlsSecretName: ""
+    tlsSecretPerReplica:
+      enabled: false
+      prefix: "prometheus"
+  podSecurityPolicy:
+    allowedCapabilities: []
+    allowedHostPaths: []
+    volumes: []
+  serviceMonitor:
+    selfMonitor: true
+    interval: ""
+    additionalLabels: {}
+    sampleLimit: 0
+    targetLimit: 0
+    labelLimit: 0
+    labelNameLengthLimit: 0
+    labelValueLengthLimit: 0
+    scheme: ""
+    tlsConfig: {}
+    bearerTokenFile:
+    metricRelabelings: []
+    relabelings: []
+    additionalEndpoints: []
   aws_secret_name: alpha-amnic-token
   external_secrets:
     data:
