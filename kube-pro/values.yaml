@@ -68,6 +68,7 @@ grafana:
   enabled: false
 
 prometheus-node-exporter:
+  enabled: false
   prometheus:
     monitor:
       relabelings:
