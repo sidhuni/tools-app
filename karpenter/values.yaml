@@ -18,3 +18,8 @@ controller:
    limits: 
      cpu: 500m
      memory: 512Mi
+
+topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: topology.kubernetes.io/zone
+    whenUnsatisfiable: DoNotSchedule
