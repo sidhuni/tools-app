@@ -1,0 +1,153 @@
+defaultRules:
+  create: true
+  rules:
+    alertmanager: false
+
+alertmanager:
+  enabled: false
+
+grafana:
+  enabled: false
+
+prometheus-node-exporter:
+  prometheus:
+    monitor:
+      relabelings:
+        - action: labelmap
+          regex: __meta_kubernetes_node_label_(.+)
+        - sourceLabels: [__meta_kubernetes_endpoint_node_name]
+          targetLabel: node
+
+prometheusOperator:
+  enabled: false
+  serviceAccount:
+        annotations: {}
+       
+prometheus:
+  aws_secret_name: alpha-amnic-token
+  external_secrets:
+    data:
+      token: token
+    name: amnic-remote-write
+  prometheusSpec:
+    serviceMonitorSelector:
+      matchLabels:
+        release: prometheus
+    remoteWrite:
+      - url: http://mimir.stg.uni.club/api/v1/push
+        headers:
+          X-Scope-OrgID: "uni-alpha"
+    additionalRemoteWrite:
+      - url: https://metrics.amnic.com/z/api/v1/push
+        authorization:
+          credentials:
+            key: token
+            name: amnic-remote-write
+        writeRelabelConfigs:
+          - targetLabel: "amnic_installation_id"
+            replacement: "c060eeef-2c1e-4ba6-aa43-2dfd07b11319"
+          - targetLabel: "amnic_cluster_id"
+            replacement: "caa1b5da-419a-4c30-8013-9af0481f3d40!alphazone!ff2a0147-4193-4f82-b8c5-a866fe313815"
+          - sourceLabels: [__name__, job, app_kubernetes_io_name]
+            regex: (container.*allocation|container_cpu_cfs_.*|container_cpu_usage_seconds_total|container_fs_limit_bytes|container_fs_usage_bytes|container_memory_working_set_bytes|container_network_receive_bytes_total|container_network_transmit_bytes_total|coredns_dns_request_duration_seconds_bucket|coredns_dns_requests_total|coredns_dns_responses_total|coredns_forward_requests_total|karpenter.*|kube_.*_info|.*_created|kube_.*labels|kube_daemonset.*|kube_deployment_.*|kube_node.*|kube_persistentvolume.*|kube_pod.*|kube_replicaset.*|kube_statefulset.*|kubecost.*|kubelet_active_pods|kubelet_desired_pods|kubelet_node_name|kubelet_pod_start_duration_seconds_sum|kubelet_restarted_pods_total|kubelet_running_.*|kubelet_running_container_count|kubelet_running_pod_count|kubelet_started_pods_total|kubelet_volume_stats.*|kubelet_working_pods|kubernetes_build_info|kubernetes_feature_enabled|machine_.*|node_cpu_seconds_total|node_disk_info|node_disk_io_time_seconds_total|node_disk_io_time_weighted_seconds_total|node_filesystem_avail_bytes|node_filesystem_size_bytes|node_gpu_count|node_load.*|node_load1|node_memory_Buffers_bytes|node_memory_Cached_bytes|node_memory_MemAvailable_bytes|node_memory_MemFree_bytes|node_memory_MemTotal_bytes|node_memory_Slab_bytes|node_network_receive_bytes_total|node_network_transmit_bytes_total|node_vmstat_oom_kill|node_vmstat_pgmajfault|node_disk_read_bytes_total|node_disk_written_bytes_total|opencost.*|.*_cost|DCGM.*).*
+            action: "keep"
+    remoteWriteDashboards: true
+    additionalScrapeConfigs: 
+    - job_name: kubelet-probes # kubelet probes (optional)
+      metrics_path: /metrics
+      scheme: https
+      authorization:
+        type: Bearer
+        credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+      tls_config:
+        ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        insecure_skip_verify: true
+      follow_redirects: true
+      relabel_configs:
+        - action: labelmap
+          regex: __meta_kubernetes_node_label_(.+)
+        - target_label: __address__
+          replacement: kubernetes.default.svc:443
+        - source_labels: [__meta_kubernetes_node_name]
+          regex: (.+)
+          target_label: __metrics_path__
+          replacement: /api/v1/nodes/$1/proxy/metrics/probes
+      kubernetes_sd_configs:
+        - role: node
+
+    - job_name: kubernetes-nodes # kubelet core
+      metrics_path: /metrics
+      scheme: https
+      authorization:
+        type: Bearer
+        credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+      tls_config:
+        ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        insecure_skip_verify: true
+      follow_redirects: true
+      relabel_configs:
+        - action: labelmap
+          regex: __meta_kubernetes_node_label_(.+)
+        - target_label: __address__
+          replacement: kubernetes.default.svc:443
+        - source_labels: [__meta_kubernetes_node_name]
+          regex: (.+)
+          target_label: __metrics_path__
+          replacement: /api/v1/nodes/$1/proxy/metrics
+        - source_labels: [instance]
+          target_label: node
+      kubernetes_sd_configs:
+        - role: node
+    - job_name: kubernetes-nodes-cadvisor # kubelet cadvisor
+      metrics_path: /metrics
+      scheme: https
+      authorization:
+        type: Bearer
+        credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+      tls_config:
+        ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        insecure_skip_verify: true
+      follow_redirects: true
+      relabel_configs:
+        - action: labelmap
+          regex: __meta_kubernetes_node_label_(.+)
+        - target_label: __address__
+          replacement: kubernetes.default.svc:443
+        - source_labels: [__meta_kubernetes_node_name]
+          regex: (.+)
+          target_label: __metrics_path__
+          replacement: /api/v1/nodes/$1/proxy/metrics/cadvisor
+        - source_labels: [instance]
+          target_label: node
+      metric_relabel_configs:
+        - source_labels: [__name__]
+          action: drop
+          regex: "container_cpu_(cfs_throttled_seconds_total|load_average_10s|system_seconds_total|user_seconds_total)"
+        - source_labels: [__name__]
+          action: drop
+          regex: "container_fs_(io_current|io_time_seconds_total|io_time_weighted_seconds_total|reads_merged_total|sector_reads_total|sector_writes_total|writes_merged_total)"
+        - source_labels: [__name__]
+          action: drop
+          regex: "container_memory_(mapped_file|swap)"
+        - source_labels: [__name__]
+          action: drop
+          regex: "container_(file_descriptors|tasks_state|threads_max)"
+        - source_labels: [__name__]
+          action: drop
+          regex: "container_spec.*"
+        - regex: (kubernetes_io_hostname|beta_kubernetes_io_os|beta_kubernetes_io_arch|beta_kubernetes_io_instance_type|failure.*|eks_amazonaws_com_sourceLaunchTemplateVersion|k8s_io_cloud_provider_aws|eks_amazonaws_com_sourceLaunchTemplateId|kubernetes_io_os|topology_ebs_csi_aws_com_zone|eks_amazonaws_com_nodegroup_image|id|name)
+          action: labeldrop
+        - regex: (karpenter_k8s_aws_instance_category|karpenter_k8s_aws_instance_cpu|karpenter_k8s_aws_instance_encryption_in_transit_supported|karpenter_k8s_aws_instance_family|karpenter_k8s_aws_instance_generation|karpenter_k8s_aws_instance_hypervisor|karpenter_k8s_aws_instance_local_nvme|karpenter_k8s_aws_instance_memory|karpenter_k8s_aws_instance_network_bandwidth|karpenter_k8s_aws_instance_pods|karpenter_k8s_aws_instance_size|karpenter_sh_initialized)
+          action: labeldrop
+        - regex: (^feature_.*)
+          action: labeldrop
+        - source_labels: [instance]
+          target_label: node
+      kubernetes_sd_configs:
+        - role: node
+  additionalRulesForClusterRole:
+    - apiGroups: [""]
+      resources:
+        - nodes/proxy
+        - ingresses
+      verbs: ["get", "list", "watch"]
