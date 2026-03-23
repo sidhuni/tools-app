@@ -9,6 +9,9 @@ auth:
     adminPasswordKey: postgres_password
     userPasswordKey: user_password
 
+global:
+  security:
+    allowInsecureImages: true
 image:
   registry: public.ecr.aws
   repository: bitnami/postgresql
