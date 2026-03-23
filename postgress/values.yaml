@@ -1,5 +1,11 @@
 fullnameOverride: postgresql
 
+
+image:
+  registry: public.ecr.aws
+  repository: bitnami/postgresql
+  tag: 15.6.0
+
 auth:
   enablePostgresUser: true
   username: admin
