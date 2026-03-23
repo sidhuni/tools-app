@@ -9,14 +9,6 @@ auth:
     adminPasswordKey: postgres_password
     userPasswordKey: user_password
 
-global:
-  security:
-    allowInsecureImages: true
-image:
-  registry: public.ecr.aws
-  repository: bitnami/postgresql
-  tag: 16.4.0  # Specific version instead of 'latest'
-  pullPolicy: IfNotPresent
 
 primary:
   resourcesPreset: none
