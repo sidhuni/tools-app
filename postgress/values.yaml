@@ -1,5 +1,8 @@
 fullnameOverride: postgresql
 
+global:
+  security:
+    allowInsecureImages: true
 
 image:
   registry: public.ecr.aws
