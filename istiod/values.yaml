@@ -6,10 +6,10 @@ pilot:
   replicaCount: 1
   rollingMaxSurge: 100%
   rollingMaxUnavailable: 25%
-  hub: "383478357652.dkr.ecr.ap-south-1.amazonaws.com/sre-common"
-  tag: "istio-pilot-1.25.3"
+  hub: "383478357652.dkr.ecr.ap-south-1.amazonaws.com"
+  tag: "sre-common:istio-pilot-1.25.3"
   variant: ""
-  image: pilot
+  image: ""
   traceSampling: 1.0
   resources:
     requests:
@@ -82,8 +82,8 @@ global:
     requests:
       cpu: 10m
       memory: 128Mi
-  hub: 383478357652.dkr.ecr.ap-south-1.amazonaws.com/sre-common
-  tag: 1.25.3
+  hub: "383478357652.dkr.ecr.ap-south-1.amazonaws.com"
+  tag: "sre-common:istio-proxy-1.25.3" 
   variant: ""
   imagePullPolicy: ""
   imagePullSecrets: 
@@ -97,7 +97,7 @@ global:
   operatorManageWebhooks: false
   priorityClassName: ""
   proxy:
-    image: proxyv2
+    image: ""
     autoInject: enabled
     clusterDomain: "cluster.local"
     componentLogLevel: "misc:error"
@@ -126,7 +126,7 @@ global:
     statusPort: 15020
     tracer: "none"
   proxy_init:
-    image: proxyv2               
+    image: ""               
     forceApplyIptables: false
     
 
