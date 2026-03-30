@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/sidhuni/tools-app.git
+    repoURL:  https://github.com/sidhuni/tools-app.git
     targetRevision: main
     path: sre-tools     # folder where chartmuseum.yaml & grafana.yaml exist
   destination:
