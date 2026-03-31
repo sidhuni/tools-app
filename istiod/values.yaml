@@ -258,7 +258,8 @@ _internal_defaults_do_not_set:
     # For components that don't use ServiceAccounts (i.e. grafana, servicegraph, tracing)
     # ImagePullSecrets will be added to the corresponding Deployment(StatefulSet) objects.
     # Must be set for any cluster configured with private docker registry.
-    imagePullSecrets: []
+    imagePullSecrets: 
+      - ecr-pull-secret
     # - private-registry-key
 
     # Enabled by default in master for maximising testing.
