@@ -76,7 +76,7 @@ _internal_defaults_do_not_set:
   revisionTags: []
   ownerName: ""
   meshConfig:
-    rootNamespace: istio-system
+    enablePrometheusMerge: true
   defaultConfig:
     tracing:
       enabled: false
@@ -89,7 +89,7 @@ _internal_defaults_do_not_set:
       context:
       - W3C_TRACE_CONTEXT
     enableTracing: false
-    enablePrometheusMerge: true
+    
   experimental:
     stableValidationPolicy: false
   global:
