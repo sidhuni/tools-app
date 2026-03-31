@@ -76,7 +76,7 @@ _internal_defaults_do_not_set:
   revisionTags: []
   ownerName: ""
   meshConfig:
-
+    rootNamespace: istio-system
   defaultConfig:
     tracing:
       enabled: false
