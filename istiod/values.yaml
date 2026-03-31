@@ -3,7 +3,7 @@ _internal_defaults_do_not_set:
   autoscaleMin: 3
   autoscaleMax: 5
   autoscaleBehavior: {}
-  replicaCount: 3
+  replicaCount: 1
   rollingMaxSurge: 100%
   rollingMaxUnavailable: 25%
   hub: ""
